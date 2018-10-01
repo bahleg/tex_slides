@@ -8,17 +8,6 @@
 \usepackage{appendixnumberbeamer}
 \usepackage{multicol}
 
-
-% мотивация (3 слайда)
-% форм Постановка (2 или 3 слайда)
-% gumbel softmax
-% вариационный вывод
-% дву-уровневная задача оптимизации (байес?)
-% общий функционал L
-% общий функционал Q (вид + сведение к evidence, теоремы о сложности 1, теоремы о сложности 2)
-% оптимизация гиперпараметров (3 слайда + адекватность лукетины)
-% графички ?()
-% все
 \DeclareMathOperator*{\argmin}{arg\,min}
 
 \DeclareMathOperator*{\argmax}{arg\,max}
@@ -52,10 +41,31 @@
   \titlepage
 \end{frame}
 
+
+\begin{frame}{Задача выбора структуры модели}
+Рассматривается задача регресси или классификации:
+\[
+    f(\mathbf{x}): \mathbb{R}^n \to \mathbb{Y}, \quad \mathbf{x} \in \mathbf{X}, |\mathbf{X}| = m.
+\]
+
+Рассмотрим задачу выбора структуры для однослойной нейросети в задаче классификации:
+\[
+    f(\mathbf{x}) = \text{softmax}(\mathbf{W}^\text{T}\mathbf{f}_1(\mathbf{x})),
+\]
+\[
+\mathbf{f}_1(\mathbf{x}) = \boldsymbol{\gamma}_{1,2}\mathbf{g}_1(\mathbf{x})+\dots+\boldsymbol{\gamma}_{1,K}\mathbf{g}_K(\mathbf{x})=\textbf{tanh}(\mathbf{W}_1^\text{T}\mathbf{x}) + \dots +  \boldsymbol{\gamma}_{1,u}\textbf{tanh}(\mathbf{W}_K^\text{T}\mathbf{x}),
+\]
+где $\mathbf{W}_1, \dots, \mathbf{W}_K$ --- матрицы одинаковой размерности с различным количеством нулевых строк, $\{\mathbf{g}_i\}_{i=1}^K$ --- базовые функции для скрытого слоя нейросети.~\\~\\
+
+\textbf{Структура модели} $\boldsymbol{\gamma}$ определяется вершиной булевого $K$-мерного куба.
+
+\end{frame}
+
+
+
 \begin{frame}{Выбор  структуры модели глубокого обучения}
-\textbf{Цель работы}\\
-Разработка метода построения наиболее правдоподобной структуры модели глубокого обучения.\\
 \begin{itemize}
+\item \textbf{Цель работы:} разработка метода построения наиболее правдоподобной структуры модели глубокого обучения.
 \item \textbf{Модель глубокого обучения --- } суперпозиция дифференцируемых функций.
 \item Качество модели определяется \textbf{параметрами} модели.
 \item Оптимизация параметров определяется \textbf{гиперпараметрами и структурными параметрами} модели.
@@ -94,18 +104,6 @@
 \end{frame}    
 
 
-
-\begin{frame}{ Постановка задачи}
-Рассматривается задача регресси или классификации:
-\[
-    f(\mathbf{x}): \mathbb{R}^n \to \mathbb{Y}, \quad \mathbf{x} \in \mathbf{X}, |\mathbf{X}| = m.
-\]
-
-\textbf{Модель глубокого обучения}
-\begin{figure}[tbh!]
-\includegraphics[width=0.45\textwidth]{./slide_plots/model.png}
-\end{figure}
-\end{frame}
 
 
 \begin{frame}{Правдоподобие модели}  
@@ -152,7 +150,7 @@
 \textcolor{red}{\textbf{TODO: Что мы считаем моделью?\\}}
 
 Задан граф $V,E$. \\
-Для каждого ребра $(j,k) \in E$ определен вектор \textbf{примитивных функций} $\mathbf{g}_{j,k}$ мощностью $K_{j,k}$.\\
+Для каждого ребра $(j,k) \in E$ определен вектор \textbf{базовых функций} $\mathbf{g}_{j,k}$ мощностью $K_{j,k}$.\\
 Граф $V, E$ со множеством функций $\mathfrak{G} = \{\mathbf{g}_{j,k}\}_{(j,k) \in E}$ называется \textbf{моделью}, если функция, задаваемая рекурсивно как 
 \[
     f_j(\mathbf{x}) = \sum_{k \in \text{Adj}(v_j)} <\boldsymbol{\gamma}_{j,k}, \mathbf{g}_{j,k}> (f_{k}(\mathbf{x})), \quad     f_0(\mathbf{x}) = \mathbf{x},
@@ -163,8 +161,8 @@
 \end{frame}
 
 
-\begin{frame}{ Постановка задачи}
-Пусть для каждого ребра $(j,k)$ задан нормированный положительный вектор $\boldsymbol{\gamma}_{j,k} \in \mathbb{R}_{+}^{|K_{j,k}|}$, определяющий веса примитивных функций из  $\mathbf{g}(j,k)$.
+\begin{frame}{ Распределение на структуре}
+Пусть для каждого ребра $(j,k)$ задан нормированный положительный вектор $\boldsymbol{\gamma}_{j,k} \in \mathbb{R}_{+}^{|K_{j,k}|}$, определяющий веса баховых функций из  $\mathbf{g}(j,k)$.
 
 Будем считать, что вектор $\boldsymbol{\gamma}_{j,k}$ распределен по распределению Gumbel-Softmax:
 \[
@@ -264,7 +262,8 @@ $$\text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{A}) \geq \mathsf{E}_{q(\mathbf{W)}}
 
 
 \begin{frame}
-\frametitle{\smallВариационная оценка с использованием градиентного спуска}
+\frametitle{Вариационная оценка с использованием градиентного спуска}
+\footnotesize
 Максимизация вариационной оценки эквивалентна минимизации $\text{D}_{\text{KL}}(q(\mathbf{W})||p(\mathbf{W} | \mathfrak{D},\mathbf{A}^{-1}))$.\\
 Градиентный спуск не минимизирует $\text{D}_{\text{KL}}(q(\mathbf{W})||p(\mathbf{W} | \mathfrak{D},\mathbf{A}^{-1}))$.
 \begin{multicols}{2}
@@ -284,7 +283,7 @@ $$\text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{A}) \geq \mathsf{E}_{q(\mathbf{W)}}
 
 
 \begin{frame}{Вариационный вывод: распределение структурных параметров}
-Для каждого элемента структуры $\boldsymbol{\gamma}$ зададим распределение весов примитивных функций по распределению Gumbel-Softmax c параметрами $\hat{\alpha}_1, \dots, \hat{\alpha}_u, c$, где параметр $c$ --- общий для всех весов.
+Для каждого элемента структуры $\boldsymbol{\gamma}$ зададим распределение весов базовых функций по распределению Gumbel-Softmax c параметрами $\hat{\alpha}_1, \dots, \hat{\alpha}_u, c$, где параметр $c$ --- общий для всех весов.
 
 Для реализации $h$-й компоненты случайной величины $\boldsymbol{\gamma}$ справедлива следующая формула:
 \[
