@@ -10,7 +10,7 @@
 
 
 % мотивация (3 слайда)
-% форм постановка (2 или 3 слайда)
+% форм Постановка (2 или 3 слайда)
 % gumbel softmax
 % вариационный вывод
 % дву-уровневная задача оптимизации (байес?)
@@ -53,9 +53,19 @@
 \end{frame}
 
 \begin{frame}{Выбор  структуры модели глубокого обучения}
-\textcolor{red}{\textbf{TODO: переделать?\\}}
 \textbf{Цель работы}\\
 Разработка метода построения наиболее правдоподобной структуры модели глубокого обучения.\\
+\begin{itemize}
+\item \textbf{Модель глубокого обучения --- } суперпозиция дифференцируемых функций.
+\item Качество модели определяется \textbf{параметрами} модели.
+\item Оптимизация параметров определяется \textbf{гиперпараметрами и структурными параметрами} модели.
+\item \textbf{Гиперпараметры} --- параметры распределения параметров модели.
+\item \textbf{Структурные параметры} --- параметры, определяющие структуры модели.
+\end{itemize} 
+\end{frame}
+
+
+\begin{frame}{Выбор  структуры модели глубокого обучения}
 \textbf{Задачи}
 \begin{itemize}
 \item Исследовать методы построения моделей глубокого обучения.
@@ -73,8 +83,7 @@
 
 
 \begin{frame}                                                                                                                                   
-\frametitle{Проблемы обучения сетей}   
-\textcolor{red}{\textbf{TODO: взять картинку у Грабового?\\}}                                                                                                         
+\frametitle{Проблемы обучения сетей}                                                                                                          
 Правдоподобие моделей с избыточным количеством параметров не меняется при удалении параметров.                                                       
 \begin{figure}[h]                                                                                                                               
 \centering                                                                                                                                      
@@ -86,53 +95,26 @@
 
 
 
-\begin{frame}{Формальная постановка задачи}
-Задана выборка 
+\begin{frame}{ Постановка задачи}
+Рассматривается задача регресси или классификации:
 \[
-\mathfrak{D} = \{(\mathbf{x}_i,y_i)\}, i = 1,\dots,m,
-\] 
-состоящая из множества пар <<объект-метка>> $$\mathbf{x}_i \in \mathbf{X} \subset \mathbb{R}^n, \quad {y}_i \in \mathbf{y} \subset \mathbb{Y}.$$
-Метка ${y}$  объекта $\mathbf{x}$ множеству $\mathbb{Y}.$
-
-Будем полагать, что пары объектов $(\mathbf{x}_i, y_i)$ являются реализацией некоторой случайно величины и порождены независимо.
-\end{frame}
-
-\begin{frame}{Формальная постановка задачи}
-\textcolor{red}{\textbf{TODO: ослабить? Как писать заголовки для этих слайдов?\\}}
-\textcolor{red}{\textbf{TODO: Что мы считаем моделью?\\}}
-
-Задан граф $V,E$. \\
-Для каждого ребра $(j,k) \in E$ определен вектор \textbf{примитивных функций} $\mathbf{g}_{j,k}$ мощностью $K_{j,k}$.\\
-Граф $V, E$ со множеством функций $\mathfrak{G} = \{\mathbf{g}_{j,k}\}_{(j,k) \in E}$ называется \textbf{моделью}, если функция, задаваемая рекурсивно как 
-\[
-    f_j(\mathbf{x}) = \sum_{k \in \text{Adj}(v_j)} <\boldsymbol{\gamma}_{j,k}, \mathbf{g}_{j,k}> (f_{k}(\mathbf{x})), \quad     f_0(\mathbf{x}) = \mathbf{x},
+    f(\mathbf{x}): \mathbb{R}^n \to \mathbb{Y}, \quad \mathbf{x} \in \mathbf{X}, |\mathbf{X}| = m.
 \]
-является непрерывной дифференцируемой функцией из $\mathbb{R}^n$ во множество $\mathbb{Y}$ при любых значениях векторов $\boldsymbol{\gamma}$.
 
-Обозначим за вектор \textbf{параметров модели}  $\mathbf{W}$ конкатенацию параметров всех подмоделей $\{f_j\}_{j=1}^{|V|}$.
+\textbf{Модель глубокого обучения}
+\begin{figure}[tbh!]
+\includegraphics[width=0.45\textwidth]{./slide_plots/model.png}
+\end{figure}
 \end{frame}
 
 
-\begin{frame}{Формальная постановка задачи}
-Пусть для каждого ребра $(j,k)$ задан нормированный положительный вектор $\boldsymbol{\gamma}_{j,k} \in \mathbb{R}_{+}^{|K_{j,k}|}$, определяющий веса примитивных функций из  $\mathbf{g}(j,k)$.
-
-Будем считать, что вектор $\boldsymbol{\gamma}_{j,k}$ распределен по распределению Gumbel-Softmax:
-\[
-    p(\boldsymbol{\gamma}) = (K_{j,k}-1)!{c_{\text{temp}}}^{K_{j,k}-1}\left(\prod_{h=1}^{K_{j,k}-1} \alpha_h \boldsymbol{\gamma}_h^{-c_{\text{temp}}-1}\right)\left(\sum_{h=1}^u\alpha_h\boldsymbol{\gamma}_h^{-c_{\text{temp}}}\right),
-\] 
-где $\alpha_1,\dots,\alpha_h$ --- параметры сдвига распределения, $c_{\text{temp}}$ --- температура распределения. 
-\\~\\
-Обозначим за \textbf{структуру} модели $\boldsymbol{\Gamma}$ множество всех векторов $\boldsymbol{\gamma}_{j,k}$.\\
-Обозначим за $\mathbf{m}$ параметры сдвига всех распределений, соответствующих структуре $\boldsymbol{\Gamma}$.
-
-\end{frame}
-
-\begin{frame}                                                                                            
-\textcolor{red}{\textbf{TODO: вероятностное распределение параметров.\\}}
+\begin{frame}{Правдоподобие модели}  
+                                                                                          
+Пусть заданы априорное распределение параметров и структуры $p(\mathbf{W}, \boldsymbol{\Gamma})$.
 
 Модель $\mathbf{f}$  оптимальна, если достигается максимум \textbf{правдоподобия модели}:                                      
 \[                                                                                                                                              
-        p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c_{\text{temp}}) = \int_{\mathbf{W}, \boldsymbol{\Gamma} } \textcolor{red}{p(\mathbf{y}|\mathbf{X},\mathbf{W},  \boldsymbol{\Gamma})} \textcolor{blue}{p(\mathbf{W}|\mathbf{A}, \boldsymbol{\Gamma})p(\boldsymbol{\Gamma}|\mathbf{m}, c_{\text{temp}})} d\mathbf{W}d{\boldsymbol{\Gamma}}.                         
+        p(\mathbf{y}|\mathbf{X}) = \int_{\mathbf{W}, \boldsymbol{\Gamma} } \textcolor{red}{p(\mathbf{y}|\mathbf{X},\mathbf{W},  \boldsymbol{\Gamma})} \textcolor{blue}{p(\mathbf{W}, \boldsymbol{\Gamma}) d\mathbf{W}d{\boldsymbol{\Gamma}}}.                         
 \]       
 
 
@@ -144,20 +126,6 @@
 \end{figure}
 \end{frame}
 
-\begin{frame}{Задача оптимизации}
-Требуется найти гиперпараметры модели $\mathbf{A}, \mathbf{m}$ доставляющие максимум правдоподобия модели:
-\[
-    \argmax_{\mathbf{A}, \mathbf{m}}  p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c_{\text{temp}}).
-\]                                                                                                                            
-\textcolor{red}{\textbf{TODO: насколько это формально?\\}}
-\begin{block}{Теорема}
-При устремлении $c_{\text{temp}}$ к нулю задача становится эквивалентна дискретной задаче оптимизации:
-\[
-    \argmax_{\mathbf{A}, \{\boldsymbol{\gamma}_{j,k} \in \Delta^{K_{j,k} -1}, (j,k) \in E\}} p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c_{\text{temp}}) \text{ при }c_{\text{temp}} \to 0,
-\]    
-где $\Delta^{K_{j,k} -1}$ --- множество векторов, соответствующих вершинам $(K_{j,k}-1)$-сипмлекса.
-\end{block}           
-\end{frame}  
 
 \begin{frame}{Выбор оптимальной модели}
 \textbf{Основные проблемы выбора оптимальной модели}\\
@@ -175,7 +143,63 @@
 \item Полный перебор вариантов структуры модели.
 \end{itemize}
 
-\end{frame}                                                                                                                                              
+\end{frame}       
+
+
+
+\begin{frame}{ Постановка задачи}
+\textcolor{red}{\textbf{TODO: ослабить? Как писать заголовки для этих слайдов?\\}}
+\textcolor{red}{\textbf{TODO: Что мы считаем моделью?\\}}
+
+Задан граф $V,E$. \\
+Для каждого ребра $(j,k) \in E$ определен вектор \textbf{примитивных функций} $\mathbf{g}_{j,k}$ мощностью $K_{j,k}$.\\
+Граф $V, E$ со множеством функций $\mathfrak{G} = \{\mathbf{g}_{j,k}\}_{(j,k) \in E}$ называется \textbf{моделью}, если функция, задаваемая рекурсивно как 
+\[
+    f_j(\mathbf{x}) = \sum_{k \in \text{Adj}(v_j)} <\boldsymbol{\gamma}_{j,k}, \mathbf{g}_{j,k}> (f_{k}(\mathbf{x})), \quad     f_0(\mathbf{x}) = \mathbf{x},
+\]
+является непрерывной дифференцируемой функцией из $\mathbb{R}^n$ во множество $\mathbb{Y}$ при любых значениях векторов $\boldsymbol{\gamma}$.
+
+Обозначим за вектор \textbf{параметров модели}  $\mathbf{W}$ конкатенацию параметров всех подмоделей $\{f_j\}_{j=1}^{|V|}$.
+\end{frame}
+
+
+\begin{frame}{ Постановка задачи}
+Пусть для каждого ребра $(j,k)$ задан нормированный положительный вектор $\boldsymbol{\gamma}_{j,k} \in \mathbb{R}_{+}^{|K_{j,k}|}$, определяющий веса примитивных функций из  $\mathbf{g}(j,k)$.
+
+Будем считать, что вектор $\boldsymbol{\gamma}_{j,k}$ распределен по распределению Gumbel-Softmax:
+\[
+    p(\boldsymbol{\gamma}) = (K_{j,k}-1)!{c_{\text{temp}}}^{K_{j,k}-1}\left(\prod_{h=1}^{K_{j,k}-1} \alpha_h \boldsymbol{\gamma}_h^{-c_{\text{temp}}-1}\right)\left(\sum_{h=1}^u\alpha_h\boldsymbol{\gamma}_h^{-c_{\text{temp}}}\right),
+\] 
+где $\alpha_1,\dots,\alpha_h$ --- параметры сдвига распределения, $c_{\text{temp}}$ --- температура распределения. 
+\\~\\
+Обозначим за \textbf{структуру} модели $\boldsymbol{\Gamma}$ множество всех векторов $\boldsymbol{\gamma}_{j,k}$.\\
+Обозначим за $\mathbf{m}$ параметры сдвига всех распределений, соответствующих структуре $\boldsymbol{\Gamma}$.
+
+\end{frame}
+
+
+\begin{frame}{Задача оптимизации}
+Пусть параметры распределения распределены нормально:
+\[
+    p(\mathbf{W}) \sim \mathcal{N}(\mathbf{0}, \mathbf{A}^{-1}).
+\]
+
+Требуется найти гиперпараметры модели $\mathbf{A}, \mathbf{m}$ доставляющие максимум правдоподобия модели:
+\[
+    \argmax_{\mathbf{A}, \mathbf{m}}  p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c_{\text{temp}}).
+\]                                                                                                                            
+\textcolor{red}{\textbf{TODO: насколько это формально?\\}}
+\begin{block}{Теорема}
+При устремлении $c_{\text{temp}}$ к нулю задача становится эквивалентна дискретной задаче оптимизации:
+\[
+    \argmax_{\mathbf{A}, \{\boldsymbol{\gamma}_{j,k} \in \Delta^{K_{j,k} -1}, (j,k) \in E\}} p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c_{\text{temp}}) \text{ при }c_{\text{temp}} \to 0,
+\]    
+где $\Delta^{K_{j,k} -1}$ --- множество векторов, соответствующих вершинам $(K_{j,k}-1)$-сипмлекса.
+\end{block}           
+\end{frame}  
+
+
+                                                                                                                                       
                                                                                                                                     
 
 \begin{frame}{Вариационная нижняя оценка правдоподобия}     
@@ -202,8 +226,7 @@ $$
    
 
 \begin{frame}{Вариационный вывод: распределение параметров}
-Пусть структура модели является вырожденной.
-\textcolor{red}{\textbf{TODO: пояснить\\}}
+Пусть структура модели определена однозначно.
 
 Пусть $q_\mathbf{W} = \mathcal{N}(\boldsymbol{\mu}_q, \mathbf{A}^{-1}_q), \quad \boldsymbol{\theta} =  [\boldsymbol{\mu}_q, \mathbf{A}^{-1}_q].$ \\
 Тогда вариационная оценка имеет вид:
