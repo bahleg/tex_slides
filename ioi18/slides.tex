@@ -61,19 +61,21 @@
 
 \end{frame}
 
-\begin{frame}{Задача выбора структуры модели: усложненный пример}
-Рассмотрим задачу выбора структуры для однослойной нейросети с неизвестной функцией активации:
+\begin{frame}{Задача выбора структуры модели: два скрытых слоя}
+Рассмотрим задачу выбора структуры для однослойной нейросети в задаче классификации:
 \[
-    f(\mathbf{x}) = \text{softmax}(\mathbf{W}^\text{T}\mathbf{f}_{K+1}(\mathbf{x})),
+    f(\mathbf{x}) = \text{softmax}(\mathbf{W}^\text{T}\mathbf{f}_2(\mathbf{x})),
 \]
 \[
-\mathbf{f}_{K+1}(\mathbf{x}) =  {\gamma}_{1,K+1}\mathbf{g}_{1,K+1}(\mathbf{x})+\dots+{\gamma}_{K,K+1}\mathbf{g}_{K,K}(\mathbf{x})=  {\gamma}_{1,K+1}\mathbf{f}_1(\mathbf{x})+\dots+{\gamma}_{K,K+1}\mathbf{f}_{K}(\mathbf{x}),
+\mathbf{f}_2(\mathbf{x}) = {\gamma}_{1,2}^{1}\mathbf{g}_{1,2}^{1}(\mathbf{f}_1(\mathbf{x}))+\dots+{\gamma}_{1,2}^{K}\mathbf{g}_{1,2}^{K}(\mathbf{f}_1(\mathbf{x}))= {\gamma}_{1,2}^{1}\textbf{tanh}(\mathbf{W}_{K+1}^\text{T}\mathbf{f}_1(\mathbf{x})) + \dots +  {\gamma}_{1,2}^{K}\textbf{tanh}(\mathbf{W}_{2K}^\text{T}\mathbf{f}_1(\mathbf{x})),
 \]
 \[
-    \mathbf{f}_i(\mathbf{x}) =  {\gamma}_{0,i}^{1}\mathbf{g}_{0,i}^{1}(\mathbf{x})+{\gamma}_{0,i}^{2}\mathbf{g}_{0,i}^{2}(\mathbf{x}) = {\gamma}_{0,i}^{1}\textbf{tanh}(\mathbf{W}_{i}^\text{T}\mathbf{x})+{\gamma}_{0,i}^{2}{\sigma}(\mathbf{W}_{i}^\text{T}\mathbf{x}), \quad i=1,\dots K.
+\mathbf{f}_1(\mathbf{x}) = {\gamma}_{0,1}^{1}\mathbf{g}_{0,1}^{1}(\mathbf{x})+\dots+{\gamma}_{0,1}^{K}\mathbf{g}_{0,1}^{K}(\mathbf{x})= {\gamma}_{0,1}^{1}\textbf{tanh}(\mathbf{W}_1^\text{T}\mathbf{x}) + \dots +  {\gamma}_{0,1}^{K}\textbf{tanh}(\mathbf{W}_K^\text{T}\mathbf{x}),
 \]
 
-\textbf{Структура модели} $\boldsymbol{\Gamma} = [\boldsymbol{\gamma}_0, \dots, \boldsymbol{\gamma}_{K+1}] $ определяется вершиной булевого $K$-мерного куба.
+где $\mathbf{W}_1, \dots, \mathbf{W}_{2K}$ --- матрицы одинаковой размерности с различным количеством нулевых строк, $\{\mathbf{g}^{i}_{0,1},\mathbf{g}^{i}_{1,2}\}_{i=1}^K$ --- базовые функции для скрытого слоя нейросети.~\\~\\
+
+\textbf{Структура модели} $\boldsymbol{\Gamma} = [\boldsymbol{\gamma}_{0,1}, \boldsymbol{\gamma}_{1,2}]$ определяется вершинами двух булевых $K$-мерных кубов.
 
 \end{frame}
 
@@ -238,6 +240,7 @@ $$
 \end{frame}
 
 \iffalse
+
 \begin{frame}{Задача оптимизации}
 Пусть параметры распределения распределены нормально:
 \[
@@ -338,12 +341,16 @@ $$
 \end{block}
 
 \begin{block}{Теорема}
-Пусть $c_{\text{reg}}>0.$ При устремлении $c_{\text{temp}}$ к нулю задача становится эквивалентна дискретной задаче оптимизации:
-\[
-    \argmax_{\mathbf{A}, \{\boldsymbol{\gamma}_{j,k} \in \Delta^{K_{j,k} -1}, (j,k) \in E\}} \textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma}. \mathbf{A}^{-1}, c_{\text{temp}})}} - \textcolor{red}{c_\text{reg}\text{D}_{KL}(p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{A}^{-1}, \mathbf{m}, c_{\text{temp}}) || q(\mathbf{W}), q(\boldsymbol{\Gamma}))},
-\]    
-где $\Delta^{K_{j,k} -1}$ --- множество векторов, соответствующих вершинам $(K_{j,k}-1)$-сипмлекса.
-\end{block} 
+Для любых значений $\mathbf{A}, \mathbf{m}$ и вариационных параметров $q_\mathbf{W}$ существует точка на вершинах симплексов структуры, определяющая распределение $q_{\boldsymbol{\Gamma}}$, что для любой точки внутри симплексов, определяющей распределение $q'_{\boldsymbol{\Gamma}}$ справедливо выражение:
+$$\lim_{c_\text{temp} \to 0}\frac{ELBO'}{ELBO} = -\infty.$$
+\end{block}
+%\begin{block}{Теорема}
+%Пусть $c_{\text{reg}}>0.$ При устремлении $c_{\text{temp}}$ к нулю задача становится эквивалентна дискретной задаче оптимизации:
+%\[
+%    \argmax_{\mathbf{A}, \{\boldsymbol{\gamma}_{j,k} \in \Delta^{K_{j,k} -1}, (j,k) \in E\}} \textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma}. \mathbf{A}^{-1}, c_{\text{temp}})}} - \textcolor{red}{c_\text{reg}\text{D}_{KL}(p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{A}^{-1}, \mathbf{m}, c_{\text{temp}}) || q(\mathbf{W}), q(\boldsymbol{\Gamma}))},
+%\]    
+%где $\Delta^{K_{j,k} -1}$ --- множество векторов, соответствующих вершинам $(K_{j,k}-1)$-сипмлекса.
+%\end{block} 
 
 \end{frame}
 
@@ -483,15 +490,15 @@ $$\argmax_{\mathbf{A}, \mathbf{m}}  p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m
     C_\text{struct} = -\mathsf{E}_{q_{\boldsymbol{\Gamma}}} \text{log}~q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma}).
 \]
 \begin{block}{Теорема}
-Пусть $f \in F(c_{\text{reg}}, c_{\text{train}},  c_{\text{prior}}, 0, \{\},  c_{\text{temp}} )$.\\
-При устремлении $ c_{\text{temp}}$ к нулю структурная сложность модели $f$ устремляется к нулю.
+Пусть $f \in F(c_{\text{reg}}, c_{\text{train}},  c_{\text{prior}}, 0, \{\},  c_{\text{temp}} )|_{\lim_{c_{\text{temp}} \to 0}} $.\\
+Сложность модели $f$ равняется нулю.
 \[
-    \lim_{c_{\text{temp}} \to \infty} C_\text{struct}(f) = 0
+    C_\text{struct}(f) = 0
 \]
 \end{block}
 
 \begin{block}{Теорема}
-Пусть $f_1 \in F(c_{\text{reg}}, c_{\text{train}},  c_{\text{prior}}, 0, \{\},  c_{\text{temp}}), f_2 =  \in \lim_{c_{\text{temp}}' \to \infty} F(c_{\text{reg}}, c_{\text{train}},  c_{\text{prior}}, 0, \{\},  c_{\text{temp}'})$.
+Пусть $f_1 \in F(c_{\text{reg}}, c_{\text{train}},  c_{\text{prior}}, 0, \{\},  c_{\text{temp}}), f_2 =  \in F(c_{\text{reg}}, c_{\text{train}}|_{\lim_{c_{\text{temp}}' \to \infty}} ,  c_{\text{prior}}, 0, \{\},  c_{\text{temp}'})$.
 Пусть вариационные параметры моделей $f_1$ и $f_2$ лежат в области $U$, в которой соответствующие функции $L$ и $Q$ являются локально-выпуклыми. 
 Тогда разница структурных сложностей моделей ограничена выражением:
 \[
@@ -509,6 +516,8 @@ $$\argmax_{\mathbf{A}, \mathbf{m}}  p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m
 
 
 \begin{frame}{Полный перебор}
+Пусть $p(\Gamma) = \lim_{c_\text{temp} \to 0} GS$.
+
 Рассмотрим последовательность $N = \prod_{(j,k) \in E} K_{j,k}$ моделей, полученных в ходе оптимизаций вида:
 $$f_1 \in F(c_{\text{reg}}, 0, 0, \{\}, 0,  c_{\text{temp}}),$$
 $$f_2 \in F(1, 0, 0, \{q_1(\boldsymbol{\Gamma})\}, 0,  c_{\text{temp}}), q_1 \in f_1,$$
@@ -517,7 +526,7 @@ $$f_3 \in F(1, 0, 0, \{q_1(\boldsymbol{\Gamma}), q_2(\boldsymbol{\Gamma})\}, 0, 
 \textcolor{red}{\textbf{TODO: формализовать что такое $q_1, q_2$\\}}
 
 \begin{block}{Теорема}
-Вариационные распределения структур $q_{\boldsymbol{\Gamma}}$ последовательности $\mathfrak{F} = \{\lim_{c_{\text{temp}} \to 0} f_1, \dots, \lim_{c_{\text{temp}} \to 0} f_N\}$ вырождаются в дельта-функции вида $\delta(\hat{\Gamma})$, где $\hat{\Gamma}$ --- точка на декартовом произведении вершин симплексов структуры модели.
+Вариационные распределения структур $q_{\boldsymbol{\Gamma}}$ последовательности $\mathfrak{F} = \{\lim_{c_{\text{temp}} \to 0} f_1, \dots, \lim_{c_{\text{temp}} \to 0} f_N\}$ вырождаются в распределения вида $\delta(\hat{\Gamma})$, где $\hat{\Gamma}$ --- точка на декартовом произведении вершин симплексов структуры модели.
 
 Вариационные распределения последовательности $\mathfrak{F}$ проходят все возможные комбинации структур модели.
 \textcolor{red}{\textbf{TODO: пояснить про дискретность структуры?\\}}
