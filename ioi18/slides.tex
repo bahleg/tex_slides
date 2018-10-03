@@ -34,7 +34,7 @@
 
 \institute[МФТИ]{Научный руководитель: д.ф.-м.н. В.В. Стрижов\\Московский Физико-Технический Институт (Государственный Университет)}     
 %\institute[МФТИ]{Московский Физико-Технический Институт (Государственный Университет)}
-\date[2018]{ИОИ-2018 \\11.10.2018\\}
+\date[2018]{Интеллектуализация обработки информации\\ ИОИ-2018 \\11.10.2018\\}
 \begin{document}
 
 \begin{frame}
@@ -53,19 +53,39 @@
     f(\mathbf{x}) = \text{softmax}(\mathbf{W}^\text{T}\mathbf{f}_1(\mathbf{x})),
 \]
 \[
-\mathbf{f}_1(\mathbf{x}) = \boldsymbol{\gamma}_{1,2}\mathbf{g}_1(\mathbf{x})+\dots+\boldsymbol{\gamma}_{1,K}\mathbf{g}_K(\mathbf{x})=\textbf{tanh}(\mathbf{W}_1^\text{T}\mathbf{x}) + \dots +  \boldsymbol{\gamma}_{1,u}\textbf{tanh}(\mathbf{W}_K^\text{T}\mathbf{x}),
+\mathbf{f}_1(\mathbf{x}) = {\gamma}_{0,1}^{1}\mathbf{g}_{0,1}^{1}(\mathbf{x})+\dots+{\gamma}_{0,1}^{K}\mathbf{g}_{0,1}^{K}(\mathbf{x})= {\gamma}_{0,1}^{1}\textbf{tanh}(\mathbf{W}_1^\text{T}\mathbf{x}) + \dots +  {\gamma}_{0,1}^{K}\textbf{tanh}(\mathbf{W}_K^\text{T}\mathbf{x}),
 \]
-где $\mathbf{W}_1, \dots, \mathbf{W}_K$ --- матрицы одинаковой размерности с различным количеством нулевых строк, $\{\mathbf{g}_i\}_{i=1}^K$ --- базовые функции для скрытого слоя нейросети.~\\~\\
+где $\mathbf{W}_1, \dots, \mathbf{W}_K$ --- матрицы одинаковой размерности с различным количеством нулевых строк, $\{\mathbf{g}^{i}_{0,1}\}_{i=1}^K$ --- базовые функции для скрытого слоя нейросети.~\\~\\
 
-\textbf{Структура модели} $\boldsymbol{\gamma}$ определяется вершиной булевого $K$-мерного куба.
+\textbf{Структура модели} $\boldsymbol{\Gamma} = [\boldsymbol{\gamma}_{0,1}]$ определяется вершиной булевого $K$-мерного куба.
+
+\end{frame}
+
+\begin{frame}{Задача выбора структуры модели: усложненный пример}
+Рассмотрим задачу выбора структуры для однослойной нейросети с неизвестной функцией активации:
+\[
+    f(\mathbf{x}) = \text{softmax}(\mathbf{W}^\text{T}\mathbf{f}_{K+1}(\mathbf{x})),
+\]
+\[
+\mathbf{f}_{K+1}(\mathbf{x}) =  {\gamma}_{1,K+1}\mathbf{g}_{1,K+1}(\mathbf{x})+\dots+{\gamma}_{K,K+1}\mathbf{g}_{K,K}(\mathbf{x})=  {\gamma}_{1,K+1}\mathbf{f}_1(\mathbf{x})+\dots+{\gamma}_{K,K+1}\mathbf{f}_{K}(\mathbf{x}),
+\]
+\[
+    \mathbf{f}_i(\mathbf{x}) =  {\gamma}_{0,i}^{1}\mathbf{g}_{0,i}^{1}(\mathbf{x})+{\gamma}_{0,i}^{2}\mathbf{g}_{0,i}^{2}(\mathbf{x}) = {\gamma}_{0,i}^{1}\textbf{tanh}(\mathbf{W}_{i}^\text{T}\mathbf{x})+{\gamma}_{0,i}^{2}{\sigma}(\mathbf{W}_{i}^\text{T}\mathbf{x}), \quad i=1,\dots K.
+\]
+
+\textbf{Структура модели} $\boldsymbol{\Gamma} = [\boldsymbol{\gamma}_0, \dots, \boldsymbol{\gamma}_{K+1}] $ определяется вершиной булевого $K$-мерного куба.
 
 \end{frame}
 
 
+\begin{frame}{}
+Пример для более сложной структуры.
+Сложная нейросеть.
+\end{frame}
 
-\begin{frame}{Выбор  структуры модели глубокого обучения}
+
+\begin{frame}{Выбор  структуры модели: базовые определия}
 \begin{itemize}
-\item \textbf{Цель работы:} разработка метода построения наиболее правдоподобной структуры модели глубокого обучения.
 \item \textbf{Модель глубокого обучения --- } суперпозиция дифференцируемых функций.
 \item Качество модели определяется \textbf{параметрами} модели.
 \item Оптимизация параметров определяется \textbf{гиперпараметрами и структурными параметрами} модели.
@@ -76,11 +96,14 @@
 
 
 \begin{frame}{Выбор  структуры модели глубокого обучения}
-\textbf{Задачи}
+
+\textbf{Цель работы:}\\
+Развитие теории исследования метода байесовскогго выбора модели глубокого обучения
+\textbf{Задачи:}
 \begin{itemize}
-\item Исследовать методы построения моделей глубокого обучения.
-\item Предложить критерии оптимльной и субоптимальной сложности модели глубокого обучения.
-\item Предложить метод построения модели субоптимальной сложности.
+\item Предложить алгоритм оптимизации параметров, гиперпараметров и структурных параметров моделей глубокого обучения.
+\item Предожить метод выбора ниболее правдоподобной структурной модели.
+\item Исследовать свойства оптимизационных алгоритмов выбора модели.
 \end{itemize}
 \textbf{Основные проблемы}
 \begin{itemize}
@@ -144,6 +167,32 @@
 \end{frame}       
 
 
+                                                                                                                                   
+                                                                                                                                    
+
+\begin{frame}{Вариационная нижняя оценка правдоподобия}     
+\textbf{Правдоподобие модели:}
+\[
+p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c_{\text{temp}}) =
+\]
+\[
+ \int_{\mathbf{W}, \boldsymbol{\Gamma} } \textcolor{red}{p(\mathbf{y}|\mathbf{X},\mathbf{W},  \boldsymbol{\Gamma})} \textcolor{blue}{p(\mathbf{W}|\mathbf{A}, \boldsymbol{\Gamma})p(\boldsymbol{\Gamma}|\mathbf{m}, c_{\text{temp}})} d\mathbf{W}d{\boldsymbol{\Gamma}}.                         
+\]
+
+Пусть $q$ --- непрерывное распределение.
+$$                                                                                                                                              
+        \text{log}~p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c_{\text{temp}}) \geq 
+$$          
+$$                                                                                                                                              
+         \geq  \textcolor{blue}{\int q(\mathbf{W})\text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma}. \mathbf{A}^{-1}, c_{\text{temp}})}d \mathbf{W}d\boldsymbol{\Gamma}} -$$ 
+    $$  \textcolor{red}{-\int q(\mathbf{w})\text{log}~\frac{p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{A}^{-1}, \mathbf{m}, c_{\text{temp}})}{q(\mathbf{W}, \boldsymbol{\Gamma})}d\mathbf{W}d\boldsymbol{\Gamma}} =$$
+$$
+\textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma}. \mathbf{A}^{-1}, c_{\text{temp}})}} - \textcolor{red}{\text{D}_{KL}(p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{A}^{-1}, \mathbf{m}, c_{\text{temp}}) || q(\mathbf{W}, \boldsymbol{\Gamma}))}.
+$$ 
+
+\end{frame}      
+   
+
 
 \begin{frame}{ Постановка задачи}
 \textcolor{red}{\textbf{TODO: ослабить? Как писать заголовки для этих слайдов?\\}}
@@ -176,6 +225,19 @@
 \end{frame}
 
 
+
+
+\begin{frame}{Вариационный вывод: распределение структурных параметров}
+Для каждого элемента структуры $\boldsymbol{\gamma}$ зададим распределение весов базовых функций по распределению Gumbel-Softmax c параметрами $\hat{\alpha}_1, \dots, \hat{\alpha}_u, c$, где параметр $c$ --- общий для всех весов.
+
+Для реализации $h$-й компоненты случайной величины $\boldsymbol{\gamma}$ справедлива следующая формула:
+\[
+    \hat{\boldsymbol{\gamma}}^h = \text{exp}\left(\text{log}\left(\alpha_h + \text{Gum}_h\right)c^{-1}\right) \sum_{h=1}^l \text{exp}\left(\text{log}\left(\alpha_l + \text{Gum}_l\right)c^{-1}\right),
+\]
+где $\text{Gum} \sim -\text{log}(-\text{log}~\mathcal{U}(0,1)).$ 
+\end{frame}
+
+\iffalse
 \begin{frame}{Задача оптимизации}
 Пусть параметры распределения распределены нормально:
 \[
@@ -195,36 +257,12 @@
 где $\Delta^{K_{j,k} -1}$ --- множество векторов, соответствующих вершинам $(K_{j,k}-1)$-сипмлекса.
 \end{block}           
 \end{frame}  
+\fi
 
-
-                                                                                                                                       
-                                                                                                                                    
-
-\begin{frame}{Вариационная нижняя оценка правдоподобия}     
-\textbf{Правдоподобие модели:}
-\[
-p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c_{\text{temp}}) =
-\]
-\[
- \int_{\mathbf{W}, \boldsymbol{\Gamma} } \textcolor{red}{p(\mathbf{y}|\mathbf{X},\mathbf{W},  \boldsymbol{\Gamma})} \textcolor{blue}{p(\mathbf{W}|\mathbf{A}, \boldsymbol{\Gamma})p(\boldsymbol{\Gamma}|\mathbf{m}, c_{\text{temp}})} d\mathbf{W}d{\boldsymbol{\Gamma}}.                         
-\]
-
-Пусть $q$ --- непрерывное распределение.
-$$                                                                                                                                              
-        \text{log}~p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c_{\text{temp}}) \geq 
-$$          
-$$                                                                                                                                              
-         \geq  \textcolor{blue}{\int q(\mathbf{W})\text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma}. \mathbf{A}^{-1}, c_{\text{temp}})}d \mathbf{W}d\boldsymbol{\Gamma}} -$$ 
-    $$  \textcolor{red}{-\int q(\mathbf{w})\text{log}~\frac{p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{A}^{-1}, \mathbf{m}, c_{\text{temp}})}{q(\mathbf{W}, \boldsymbol{\Gamma})}d\mathbf{W}d\boldsymbol{\Gamma}} =$$
-$$
-\textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma}. \mathbf{A}^{-1}, c_{\text{temp}})}} - \textcolor{red}{\text{D}_{KL}(p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{A}^{-1}, \mathbf{m}, c_{\text{temp}}) || q(\mathbf{W}, \boldsymbol{\Gamma}))}.
-$$ 
-
-\end{frame}      
-   
+    
 
 \begin{frame}{Вариационный вывод: распределение параметров}
-Пусть структура модели определена однозначно.
+Пусть $\mathbf{W} \sim \mathcal{N}(\mathbf{0}, \mathbf{A}^{-1})$ и структура модели $\boldsymbol{\Gamma}$ определена однозначно.
 
 Пусть $q_\mathbf{W} = \mathcal{N}(\boldsymbol{\mu}_q, \mathbf{A}^{-1}_q), \quad \boldsymbol{\theta} =  [\boldsymbol{\mu}_q, \mathbf{A}^{-1}_q].$ \\
 Тогда вариационная оценка имеет вид:
@@ -282,17 +320,8 @@ $$\text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{A}) \geq \mathsf{E}_{q(\mathbf{W)}}
 \end{frame}
 
 
-\begin{frame}{Вариационный вывод: распределение структурных параметров}
-Для каждого элемента структуры $\boldsymbol{\gamma}$ зададим распределение весов базовых функций по распределению Gumbel-Softmax c параметрами $\hat{\alpha}_1, \dots, \hat{\alpha}_u, c$, где параметр $c$ --- общий для всех весов.
-
-Для реализации $h$-й компоненты случайной величины $\boldsymbol{\gamma}$ справедлива следующая формула:
-\[
-    \hat{\boldsymbol{\gamma}}^h = \text{exp}\left(\text{log}\left(\alpha_h + \text{Gum}_h\right)c^{-1}\right) \sum_{h=1}^l \text{exp}\left(\text{log}\left(\alpha_l + \text{Gum}_l\right)c^{-1}\right),
-\]
-где $\text{Gum} \sim -\text{log}(-\text{log}~\mathcal{U}(0,1)).$ 
-\end{frame}
-
 \begin{frame}{Оптимизация параметров вариационного распределения}
+\footnotesize
 Оптимизацию параметров вариационного распределения будем проводить по следующему функционалу:
 \[
 L =
@@ -307,6 +336,15 @@ $$
 L \to^p c_\text{reg} m \int q(\mathbf{W}, \boldsymbol{\Gamma})\text{log}~\frac{p(\mathbf{y}, \mathbf{W}, \boldsymbol{\Gamma}|\mathbf{X},\mathbf{A},\mathbf{m}, c_{\text{temp}})}{q(\mathbf{W}, \boldsymbol{\Gamma})}d\mathbf{W}d\boldsymbol{\Gamma}
 $$
 \end{block}
+
+\begin{block}{Теорема}
+Пусть $c_{\text{reg}}>0.$ При устремлении $c_{\text{temp}}$ к нулю задача становится эквивалентна дискретной задаче оптимизации:
+\[
+    \argmax_{\mathbf{A}, \{\boldsymbol{\gamma}_{j,k} \in \Delta^{K_{j,k} -1}, (j,k) \in E\}} \textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma}. \mathbf{A}^{-1}, c_{\text{temp}})}} - \textcolor{red}{c_\text{reg}\text{D}_{KL}(p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{A}^{-1}, \mathbf{m}, c_{\text{temp}}) || q(\mathbf{W}), q(\boldsymbol{\Gamma}))},
+\]    
+где $\Delta^{K_{j,k} -1}$ --- множество векторов, соответствующих вершинам $(K_{j,k}-1)$-сипмлекса.
+\end{block} 
+
 \end{frame}
 
 
@@ -358,7 +396,7 @@ $$
 $\gamma$ --- длина шага градиентного спуска, $\boldsymbol{\theta}_0$ --- начальное значение параметров $\boldsymbol{\theta}$, $\hat{\mathfrak{D}}$ --- случайная подвыборка исходной выборки $\mathfrak{D}$.
 \end{block}
 
-ачальное значение параметров $\boldsymbol{\theta}$.
+начальное значение параметров $\boldsymbol{\theta}$.
 
 
 \end{frame}
