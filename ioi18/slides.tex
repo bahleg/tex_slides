@@ -28,11 +28,11 @@
 } 
 
 \captionsetup[subfloat]{labelformat=empty}
-\title[Выбор структуры модели]{Байесовский выбор наиболее правдоподобной структуры модели глубокого обучения}
+\title[Выбор структуры модели]{Байесовский выбор\\ наиболее правдоподобной структуры\\ модели глубокого обучения}
 \author{О.\,Ю.\,Бахтеев}
 
 
-\institute[МФТИ]{Научный руководитель: д.ф.-м.н. В.В. Стрижов\\Московский Физико-Технический Институт (Государственный Университет)}     
+\institute[МФТИ]{Научный руководитель: д.ф.-м.н. В.В. Стрижов\\Московский физико-технический институт (государственный университет)}     
 %\institute[МФТИ]{Московский Физико-Технический Институт (Государственный Университет)}
 \date[2018]{Интеллектуализация обработки информации\\ ИОИ-2018 \\11.10.2018\\}
 \begin{document}
@@ -42,29 +42,78 @@
 \end{frame}
 
 
+
+\begin{frame}{Выбор  структуры модели глубокого обучения}
+
+\textbf{Цель работы:}\\
+Развитие теории байесовскогго выбора модели и исследование свойств методов выбора моделей глубокого обучения.\\
+\textbf{Задачи:}
+\begin{itemize}
+\item Предложить алгоритм оптимизации параметров, гиперпараметров и структурных параметров моделей глубокого обучения.
+\item Предожить метод выбора модели наиболее правдоподобной структуры.
+\item Исследовать свойства оптимизационных алгоритмов выбора модели.
+\end{itemize}
+\textbf{Основные проблемы}
+\begin{itemize}
+\item Многоэкстремальность задачи оптимизации параметров модели.
+\item Вычислительная сложность оптимизации.
+\item Большое число параметров и гиперпараметров.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[plain, noframenumbering]{Исследование основывается на следующих работах}
+\begin{itemize}
+\item Graves A. Practical variational inference for neural networks //Advances in Neural Information Processing Systems. – 2011
+\item  Maclaurin D., Duvenaud D., Adams R. Gradient-based hyperparameter optimization through reversible learning //International Conference on Machine Learning. – 2015
+\item  Luketina J. et al. Scalable gradient-based tuning of continuous regularization hyperparameters //International Conference on Machine Learning. - 2016
+\item J. Fu et al., DrMAD: Distilling Reverse-Mode Automatic Differentiation for Optimizing
+Hyperparameters of Deep Neural Networks // IJCAI - 2016
+\item Pedregosa F. Hyperparameter optimization with approximate gradient //International Conference on Machine Learning. – 2016. –
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}                                                                                                                                   
+\frametitle{Проблемы оптимизации моделей глубокого обучения}                                                                                                          
+Правдоподобие моделей с избыточным количеством параметров не меняется при удалении параметров.                                                       
+\begin{figure}[h]                                                                                                                               
+\centering                                                                                                                                      
+\subfloat[Избыточность параметров модели]{\includegraphics[width=0.45\textwidth]{./slide_plots/pruning.pdf}}                                          
+\subfloat[Неустойчивость модели]{\includegraphics[width=0.45\textwidth]{./slide_plots/noise.pdf}}                                                     
+\end{figure}                                                                                                   
+\textcolor{gray}{Глубокое обучение предполагает оптимизацию моделей с заведомо избыточной сложностью.}  
+                                                                                                                                                
+\end{frame}    
+
+
+
 \begin{frame}{Задача выбора структуры модели}
 Рассматривается задача регресси или классификации:
 \[
-    f(\mathbf{x}): \mathbb{R}^n \to \mathbb{Y}, \quad \mathbf{x} \in \mathbf{X}, |\mathbf{X}| = m.
+    f(\mathbf{x}): \mathbb{R}^n \to \mathbb{Y}, \quad \mathbf{x} \in \mathbb{R}^n.
 \]
+$f(\mathbf{x})$ --- \textbf{модель глубокого обучения --- } суперпозиция дифференцируемых функций.
 
 Рассмотрим задачу выбора структуры для однослойной нейросети в задаче классификации:
 \[
-    f(\mathbf{x}) = \text{softmax}(\mathbf{W}^\text{T}\mathbf{f}_1(\mathbf{x})),
+    f(\mathbf{x}) = \text{softmax}\left(\mathbf{W}^\text{T}\mathbf{f}_1(\mathbf{x})\right),
 \]
 \[
 \mathbf{f}_1(\mathbf{x}) = {\gamma}_{0,1}^{1}\mathbf{g}_{0,1}^{1}(\mathbf{x})+\dots+{\gamma}_{0,1}^{K}\mathbf{g}_{0,1}^{K}(\mathbf{x})= {\gamma}_{0,1}^{1}\textbf{tanh}(\mathbf{W}_1^\text{T}\mathbf{x}) + \dots +  {\gamma}_{0,1}^{K}\textbf{tanh}(\mathbf{W}_K^\text{T}\mathbf{x}),
 \]
-где $\mathbf{W}_1, \dots, \mathbf{W}_K$ --- матрицы одинаковой размерности с различным количеством нулевых строк, $\{\mathbf{g}^{i}_{0,1}\}_{i=1}^K$ --- базовые функции для скрытого слоя нейросети.~\\~\\
+где $\mathbf{W}_1, \dots, \mathbf{W}_K$ --- матрицы параметров, $\{\mathbf{g}^{i}_{0,1}\}_{i=1}^K$ --- базовые функции для скрытого слоя нейросети.~\\~\\
 
-\textbf{Структура модели} $\boldsymbol{\Gamma} = [\boldsymbol{\gamma}_{0,1}]$ определяется вершиной булевого $K$-мерного куба.
+\textbf{Структурные параметры:}  $\boldsymbol{\Gamma} = [\boldsymbol{\gamma}_{0,1}]$.\\
+\textbf{Структура модели} определяется вершиной булевого $K$-мерного куба.
 
 \end{frame}
 
 \begin{frame}{Задача выбора структуры модели: два скрытых слоя}
-Рассмотрим задачу выбора структуры для однослойной нейросети в задаче классификации:
+Рассмотрим задачу выбора структуры для двухслойной нейросети в задаче классификации:
 \[
-    f(\mathbf{x}) = \text{softmax}(\mathbf{W}^\text{T}\mathbf{f}_2(\mathbf{x})),
+    f(\mathbf{x}) = \text{softmax}\left(\mathbf{W}^\text{T}\mathbf{f}_2(\mathbf{x})\right),
 \]
 \[
 \mathbf{f}_2(\mathbf{x}) = {\gamma}_{1,2}^{1}\mathbf{g}_{1,2}^{1}(\mathbf{f}_1(\mathbf{x}))+\dots+{\gamma}_{1,2}^{K}\mathbf{g}_{1,2}^{K}(\mathbf{f}_1(\mathbf{x}))= {\gamma}_{1,2}^{1}\textbf{tanh}(\mathbf{W}_{K+1}^\text{T}\mathbf{f}_1(\mathbf{x})) + \dots +  {\gamma}_{1,2}^{K}\textbf{tanh}(\mathbf{W}_{2K}^\text{T}\mathbf{f}_1(\mathbf{x})),
@@ -73,60 +122,56 @@
 \mathbf{f}_1(\mathbf{x}) = {\gamma}_{0,1}^{1}\mathbf{g}_{0,1}^{1}(\mathbf{x})+\dots+{\gamma}_{0,1}^{K}\mathbf{g}_{0,1}^{K}(\mathbf{x})= {\gamma}_{0,1}^{1}\textbf{tanh}(\mathbf{W}_1^\text{T}\mathbf{x}) + \dots +  {\gamma}_{0,1}^{K}\textbf{tanh}(\mathbf{W}_K^\text{T}\mathbf{x}),
 \]
 
-где $\mathbf{W}_1, \dots, \mathbf{W}_{2K}$ --- матрицы одинаковой размерности с различным количеством нулевых строк, $\{\mathbf{g}^{i}_{0,1},\mathbf{g}^{i}_{1,2}\}_{i=1}^K$ --- базовые функции для скрытого слоя нейросети.~\\~\\
+где $\mathbf{W}_1, \dots, \mathbf{W}_{2K}$ --- матрицы параметров, $\{\mathbf{g}^{i}_{0,1},\mathbf{g}^{i}_{1,2}\}_{i=1}^K$ --- базовые функции для скрытых слоев нейросети.~\\~\\
 
-\textbf{Структура модели} $\boldsymbol{\Gamma} = [\boldsymbol{\gamma}_{0,1}, \boldsymbol{\gamma}_{1,2}]$ определяется вершинами двух булевых $K$-мерных кубов.
+\textbf{Структурные параметры:} $\boldsymbol{\Gamma} = [\boldsymbol{\gamma}_{0,1}, \boldsymbol{\gamma}_{1,2}]$.\\
+\textbf{Структура модели} определяется вершинами двух булевых $K$-мерных кубов.
 
 \end{frame}
 
 
 \begin{frame}{}
-Пример для более сложной структуры.
-Сложная нейросеть.
+Картинка: связь параметров со структурой.
+\end{frame}
+
+\begin{frame}{ Семейство моделей}
+\textcolor{red}{\textbf{TODO: упростить определение?\\}}
+
+
+Задан граф $V,E$. \\
+Для каждого ребра $(j,k) \in E$ определен вектор \textbf{базовых функций} $\mathbf{g}_{j,k}$ мощностью $K_{j,k}$.\\
+Граф $V, E$ со множеством функций $\mathfrak{G} = \{\mathbf{g}_{j,k}\}_{(j,k) \in E}$ называется \textbf{семейством моделей}, если функция, задаваемая рекурсивно как 
+\[
+    f_j(\mathbf{x}) = \sum_{k \in \text{Adj}(v_j)} <\boldsymbol{\gamma}_{j,k}, \mathbf{g}_{j,k}> (f_{k}(\mathbf{x})), \quad     f_0(\mathbf{x}) = \mathbf{x},
+\]
+является непрерывной дифференцируемой функцией из $\mathbb{R}^n$ во множество $\mathbb{Y}$ при любых значениях векторов $\boldsymbol{\gamma}$.
+
+Обозначим за вектор \textbf{параметров модели}  $\mathbf{W}$ конкатенацию параметров всех подмоделей $\{f_j\}_{j=1}^{|V|}$.
 \end{frame}
 
 
-\begin{frame}{Выбор  структуры модели: базовые определия}
-\begin{itemize}
-\item \textbf{Модель глубокого обучения --- } суперпозиция дифференцируемых функций.
-\item Качество модели определяется \textbf{параметрами} модели.
-\item Оптимизация параметров определяется \textbf{гиперпараметрами и структурными параметрами} модели.
-\item \textbf{Гиперпараметры} --- параметры распределения параметров модели.
-\item \textbf{Структурные параметры} --- параметры, определяющие структуры модели.
-\end{itemize} 
-\end{frame}
 
 
-\begin{frame}{Выбор  структуры модели глубокого обучения}
+\begin{frame}
+\frametitle{Критерии качества модели}
 
-\textbf{Цель работы:}\\
-Развитие теории исследования метода байесовскогго выбора модели глубокого обучения
-\textbf{Задачи:}
-\begin{itemize}
-\item Предложить алгоритм оптимизации параметров, гиперпараметров и структурных параметров моделей глубокого обучения.
-\item Предожить метод выбора ниболее правдоподобной структурной модели.
-\item Исследовать свойства оптимизационных алгоритмов выбора модели.
-\end{itemize}
-\textbf{Основные проблемы}
-\begin{itemize}
-\item Многоэкстремальность задачи оптимизации параметров модели.
-\item Вычислительная сложность оптимизации.
-\item Большое количество параметров и гиперпараметров.
-\end{itemize}
+\textbf{Точность} $S$ модели $\mathbf{f}(\mathbf{x}, \mathbf{w})$ --- величина ошибки на контрольной выборке.
+~\\
+~\\
+\textbf{Устойчивость} модели $\mathbf{f}(\mathbf{x}, \mathbf{w})$ --- число обусловленности матрицы $\mathbf{A}$:
+$$\eta(\mathbf{{w}})=\frac{\lambda_{\max}}{\lambda_{\min}} \quad\text{при гипотезе } 	\mathbf{w} \sim \mathcal{N}(\mathbf{0},\mathbf{A}^{-1}),$$  $\lambda_{\max}$ --- максимальное, а $\lambda_{\min}$ --- минимальное собственные числа матрицы $\mathbf{A}$.
+
+
+
+
+\textbf{Статистическая сложность} модели $\mathbf{f}$:
+\[
+	\text{MDL}(\mathfrak{D},\mathbf{f}) = -\text{log}~p(\mathbf{f}) - \text{log}~\bigl(p(\mathfrak{D}|\mathbf{f})\delta\mathfrak{D})\bigr),
+\]
+где $\delta\mathfrak{D}$ --- допустимая точность передачи информации о выборке $\mathfrak{D}$.
+
 
 \end{frame}
-
-
-\begin{frame}                                                                                                                                   
-\frametitle{Проблемы обучения сетей}                                                                                                          
-Правдоподобие моделей с избыточным количеством параметров не меняется при удалении параметров.                                                       
-\begin{figure}[h]                                                                                                                               
-\centering                                                                                                                                      
-\subfloat[Избыточность параметров модели]{\includegraphics[width=0.45\textwidth]{./slide_plots/pruning.pdf}}                                          
-\subfloat[Неустойчивость модели]{\includegraphics[width=0.45\textwidth]{./slide_plots/noise.pdf}}                                                     
-\end{figure}                                                                                                                                    
-                                                                                                                                                
-\end{frame}    
 
 
 
@@ -172,7 +217,8 @@
                                                                                                                                    
                                                                                                                                     
 
-\begin{frame}{Вариационная нижняя оценка правдоподобия}     
+\begin{frame}{Вариационная нижняя оценка правдоподобия} 
+Интеграл правдоподобия невычислим аналитически.\\
 \textbf{Правдоподобие модели:}
 \[
 p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c_{\text{temp}}) =
@@ -181,39 +227,27 @@ p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c_{\text{temp}}) =
  \int_{\mathbf{W}, \boldsymbol{\Gamma} } \textcolor{red}{p(\mathbf{y}|\mathbf{X},\mathbf{W},  \boldsymbol{\Gamma})} \textcolor{blue}{p(\mathbf{W}|\mathbf{A}, \boldsymbol{\Gamma})p(\boldsymbol{\Gamma}|\mathbf{m}, c_{\text{temp}})} d\mathbf{W}d{\boldsymbol{\Gamma}}.                         
 \]
 
+Получим нижнюю оценку интеграла правдоподобия.\\
 Пусть $q$ --- непрерывное распределение.
 $$                                                                                                                                              
         \text{log}~p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c_{\text{temp}}) \geq 
 $$          
-$$                                                                                                                                              
-         \geq  \textcolor{blue}{\int q(\mathbf{W})\text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma}. \mathbf{A}^{-1}, c_{\text{temp}})}d \mathbf{W}d\boldsymbol{\Gamma}} -$$ 
-    $$  \textcolor{red}{-\int q(\mathbf{w})\text{log}~\frac{p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{A}^{-1}, \mathbf{m}, c_{\text{temp}})}{q(\mathbf{W}, \boldsymbol{\Gamma})}d\mathbf{W}d\boldsymbol{\Gamma}} =$$
+%$$                                                                                                                                              
+%         \geq  \textcolor{blue}{\int q(\mathbf{W})\text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma}. \mathbf{A}^{-1}, c_{\text{temp}})}d \mathbf{W}d\boldsymbol{\Gamma}} -$$ 
+%    $$  \textcolor{red}{-\int q(\mathbf{w})\text{log}~\frac{p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{A}^{-1}, \mathbf{m}, c_{\text{temp}})}{q(\mathbf{W}, \boldsymbol{\Gamma})}d\mathbf{W}d\boldsymbol{\Gamma}} =$$
 $$
 \textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma}. \mathbf{A}^{-1}, c_{\text{temp}})}} - \textcolor{red}{\text{D}_{KL}(p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{A}^{-1}, \mathbf{m}, c_{\text{temp}}) || q(\mathbf{W}, \boldsymbol{\Gamma}))}.
 $$ 
+
+Полученная оценка совпадает с интегралом правдоподобия при $D_\text{KL}(q(\mathbf{W}, \boldsymbol{\Gamma})|(p(\mathbf{W}, \boldsymbol{\Gamma}))=0$.
 
 \end{frame}      
    
 
 
-\begin{frame}{ Постановка задачи}
-\textcolor{red}{\textbf{TODO: ослабить? Как писать заголовки для этих слайдов?\\}}
-\textcolor{red}{\textbf{TODO: Что мы считаем моделью?\\}}
-
-Задан граф $V,E$. \\
-Для каждого ребра $(j,k) \in E$ определен вектор \textbf{базовых функций} $\mathbf{g}_{j,k}$ мощностью $K_{j,k}$.\\
-Граф $V, E$ со множеством функций $\mathfrak{G} = \{\mathbf{g}_{j,k}\}_{(j,k) \in E}$ называется \textbf{моделью}, если функция, задаваемая рекурсивно как 
-\[
-    f_j(\mathbf{x}) = \sum_{k \in \text{Adj}(v_j)} <\boldsymbol{\gamma}_{j,k}, \mathbf{g}_{j,k}> (f_{k}(\mathbf{x})), \quad     f_0(\mathbf{x}) = \mathbf{x},
-\]
-является непрерывной дифференцируемой функцией из $\mathbb{R}^n$ во множество $\mathbb{Y}$ при любых значениях векторов $\boldsymbol{\gamma}$.
-
-Обозначим за вектор \textbf{параметров модели}  $\mathbf{W}$ конкатенацию параметров всех подмоделей $\{f_j\}_{j=1}^{|V|}$.
-\end{frame}
-
 
 \begin{frame}{ Распределение на структуре}
-Пусть для каждого ребра $(j,k)$ задан нормированный положительный вектор $\boldsymbol{\gamma}_{j,k} \in \mathbb{R}_{+}^{|K_{j,k}|}$, определяющий веса баховых функций из  $\mathbf{g}(j,k)$.
+Пусть для каждого ребра $(j,k)$ задан нормированный положительный вектор $\boldsymbol{\gamma}_{j,k} \in \mathbb{R}_{+}^{|K_{j,k}|}$, определяющий веса базовых функций из  $\mathbf{g}(j,k)$.
 
 Будем считать, что вектор $\boldsymbol{\gamma}_{j,k}$ распределен по распределению Gumbel-Softmax:
 \[
@@ -548,16 +582,7 @@ $$f_3 \in F(1, 0, 0, \{q_1(\boldsymbol{\Gamma}), q_2(\boldsymbol{\Gamma})\}, 0, 
 
 
 
-\begin{frame}[plain, noframenumbering]{Исследование основывается на следующих работах}
-\begin{itemize}
-\item Graves A. Practical variational inference for neural networks //Advances in Neural Information Processing Systems. – 2011
-\item  Maclaurin D., Duvenaud D., Adams R. Gradient-based hyperparameter optimization through reversible learning //International Conference on Machine Learning. – 2015
-\item  Luketina J. et al. Scalable gradient-based tuning of continuous regularization hyperparameters //International Conference on Machine Learning. - 2016
-\item J. Fu et al., DrMAD: Distilling Reverse-Mode Automatic Differentiation for Optimizing
-Hyperparameters of Deep Neural Networks // IJCAI - 2016
-\item Pedregosa F. Hyperparameter optimization with approximate gradient //International Conference on Machine Learning. – 2016. –
-\end{itemize}
-\end{frame}
+
 
 
 
