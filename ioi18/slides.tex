@@ -62,17 +62,6 @@
 
 \end{frame}
 
-\begin{frame}{Исследование основывается на следующих работах}
-\begin{itemize}
-\item Graves A. Practical variational inference for neural networks //Advances in Neural Information Processing Systems. – 2011
-\item  Maclaurin D., Duvenaud D., Adams R. Gradient-based hyperparameter optimization through reversible learning //International Conference on Machine Learning. – 2015
-\item  Luketina J. et al. Scalable gradient-based tuning of continuous regularization hyperparameters //International Conference on Machine Learning. - 2016
-\item J. Fu et al., DrMAD: Distilling Reverse-Mode Automatic Differentiation for Optimizing
-Hyperparameters of Deep Neural Networks // IJCAI - 2016
-\item Pedregosa F. Hyperparameter optimization with approximate gradient //International Conference on Machine Learning. – 2016. –
-\end{itemize}
-\end{frame}
-
 
 \begin{frame}    
                                                                                                                         
@@ -91,24 +80,24 @@ Hyperparameters of Deep Neural Networks // IJCAI - 2016
 
 Однослойная нейросеть:
 \[
-    \mathbf{f}(\mathbf{x}) = \text{softmax}\left(\mathbf{W}^\text{T}\mathbf{f}_1(\mathbf{x})\right), \quad f(\mathbf{x}): \mathbb{R}^n \to 2^{|\mathbb{Y}|}, \quad \mathbf{x} \in \mathbb{R}^n.
+    \mathbf{f}(\mathbf{x}) = \text{softmax}\left(\mathbf{W}_0^\text{T}\mathbf{f}_1(\mathbf{x})\right), \quad f(\mathbf{x}): \mathbb{R}^n \to [0,1]^{|\mathbb{Y}|}, \quad \mathbf{x} \in \mathbb{R}^n.
 \]
 \[
 \]
 \[
-{f}_1(\mathbf{x}) = {\gamma}_{0,1}^{1}\mathbf{g}_{0,1}^{1}(\mathbf{x})+\dots+{\gamma}_{0,1}^{K}\mathbf{g}_{0,1}^{K}(\mathbf{x})= {\gamma}_{0,1}^{1}\boldsymbol{\sigma}%(\mathbf{W}_1^\text{T}\mathbf{x}) + \dots +  {\gamma}_{0,1}^{K}\boldsymbol{\sigma}(\mathbf{W}_K^\text{T}\mathbf{x}),
+{f}_1(\mathbf{x}) = {\gamma}_{0,1}^{1}\mathbf{g}_{0,1}^{1}(\mathbf{x})+\dots+{\gamma}_{0,1}^{K}\mathbf{g}_{0,1}^{K}(\mathbf{x})= {\gamma}_{0,1}^{1}\boldsymbol{\sigma}(\mathbf{W}_1^\text{T}\mathbf{x}) + \dots +  {\gamma}_{0,1}^{K}\boldsymbol{\sigma}(\mathbf{W}_K^\text{T}\mathbf{x}),
 \]
-где $\mathbf{W}_1, \dots, \mathbf{W}_K$ --- матрицы параметров, $\{\mathbf{g}^{i}_{0,1}\}_{i=1}^K$ --- базовые функции для скрытого слоя нейросети.~\\~\\
+где $\mathbf{W} = [\mathbf{W}_0,\mathbf{W}_1, \dots, \mathbf{W}_K]^\text{T}$ --- матрицы параметров, $\{\mathbf{g}^{i}_{0,1}\}_{i=1}^K$ --- базовые функции скрытого слоя нейросети.~\\~\\
 
 \textbf{Структурные параметры:}  $\boldsymbol{\Gamma} = [\boldsymbol{\gamma}_{0,1}]$.\\
-\textbf{Структура модели} определяется вершиной булевого $K$-мерного куба.
+\textbf{Структура модели} определяется вершиной $K$-мерного симплекса.
 
 \end{frame}
 
 \begin{frame}{Задача выбора структуры модели: два скрытых слоя}
 Двухслойная нейросеть:
 \[
-    \mathbf{f}(\mathbf{x}) = \text{softmax}\left(\mathbf{W}^\text{T}\textcolor{red}{\mathbf{f}_2}(\mathbf{x})\right), \quad f(\mathbf{x}): \mathbb{R}^n \to 2^{|\mathbb{Y}|}, \quad \mathbf{x} \in \mathbb{R}^n.
+    \mathbf{f}(\mathbf{x}) = \text{softmax}\left(\mathbf{W}^\text{T}\textcolor{red}{\mathbf{f}_2}(\mathbf{x})\right), \quad f(\mathbf{x}): \mathbb{R}^n \to [0,1]^{|\mathbb{Y}|}, \quad \mathbf{x} \in \mathbb{R}^n.
 \]
 \[
 \textcolor{red}{
@@ -118,10 +107,10 @@ Hyperparameters of Deep Neural Networks // IJCAI - 2016
 \mathbf{f}_1(\mathbf{x}) = {\gamma}_{0,1}^{1}\mathbf{g}_{0,1}^{1}(\mathbf{x})+\dots+{\gamma}_{0,1}^{K}\mathbf{g}_{0,1}^{K}(\mathbf{x})= {\gamma}_{0,1}^{1}\boldsymbol{\sigma}(\mathbf{W}_1^\text{T}\mathbf{x}) + \dots +  {\gamma}_{0,1}^{K}\boldsymbol{\sigma}(\mathbf{W}_K^\text{T}\mathbf{x}),
 \]
 
-где $\textcolor{red}{\mathbf{W}_1, \dots, \mathbf{W}_{2K}}$ --- матрицы параметров, $\{\mathbf{g}^{i}_{0,1}, \textcolor{red}{\mathbf{g}^{i}_{1,2}\}_{i=1}^K}$ --- базовые функции для скрытых слоев нейросети.~\\~\\
+где $\mathbf{W} = [\mathbf{W}_0,\textcolor{red}{\mathbf{W}_1, \dots, \mathbf{W}_{2K}}]^{\text{T}}$ --- матрицы параметров, $\{\mathbf{g}^{i}_{0,1}, \textcolor{red}{\mathbf{g}^{i}_{1,2}\}_{i=1}^K}$ --- базовые функции скрытых слоев нейросети.~\\~\\
 
 \textbf{Структурные параметры:} $\boldsymbol{\Gamma} = [\boldsymbol{\gamma}_{0,1}, \textcolor{red}{\boldsymbol{\gamma}_{1,2}}]$.\\
-\textbf{Структура модели} определяется вершинами \textcolor{red}{двух} булевых $K$-мерных кубов.
+\textbf{Структура модели} определяется вершинами \textcolor{red}{двух} $K$-мерных симплексов.
 \end{frame}
         
 
@@ -129,30 +118,43 @@ Hyperparameters of Deep Neural Networks // IJCAI - 2016
 Картинка: связь параметров со структурой.
 \end{frame}
 
-\begin{frame}{ Семейство моделей}
+
+\begin{frame}{Исследование основывается на следующих работах}
+\begin{itemize}
+\item Graves A. Practical variational inference for neural networks //Advances in Neural Information Processing Systems. – 2011
+\item  Maclaurin D., Duvenaud D., Adams R. Gradient-based hyperparameter optimization through reversible learning //International Conference on Machine Learning. – 2015
+\item Jang E. et al., Categorical Reparameterization with Gumbel-Softmax //International Conference on Learning Representations 2017. 
+\item Hanxiao L. et al., DARTS: Differentiable Architecture Search.
+\item О. Ю. Бахтеев, В. В. Стрижов. Выбор моделей глубокого обучения субоптимальной сложности  //Автоматика и телемеханика, 2018.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Графовое представление модели глубокого обучения}
+\begin{block}{Определение}
 Задан граф $V,E$. \\
 Для каждого ребра $(j,k) \in E$ определен вектор \textbf{базовых функций} $\mathbf{g}_{j,k}$ мощностью $K_{j,k}$.\\
-Граф $V, E$ со множеством функций $\mathfrak{G} = \{\mathbf{g}_{j,k}\}_{(j,k) \in E}$ называется \textbf{семейством моделей}, если функция, задаваемая рекурсивно как 
+Граф $V, E$ со множеством функций $\{\mathbf{g}_{j,k}\}_{(j,k) \in E}$ называется \textbf{семейством моделей}, если функция, задаваемая рекурсивно как 
 \[
-    \mathbf{f}_j(\mathbf{x}) = \sum_{k \in \text{Adj}(v_j)} <\boldsymbol{\gamma}_{j,k}, \mathbf{g}_{j,k}> (f_{k}(\mathbf{x})), \quad     \mathbf{f}_0(\mathbf{x}) = \mathbf{x},
+    \mathbf{f}_j(\mathbf{x}) = \sum_{k \in \text{Adj}(v_j)} \langle \boldsymbol{\gamma}_{j,k}, \mathbf{g}_{j,k} \rangle (\mathbf{f}_{k}(\mathbf{x})), \quad     \mathbf{f}_0(\mathbf{x}) = \mathbf{x},
 \]
-является непрерывной дифференцируемой функцией из $\mathbb{R}^n$ во множество $\mathbb{Y}$ при любых значениях векторов $\boldsymbol{\gamma}$.
-
-\textbf{Модель} определяется параметрами подмоделей $f_j$ и структурными параметрами  $\boldsymbol{\gamma}$.\\
-Обозначим за вектор \textbf{параметров модели}  $\mathbf{W}$ конкатенацию параметров всех подмоделей $\{f_j\}_{j=1}^{|V|}$.\\
-Обозначим за вектор \textbf{параметров модели}  $\boldsymbol{\Gamma}$ конкатенацию структурных параметров $\boldsymbol{\gamma}$.
+является непрерывной дифференцируемой по параметрам функцией из $\mathbb{R}^n$ во множество $\mathbb{Y}$ при любых значениях векторов $\boldsymbol{\gamma}$.
+\end{block}
+\textbf{Модель} задается параметрами подмоделей $\{\mathbf{f}_j\}_{j=1}^{|V|}$ и структурными параметрами  $\boldsymbol{\gamma}$.\\
+\textbf{Параметры модели}  $\mathbf{W}$ ---  конкатенация параметров всех подмоделей $\{\mathbf{f}_j\}_{j=1}^{|V|}$.\\
+\textbf{Структура модели}  $\boldsymbol{\Gamma}$ --- конкатенация структурных параметров $\boldsymbol{\gamma}$.
 \end{frame}
 
 
 
 
 \begin{frame}
-\frametitle{Критерии качества модели}
+\frametitle{Эксплуатационные критерии качества модели}
 
-\textbf{Точность} $S$ модели $\mathbf{f}(\mathbf{x})$ --- величина ошибки на контрольной выборке.
+\textbf{Точность} $S(\mathbf{W}, \boldsymbol{\Gamma})$ модели $\mathbf{f}(\mathbf{x})$ --- величина ошибки на контрольной выборке.
 ~\\
 ~\\
-\textbf{Устойчивость} модели $\mathbf{f}(\mathbf{x})$ --- число обусловленности матрицы $\mathbf{A}$:
+\textbf{Устойчивость} $\eta(\mathbf{{W}})$ модели $\mathbf{f}(\mathbf{x})$ --- число обусловленности матрицы $\mathbf{A}$:
 $$\eta(\mathbf{{W}})=\frac{\lambda_{\max}}{\lambda_{\min}} \quad\text{при гипотезе } 	\mathbf{W} \sim \mathcal{N}(\mathbf{0},\mathbf{A}^{-1}),$$  $\lambda_{\max}$ --- максимальное, а $\lambda_{\min}$ --- минимальное собственные числа матрицы $\mathbf{A}$.
 
 
@@ -164,12 +166,6 @@ $$\eta(\mathbf{{W}})=\frac{\lambda_{\max}}{\lambda_{\min}} \quad\text{при г�
 \begin{frame}{Статистические критерии качества модели}
 \small
 
-\textbf{Статистическая сложность} модели $\mathbf{f}$:
-\[
-	\text{MDL}(\mathbf{y},\mathbf{f}) = -\text{log}~p(\mathbf{f}) - \text{log}~\bigl(p(\mathbf{y}|\mathbf{X}, \mathbf{f})\delta\mathfrak{D})\bigr),
-\]
-где $\delta\mathfrak{D}$ --- допустимая точность передачи информации о выборке $\mathfrak{D}$.
-
 
 \textbf{Параметрическая сложность} --- наименьшая дивергенция между априорным распределением параметров и апостериорным распределением параметров:
 \[
@@ -177,44 +173,47 @@ $$\eta(\mathbf{{W}})=\frac{\lambda_{\max}}{\lambda_{\min}} \quad\text{при г�
 \]
 где $\mathbf{m}$ --- гиперпараметры априорного распределения структуры модели.
 
-\textcolor{red}{\textbf{TODO: надо ли про bits-back?\\}}
+\textcolor{red}{\textbf{TODO: bits-back!\\}}
 
 \textbf{Структурная сложность модели} --- энтропия апостериорного распределения структуры модели:
 \[
     C_\text{struct} = -\mathsf{E}_{p} \text{log}~p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}).
 \]
 
-В данной работе предлагается метод оптимизации модели, учитывающий все перечисленные критерии качества модели. 
+\textcolor{red}{В данной работе предлагается метод оптимизации модели, учитывающий все перечисленные критерии качества модели. }
 \end{frame}
 
 
-\begin{frame}{Правдоподобие модели}  
-                                                                                          
-Пусть заданы априорное распределение параметров и структуры $p(\mathbf{W}, \boldsymbol{\Gamma})$.
+\begin{frame}{Правдоподобие как статистическая сложность}  
+\small
+\textbf{Статистическая сложность} модели $\mathbf{f}$:
+\[
+	\text{MDL}(\mathbf{y},\mathbf{f}) = -\text{log}~p(\mathbf{f}) - \text{log}~\bigl(p(\mathbf{y}|\mathbf{X}, \mathbf{f})\delta\mathfrak{D})\bigr),
+\]
+где $\delta\mathfrak{D}$ --- допустимая точность передачи информации о выборке $\mathfrak{D}$.
 
-Модель $\mathbf{f}$  оптимальна, если достигается максимум \textbf{правдоподобия модели}:                                      
+\textbf{Правдоподобия модели}:                                      
 \[                                                                                                                                              
         p(\mathbf{y}|\mathbf{X}) = \int_{\mathbf{W}, \boldsymbol{\Gamma} } \textcolor{red}{p(\mathbf{y}|\mathbf{X},\mathbf{W},  \boldsymbol{\Gamma})} \textcolor{blue}{p(\mathbf{W}, \boldsymbol{\Gamma}) d\mathbf{W}d{\boldsymbol{\Gamma}}}.                         
 \]       
 
 
 \begin{figure}
+\vspace{-0.5cm}
   \centering
- \subfloat[Схема выбора модели по правдоподобию]{\includegraphics[width=0.4\textwidth]{slide_plots/evidence.pdf}} 
- \subfloat[Пример: полиномы]{\includegraphics[width=0.4\textwidth]{slide_plots/example.pdf}}
+ \subfloat[Схема выбора модели по правдоподобию]{\includegraphics[width=0.35\textwidth]{slide_plots/evidence.pdf}} 
+ \subfloat[Пример: полиномы]{\includegraphics[width=0.35\textwidth]{slide_plots/example.pdf}}
 
 \end{figure}
 \end{frame}
 
 
-\begin{frame}{Статистические критерии качества модели}
-\end{frame}
 
 \begin{frame}{Выбор оптимальной модели}
 \textbf{Основные проблемы выбора оптимальной модели}\\
 \begin{itemize}
-\item Интеграл правдоподобия невычислим аналитически.
-\item Задача оптимизации многоэкстремальна и невыпукла.
+\item Интеграл правдоподобия $p(\mathbf{y}|\mathbf{X})$ невычислим аналитически.
+\item Задача его оптимизации многоэкстремальна и невыпукла.
 \end{itemize}
 ~\\
 \textbf{Требуется}\\ 
@@ -241,19 +240,55 @@ p(\mathbf{y}|\mathbf{X}) =
 \]
 
 Получим нижнюю оценку интеграла правдоподобия.\\
-Пусть $q$ --- непрерывное распределение.
+Пусть $q(\mathbf{W}, \boldsymbol{\Gamma}) = q_{\mathbf{W}}(\mathbf{W})q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma})$ --- непрерывное распределение, аппроксимирующее 
+апостериорное распределение $p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X})$.
 $$                                                                                                                                              
         \text{log}~p(\mathbf{y}|\mathbf{X}) \geq 
-\textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma})}} - \textcolor{red}{\text{D}_{KL}(p(\mathbf{w}, \boldsymbol{\Gamma}) || q(\mathbf{W}, \boldsymbol{\Gamma}))} = \text{log}\hat{{p}}_q(\mathbf{y}|\mathbf{X}).
+\textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma})}} - \textcolor{red}{\text{D}_{KL}(p(\mathbf{w}, \boldsymbol{\Gamma}) || q(\mathbf{W}, \boldsymbol{\Gamma}))} = \text{log}\hat{{p}}_{q_{\mathbf{W}}q_{\boldsymbol{\Gamma}}}(\mathbf{y}|\mathbf{X}).
 $$ 
 
-Полученная оценка совпадает с интегралом правдоподобия при $$D_\text{KL}(q(\mathbf{W}, \boldsymbol{\Gamma})|(p(\mathbf{W}, \boldsymbol{\Gamma}))=0.$$
+Полученная оценка совпадает с интегралом правдоподобия при $$D_\text{KL}(q(\mathbf{W}, \boldsymbol{\Gamma})|(p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}))=0.$$
 
 \end{frame}      
+
+
+
+\begin{frame}
+\frametitle{Градиентный спуск как вариационная оценка правдоподобия модели}
+\footnotesize
+
+\begin{multicols}{2}
+
+\begin{figure}
+\subfloat{\includegraphics[width=0.38\textwidth]{./slide_plots/sgd_estimate.png}}
+\end{figure}
+
+\columnbreak
+
+
+\begin{figure}
+{\includegraphics[width=0.38\textwidth]{./slide_plots/sgd_show.pdf}}
+\end{figure}
+\end{multicols}
+\end{frame}
+
+
    
+\begin{frame}{Выбор вариационного распределения $q$}
+\textbf{Вариационное распределение параметров $q_{\mathbf{W}}:$}
+$$q_\mathbf{W} = \mathcal{N}(\boldsymbol{\mu}_q, \mathbf{A}^{-1}_q).$$
 
+\textbf{Вариационное распределение структуры $q_{\boldsymbol{\Gamma}}:$}
+$$q_{\boldsymbol{\Gamma}} = \prod_{(j,k) \in E} q_{\boldsymbol{\gamma_{j,k}}} \sim \mathcal{GS}(c_\text{temp}).$$
+\textbf{Свойства:}
+\begin{itemize}
+\item $\lim_{c_\text{temp} \to \infty}  \mathcal{GS}(c_\text{temp}) = \mathcal{U}.$
+\item При ${c_\text{temp} \to 0}$ распределение вырождается в дискретное распределение.
+\item Существует вычислительно устойчивый метод вычисления градиента по параметрам распределения от реализации случайной величины.
+\end{itemize}
+\end{frame}
 
-
+\iffalse
 \begin{frame}{ Распределение на структуре}
 Пусть для каждого ребра $(j,k)$ задан нормированный положительный вектор $\boldsymbol{\gamma}_{j,k} \in \mathbb{R}_{+}^{|K_{j,k}|}$, определяющий веса базовых функций из  $\mathbf{g}(j,k)$.
 \\~\\
@@ -348,6 +383,7 @@ $$\text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{A}) \geq \mathsf{E}_{q(\mathbf{W)}}
 \end{multicols}
 \end{frame}
 
+\fi 
 
 \begin{frame}{Оптимизация параметров вариационного распределения}
 \footnotesize
@@ -362,22 +398,14 @@ L =
 Тогда функция $L$ сходится по вероятности к вариационной нижней оценке правдоподобия для подвыборки  $\mathfrak{D}$ 
 мощностью $c_\text{reg} m$:
 $$
-L \to^p c_\text{reg} m \text{log}\hat{{p}}_q(\mathbf{y}|\mathbf{X}).
+L \to^p c_\text{reg} m \text{log}\hat{{p}}_{q_{\mathbf{W}}q_{\boldsymbol{\Gamma}}}(\mathbf{y}|\mathbf{X}).
 $$
 \end{block}
 
 \begin{block}{Теорема}
-Для любых значений $\mathbf{A}, \mathbf{m}$ и вариационных параметров $q_\mathbf{W}$ существует точка на вершинах симплексов структуры, определяющая распределение $q_{\boldsymbol{\Gamma}}$, что для любой точки внутри симплексов, определяющей распределение $q'_{\boldsymbol{\Gamma}}$ справедливо выражение:
-$$\lim_{c_\text{temp} \to 0}\frac{\text{log}\hat{{p}}_q'(\mathbf{y}|\mathbf{X})}{\text{log}\hat{{p}}_q(\mathbf{y}|\mathbf{X})} = -\infty.$$
+Для любых значений $\mathbf{A}, \mathbf{m}$ и вариационных параметров $\boldsymbol{\mu}_q, \mathbf{A}_q$ существует такая точка $\mathbf{m}$ на вершинах симплексов структуры $\boldsymbol{\Gamma}$, определяющая распределение $q_{\boldsymbol{\Gamma}}$, что для любой точки  $\mathbf{m}'$ внутри симплексов, определяющей распределение $q'_{\boldsymbol{\Gamma}}$ справедливо выражение:
+$$\lim_{c_\text{temp} \to 0}\frac{\text{log}\hat{{p}}_{q_{\mathbf{W}}q'_{\boldsymbol{\Gamma}}}(\mathbf{y}|\mathbf{X})}{\text{log}\hat{{p}}_{q_{\mathbf{W}}q_{\boldsymbol{\Gamma}}}(\mathbf{y}|\mathbf{X})} = -\infty.$$
 \end{block}
-%\begin{block}{Теорема}
-%Пусть $c_{\text{reg}}>0.$ При устремлении $c_{\text{temp}}$ к нулю задача становится эквивалентна дискретной задаче оптимизации:
-%\[
-%    \argmax_{\mathbf{A}, \{\boldsymbol{\gamma}_{j,k} \in \Delta^{K_{j,k} -1}, (j,k) \in E\}} \textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma}. \mathbf{A}^{-1}, c_{\text{temp}})}} - \textcolor{red}{c_\text{reg}\text{D}_{KL}(p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{A}^{-1}, \mathbf{m}, c_{\text{temp}}) || q(\mathbf{W}), q(\boldsymbol{\Gamma}))},
-%\]    
-%где $\Delta^{K_{j,k} -1}$ --- множество векторов, соответствующих вершинам $(K_{j,k}-1)$-сипмлекса.
-%\end{block} 
-
 \end{frame}
 
 
@@ -390,6 +418,11 @@ Q = \textcolor{blue}{c_\text{train}\mathsf{E}_q \text{log}~{p(\mathbf{y} | \math
  - \textcolor{OliveGreen}{c_{\text{comb}}\sum_{p' \in \mathbf{P}} \text{D}_{KL}(\boldsymbol{\Gamma} | p')} \to \max, 
 \]
 где $\mathbf{P}$ --- множество (возможно пустое) распределений на структуре модели.
+\begin{itemize}
+\item $\textcolor{blue}{c_\text{train}}$ --- коэффициент правдоподобия выборки;
+\item $\textcolor{red}{c_\text{prior}}$ --- коэффициент регуляризации модели;
+\item $\textcolor{OliveGreen}{c_{\text{comb}}}$ --- коэффициент перебора структуры (?).
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Общая задача оптимизации}
@@ -413,22 +446,23 @@ Q = \textcolor{blue}{c_\text{train}\mathsf{E}_q \text{log}~{p(\mathbf{y} | \math
 
 
 \begin{frame}{Оператор оптимизации}
+\small
 Обозначим за $\mathbf{h}$ гиперпараметры $\mathbf{A}, \mathbf{m}$.\\
 Обозначим за $\boldsymbol{\theta}$ параметры распределений $q_{\mathbf{W}}, q_{\boldsymbol{\Gamma}}$.
 
 \begin{block}{Определение}
 Оператором $T$ назовем оператор стохастического градиентного спуска, производящий $\eta$ шагов оптимизации:
-\begin{equation}
-\label{eq:gd}
-	 \hat{\boldsymbol{\theta}} = T \circ T \circ \dots \circ T(\boldsymbol{\theta}_0, \mathbf{A}^{-1}) = T^\eta(\boldsymbol{\theta}_0, \mathbf{A}^{-1}),
-\end{equation}
-где 
-$$
-	T(\boldsymbol{\theta}, \mathbf{A}^{-1}) =\boldsymbol{\theta} - \beta \nabla L(\boldsymbol{\theta}, \mathbf{A}^{-1})|_{\hat{\mathfrak{D}}}, 
-$$
+\[
+	 \hat{\boldsymbol{\theta}} = T \circ T \circ \dots \circ T(\boldsymbol{\theta}_0, \mathbf{A}^{-1}) = T^\eta(\boldsymbol{\theta}_0, \mathbf{A}^{-1}), \quad\text{где}	T(\boldsymbol{\theta}, \mathbf{A}^{-1}) =\boldsymbol{\theta} - \beta \nabla L(\boldsymbol{\theta}, \mathbf{A}^{-1})|_{\hat{\mathfrak{D}}}, 
+\]
 $\gamma$ --- длина шага градиентного спуска, $\boldsymbol{\theta}_0$ --- начальное значение параметров $\boldsymbol{\theta}$, $\hat{\mathfrak{D}}$ --- случайная подвыборка исходной выборки $\mathfrak{D}$.
 \end{block}
 
+Перепишем итоговую задачу оптимизации:
+\[
+	\hat{\mathbf{h}} = \argmax_{\mathbf{h}} Q( T^\eta(\boldsymbol{\theta}_0, \mathbf{A}^{-1})),
+\]
+где $\boldsymbol{\theta}_0$ --- начальное значение $\boldsymbol{\theta}$.
 
 
 
@@ -437,14 +471,10 @@ $\gamma$ --- длина шага градиентного спуска, $\boldsy
 
 
 
-
+\iffalse
 \begin{frame}{Оптимизация гиперпараметров}
 
-Перепишем итоговую задачу оптимизации:
-\[
-	\hat{\mathbf{h}} = \argmax_{\mathbf{h}} Q( T^\eta(\boldsymbol{\theta}_0, \mathbf{A}^{-1})),
-\]
-где $\boldsymbol{\theta}_0$ --- начальное значение $\boldsymbol{\theta}$.
+
 
 \begin{block}{Утверждение, Luketina et al., 2016}
 Пусть функции $L$ и $Q$ являются дважды дифференцируемыми и выпуклыми. 
@@ -460,6 +490,7 @@ $\gamma$ --- длина шага градиентного спуска, $\boldsy
 \end{block}
 \end{frame}
 
+\fi 
 
 \begin{frame}{Оптимизация гиперпараметров: пример}
 \begin{multicols}{2}
@@ -484,17 +515,17 @@ $$\argmax_{\mathbf{A}, \mathbf{m}}  p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m
 при $c_{\text{reg}} = c_{\text{prior}} = c_{\text{train}} >0, c_{\text{comb}} = 0$. 
 \end{block}
 ~\\
-Обозначим за $F(c_{\text{reg}}, c_{\text{train}}, c_{\text{prior}}, c_{\text{comb}}, \mathbf{P}, c_{\text{temp}})$ множество экстремумов функции $L$ при решении задачи двухуровневой оптимизации.
+
 \end{frame}
 
 \begin{frame}{Параметрическая сложность}
 \small
-TODO: тип сходимости
+Обозначим за $F(c_{\text{reg}}, c_{\text{train}}, c_{\text{prior}}, c_{\text{comb}}, \mathbf{P}, c_{\text{temp}})$ множество экстремумов функции $L$ при решении задачи двухуровневой оптимизации.
 \begin{block}{Теорема}
 Пусть $\mathbf{f} \in F(1, 1, c_{\text{prior}}, 0, \{\},  c_{\text{temp}} )$.
-При устремлении $ c_{\text{prior}}$ к бесконечности параметрическая сложность модели $f$ устремляется к нулю.
+При устремлении $ c_{\text{prior}}$ к бесконечности параметрическая сложность модели $\mathbf{f}$ устремляется к нулю.
 \[
-    \lim_{c_{\text{prior}} \to \infty} C_{\text{param}}(f) = 0
+    \lim_{c_{\text{prior}} \to \infty} C_{\text{param}}(\mathbf{f}) = 0
 \]
 \end{block}
 
@@ -514,10 +545,10 @@ TODO: тип сходимости
 \small
 
 \begin{block}{Теорема}
-Пусть для каждого ребра $(i,j)$ семейства моделей $\mathfrak{F}$ априорное распределение $$p(\boldsymbol{\gamma}_{i,j}) =  GS (\alpha_1, \dots, \alpha_{K_{i,j)}, c_{\text{temp}}}).$$
+Пусть для каждого ребра $(i,j)$ семейства моделей $\mathfrak{F}$ априорное распределение $$p(\boldsymbol{\gamma}_{i,j}) =  \lim_{c_{\text{temp}} \to 0} \mathcal{GS}(c_{\text{temp}}).$$
 Пусть $c_{\text{reg}} >0, c_{\text{train}} >0, c_{\text{prior}}>0$.
 Пусть $\mathbf{f} \in F(c_{\text{reg}}, c_{\text{train}}, c_{\text{prior}}, 0, \{\}, c_{\text{temp}})$.
-Тогда сложность модели $\mathbf{f}$ равняется нулю.
+Тогда структурная сложность модели $\mathbf{f}$ равняется нулю.
 \[
     C_\text{struct}(\mathbf{f}) = 0
 \]
@@ -543,7 +574,7 @@ TODO: тип сходимости
 
 \begin{frame}{Полный перебор}
 \small
-Пусть для каждого ребра $(i,j)$ семейства моделей $\mathfrak{F}$ априорное распределение $$p(\boldsymbol{\gamma}_{i,j}) =  GS (\alpha_1, \dots, \alpha_{K_{i,j)}, c_{\text{temp}}}).$$
+Пусть для каждого ребра $(i,j)$ семейства моделей $\mathfrak{F}$ априорное распределение $$p(\boldsymbol{\gamma}_{i,j}) =  lim_{c_{\text{temp}} \to 0} \mathcal{GS}(c_{\text{temp}}).$$
 
 Рассмотрим последовательность $N = \prod_{(j,k) \in E} K_{j,k}$ моделей, полученных в ходе оптимизаций вида:
 $$f_1 \in F(c_{\text{reg}}, 0, 0, \{\}, c_{\text{comb}},  c_{\text{temp}}),$$
@@ -564,8 +595,15 @@ $$f_3 \in F(c_{\text{reg}}, 0, 0, \{q_1(\boldsymbol{\Gamma}), q_2(\boldsymbol{\G
 \begin{itemize}
 \item Предложен алгоритм оптимизации параметров, гиперпараметров и структурных
 параметров моделей глубокого обучения.
-\item Предложен метод выбора модели наиболее правдоподобной структуры.
+\item Предложен метод выбора модели наиболее правдоподобной структуры, обобщающий различные алгоритмы оптимизации:
+\begin{itemize}
+\item оптимизация правдоподобия;
+\item последовательное увеличение сложности модели;
+\item последовательное снижение сложности модели;
+\item полный перебор вариантов структуры модели.
+\end{itemize}
 \item Проведено исследование свойства оптимизационных алгоритмов выбора модели.
+
 \end{itemize}
 \end{frame}
 
