@@ -91,7 +91,7 @@
 
 \textbf{Структурные параметры:}  $\boldsymbol{\Gamma} = [\boldsymbol{\gamma}_{0,1}]$.\\
 \textbf{Структура модели} определяется вершиной $K$-мерного симплекса.
-
+    
 \end{frame}
 
 \begin{frame}{Задача выбора структуры модели: два скрытых слоя}
@@ -113,18 +113,17 @@
 \textbf{Структура модели} определяется вершинами \textcolor{red}{двух} $K$-мерных симплексов.
 \end{frame}
         
-
+\iffalse
 \begin{frame}{}
 Картинка: связь параметров со структурой.
 \end{frame}
-
+\fi
 
 \begin{frame}{Исследование основывается на следующих работах}
 \begin{itemize}
 \item Graves A. Practical variational inference for neural networks //Advances in Neural Information Processing Systems. – 2011
-\item  Maclaurin D., Duvenaud D., Adams R. Gradient-based hyperparameter optimization through reversible learning //International Conference on Machine Learning. – 2015
-\item Jang E. et al., Categorical Reparameterization with Gumbel-Softmax //International Conference on Learning Representations 2017. 
-\item Hanxiao L. et al., DARTS: Differentiable Architecture Search.
+\item  Maclaurin D., Duvenaud D., Adams R. Gradient-based hyperparameter optimization through reversible learning //International Conference on Machine Learning. – 2015.
+\item Hanxiao L. et al., DARTS: Differentiable Architecture Search //  arXiv preprint:1806.09055, - 2018.
 \item О. Ю. Бахтеев, В. В. Стрижов. Выбор моделей глубокого обучения субоптимальной сложности  //Автоматика и телемеханика, 2018.
 \end{itemize}
 \end{frame}
@@ -279,10 +278,10 @@ $$
 $$q_\mathbf{W} = \mathcal{N}(\boldsymbol{\mu}_q, \mathbf{A}^{-1}_q).$$
 
 \textbf{Вариационное распределение структуры $q_{\boldsymbol{\Gamma}}:$}
-$$q_{\boldsymbol{\Gamma}} = \prod_{(j,k) \in E} q_{\boldsymbol{\gamma_{j,k}}} \sim \mathcal{GS}(c_\text{temp}).$$
+$$q_{\boldsymbol{\Gamma}}( \mathbf{m}_q, c_\text{temp}) = \prod_{(j,k) \in E} q_{\boldsymbol{\gamma_{j,k}}}(c_\text{temp}, \mathbf{m}_q^{j,k}) \sim \mathcal{GS}(c_\text{temp}, \mathbf{m}_q^{j,k}), \quad |\mathbf{m}_q^{j,k}| = K^{j,k}$$ 
 \textbf{Свойства:}
-\begin{itemize}
-\item $\lim_{c_\text{temp} \to \infty}  \mathcal{GS}(c_\text{temp}) = \mathcal{U}.$
+\begin{itemize} 
+\item $\lim_{c_\text{temp} \to \infty}  \mathcal{GS}(c_\text{temp}) = \mathcal{U}(\Delta^{K^{j,k} -1}).$
 \item При ${c_\text{temp} \to 0}$ распределение вырождается в дискретное распределение.
 \item Существует вычислительно устойчивый метод вычисления градиента по параметрам распределения от реализации случайной величины.
 \end{itemize}
@@ -387,30 +386,31 @@ $$\text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{A}) \geq \mathsf{E}_{q(\mathbf{W)}}
 
 \begin{frame}{Оптимизация параметров вариационного распределения}
 \footnotesize
-Оптимизацию параметров вариационного распределения $q(\mathbf{W}, \boldsymbol{\Gamma}) = q_{\mathbf{W}}(\mathbf{W})q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma})$ будем проводить по следующему функционалу:
+Параметры вариационного распределения $q(\mathbf{W}, \boldsymbol{\Gamma}) = q_{\mathbf{W}}(\mathbf{W})q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma})$ оптимизируем:
 \[
 L =
-\textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma}. \mathbf{A}^{-1}, c_{\text{temp}})}} - \textcolor{red}{c_\text{reg}\text{D}_{KL}(p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{A}^{-1}, \mathbf{m}, c_{\text{temp}}) || q(\mathbf{W}), q(\boldsymbol{\Gamma}))} \to \max
+\textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma}. \mathbf{A}^{-1}, c_{\text{temp}})}} - \textcolor{red}{c_\text{reg}\text{D}_{KL}\left(p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{A}^{-1}, \mathbf{m}, c_{\text{temp}}) || q(\mathbf{W}), q(\boldsymbol{\Gamma})\right)} \to \max_{\mathbf{A}_q, \boldsymbol{\mu}_q, \mathbf{m}_q}
 \]
 
-\begin{block}{Теорема}
+\begin{block}{Теорема [Бахтеев, 2018].}
 Пусть $c_\text{reg} > 0$ .
-Тогда функция $L$ сходится по вероятности к вариационной нижней оценке правдоподобия для подвыборки  $\mathfrak{D}$ 
+Тогда функция $L$ сходится по вероятности к вариационной нижней оценке логарифма правдоподобия $\text{log}~p(\mathbf{y}|\mathbf{x})$ для случайной подвыборки  $\mathfrak{D}$ 
 мощностью $c_\text{reg} m$:
 $$
 L \to^p c_\text{reg} m \text{log}\hat{{p}}_{q_{\mathbf{W}}q_{\boldsymbol{\Gamma}}}(\mathbf{y}|\mathbf{X}).
 $$
 \end{block}
 
-\begin{block}{Теорема}
-Для любых значений $\mathbf{A}, \mathbf{m}$ и вариационных параметров $\boldsymbol{\mu}_q, \mathbf{A}_q$ существует такая точка $\mathbf{m}$ на вершинах симплексов структуры $\boldsymbol{\Gamma}$, определяющая распределение $q_{\boldsymbol{\Gamma}}$, что для любой точки  $\mathbf{m}'$ внутри симплексов, определяющей распределение $q'_{\boldsymbol{\Gamma}}$ справедливо выражение:
-$$\lim_{c_\text{temp} \to 0}\frac{\text{log}\hat{{p}}_{q_{\mathbf{W}}q'_{\boldsymbol{\Gamma}}}(\mathbf{y}|\mathbf{X})}{\text{log}\hat{{p}}_{q_{\mathbf{W}}q_{\boldsymbol{\Gamma}}}(\mathbf{y}|\mathbf{X})} = -\infty.$$
+\begin{block}{Теорема  [Бахтеев, 2018].}
+Для любых значений $\mathbf{A}, \mathbf{m}$ и вариационных параметров $\boldsymbol{\mu}_q, \mathbf{A}_q$ существует такая точка $\mathbf{m}_q^1$ на вершинах симплексов структуры $\boldsymbol{\Gamma}$,  что для любой точки  $\mathbf{m}_q^2$ внутри симплексов справедливо выражение:
+$$\lim_{c_\text{temp} \to 0}\frac{\text{log}\hat{{p}}_{q_{\mathbf{W}}q^2_{\boldsymbol{\Gamma}}}(\mathbf{y}|\mathbf{X})}{\text{log}\hat{{p}}_{q_{\mathbf{W}}q_{\boldsymbol{\Gamma}}}(\mathbf{y}|\mathbf{X})} = -\infty,\text{\quad где}
+q_{\boldsymbol{\Gamma}}^1 = q_{\boldsymbol{\Gamma}}( \mathbf{m}_q^1, c_\text{temp}), \quad q_{\boldsymbol{\Gamma}}^2 = q_{\boldsymbol{\Gamma}}^1(\mathbf{m}_q^2, c_\text{temp})).$$
 \end{block}
 \end{frame}
 
 
 \begin{frame}{Оптимизация параметров априорного распределения}
-Оптимизацию параметров априорного распределения будем проводить по следующему функционалу:
+Гиперпараметры $\mathbf{A}, \mathbf{m}$ оптимизируем:
 \[
 Q = \textcolor{blue}{c_\text{train}\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma}. \mathbf{A}^{-1}, c_{\text{prior}})}}
  - \textcolor{red}{c_\text{prior}\text{D}_{KL}(p(\mathbf{W}, \boldsymbol{\Gamma} |\mathbf{A}^{-1}, \mathbf{m}, c_{\text{temp}}) || q(\mathbf{W}, \boldsymbol{\Gamma}))} -\]
@@ -421,7 +421,7 @@ Q = \textcolor{blue}{c_\text{train}\mathsf{E}_q \text{log}~{p(\mathbf{y} | \math
 \begin{itemize}
 \item $\textcolor{blue}{c_\text{train}}$ --- коэффициент правдоподобия выборки;
 \item $\textcolor{red}{c_\text{prior}}$ --- коэффициент регуляризации модели;
-\item $\textcolor{OliveGreen}{c_{\text{comb}}}$ --- коэффициент перебора структуры (?).
+\item $\textcolor{OliveGreen}{c_{\text{comb}}}$ --- коэффициент перебора структуры.
 \end{itemize}
 \end{frame}
 
@@ -508,7 +508,7 @@ $\gamma$ --- длина шага градиентного спуска, $\boldsy
 \end{frame}
 
 \begin{frame}{Оптимизация правдоподобия модели}
-\begin{block}{Теорема}
+\begin{block}{Теорема  [Бахтеев, 2018].}
 Пусть существуют параметры распределения $q(\mathbf{W}, \boldsymbol{\Gamma})$, такие что $\text{D}_\text{KL}(q(\mathbf{W}, \boldsymbol{\Gamma})|p(\mathbf{W},  \boldsymbol{\Gamma}| \mathbf{y}, \mathbf{X}, \mathbf{A}, \mathbf{m}, c_\text{temp})) = 0$.\\
 Тогда двухуровневая задача оптимизация эквивалентна задаче оптимизации правдоподобия модели:
 $$\argmax_{\mathbf{A}, \mathbf{m}}  p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c_{\text{temp}})$$ 
@@ -521,7 +521,7 @@ $$\argmax_{\mathbf{A}, \mathbf{m}}  p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m
 \begin{frame}{Параметрическая сложность}
 \small
 Обозначим за $F(c_{\text{reg}}, c_{\text{train}}, c_{\text{prior}}, c_{\text{comb}}, \mathbf{P}, c_{\text{temp}})$ множество экстремумов функции $L$ при решении задачи двухуровневой оптимизации.
-\begin{block}{Теорема}
+\begin{block}{Теорема [Бахтеев, 2018].}
 Пусть $\mathbf{f} \in F(1, 1, c_{\text{prior}}, 0, \{\},  c_{\text{temp}} )$.
 При устремлении $ c_{\text{prior}}$ к бесконечности параметрическая сложность модели $\mathbf{f}$ устремляется к нулю.
 \[
@@ -529,12 +529,12 @@ $$\argmax_{\mathbf{A}, \mathbf{m}}  p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m
 \]
 \end{block}
 
-\begin{block}{Теорема}
-Пусть $\mathbf{f}_1 \in F(1, 1, c_{\text{prior}}, 0, \{\},  c_{\text{temp}} ), \mathbf{f}_2 \in F(1, 1, c_{\text{prior}}, 0, \{\},  c_{\text{temp}}' )$, $c_{\text{prior}} < c_{\text{prior}}'$.\\
+\begin{block}{Теорема [Бахтеев, 2018].}
+Пусть $\mathbf{f}_1 \in F(1, 1, c_{\text{prior}}^1, 0, \{\},  c_{\text{temp}} ), \mathbf{f}_2 \in F(1, 1, c_{\text{prior}}^2, 0, \{\},  c_{\text{temp}})$, $c_{\text{prior}}^1 < c_{\text{prior}}^2$.\\
 Пусть вариационные параметры моделей $\mathbf{f}_1$ и $\mathbf{f}_2$ лежат в области $\mathsf{U}$, в которой соответствующие функции $L$ и $Q$ являются локально-выпуклыми.\\ 
-Тогда модель $\mathbf{f}_1$ имеет параметрическую сложность, не большую чем у $\mathbf{f}_2$.
+Тогда модель $\mathbf{f}_1$ имеет параметрическую сложность, не меньшую чем у $\mathbf{f}_2$.
 \[
-    C_\text{param}(\mathbf{f}_1) \leq C_\text{param}(\mathbf{f}_2).
+    C_\text{param}(\mathbf{f}_1) \geq C_\text{param}(\mathbf{f}_2).
 \]
 \end{block}
 
@@ -544,7 +544,7 @@ $$\argmax_{\mathbf{A}, \mathbf{m}}  p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m
 \begin{frame}{Структурная сложность}
 \small
 
-\begin{block}{Теорема}
+\begin{block}{Теорема  [Бахтеев, 2018].}
 Пусть для каждого ребра $(i,j)$ семейства моделей $\mathfrak{F}$ априорное распределение $$p(\boldsymbol{\gamma}_{i,j}) =  \lim_{c_{\text{temp}} \to 0} \mathcal{GS}(c_{\text{temp}}).$$
 Пусть $c_{\text{reg}} >0, c_{\text{train}} >0, c_{\text{prior}}>0$.
 Пусть $\mathbf{f} \in F(c_{\text{reg}}, c_{\text{train}}, c_{\text{prior}}, 0, \{\}, c_{\text{temp}})$.
@@ -554,12 +554,12 @@ $$\argmax_{\mathbf{A}, \mathbf{m}}  p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m
 \]
 \end{block}
 
-\begin{block}{Теорема}
-Пусть $\mathbf{f}_1 \in F(c_{\text{reg}}, c_{\text{train}},  c_{\text{prior}}, 0, \{\},  c_{\text{temp}}), \mathbf{f}_2 =  \in \lim_{c_{\text{temp}'} \to \infty} F(c_{\text{reg}}, c_{\text{train}}|,  c_{\text{prior}}, 0, \{\},  c_{\text{temp}'})$.
+\begin{block}{Теорема [Бахтеев, 2018].}
+Пусть $\mathbf{f}_1 \in F(c_{\text{reg}}, c_{\text{train}},  c_{\text{prior}}, 0, \{\},  c^1_{\text{temp}}), \mathbf{f}_2 =  \in \lim_{c^2_{\text{temp}} \to \infty} F(c_{\text{reg}}, c_{\text{train}},  c_{\text{prior}}, 0, \{\},  c^2_{\text{temp}})$.
 Пусть вариационные параметры моделей $f_1$ и $f_2$ лежат в области $U$, в которой соответствующие функции $L$ и $Q$ являются локально-выпуклыми. 
 Тогда разница структурных сложностей моделей ограничена выражением:
 \[
-    C_\text{struct}(\mathbf{f}_1)  - C_\text{struct}(\mathbf{f}_2) \leq \textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma}. \mathbf{A}^{-1}, c_{\text{temp}})}} - \textcolor{blue}{\mathsf{E}_q' \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma}. \mathbf{A}^{-1}, c_{\text{temp}})}}.
+    C_\text{struct}(\mathbf{f}_1)  - C_\text{struct}(\mathbf{f}_2) \leq \textcolor{blue}{\mathsf{E}_q^1 \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma}. \mathbf{A}^{-1}, c^1_{\text{temp}})}} - \textcolor{blue}{\mathsf{E}_q^2 \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma}, \mathbf{A}^{-1})}}.
 \]
 \end{block}
 
@@ -584,9 +584,9 @@ $$f_3 \in F(c_{\text{reg}}, 0, 0, \{q_1(\boldsymbol{\Gamma}), q_2(\boldsymbol{\G
 
 
 \begin{block}{Теорема}
-Вариационные распределения структур $q_{\boldsymbol{\Gamma}}$ последовательности вырождаются в распределения вида $\delta(\hat{\Gamma})$, где $\hat{\Gamma}$ --- точка на декартовом произведении вершин симплексов структуры модели.
+Вариационные распределения структур $q_{\boldsymbol{\Gamma}}$ последовательности вырождаются в распределения вида $\delta(\hat{\mathbf{m}})$, где $\hat{\mathbf{m}}$ --- точка на декартовом произведении вершин симплексов структуры модели.
 
-Вариационные распределения последовательности проходят все возможные комбинации структур модели.
+Последовательность соответствует полному перебору структуры $\boldsymbol{\Gamma}$.
 \end{block}
 \end{frame}
 
