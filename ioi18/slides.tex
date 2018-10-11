@@ -453,14 +453,14 @@ Q = \textcolor{blue}{c_\text{train}\mathsf{E}_q \text{log}~{p(\mathbf{y} | \math
 \begin{block}{Определение}
 Оператором $T$ назовем оператор стохастического градиентного спуска, производящий $\eta$ шагов оптимизации:
 \[
-	 \hat{\boldsymbol{\theta}} = T \circ T \circ \dots \circ T(\boldsymbol{\theta}_0, \mathbf{A}^{-1}) = T^\eta(\boldsymbol{\theta}_0, \mathbf{A}^{-1}), \quad\text{где}	T(\boldsymbol{\theta}, \mathbf{A}^{-1}) =\boldsymbol{\theta} - \beta \nabla L(\boldsymbol{\theta}, \mathbf{A}^{-1})|_{\hat{\mathfrak{D}}}, 
+	 \hat{\boldsymbol{\theta}} = T \circ T \circ \dots \circ T(\boldsymbol{\theta}_0, \mathbf{A}^{-1}, \mathbf{m}) = T^\eta(\boldsymbol{\theta}_0, \mathbf{A}^{-1}, \mathbf{m}), \quad\text{где}	T(\boldsymbol{\theta}, \mathbf{A}^{-1}, \mathbf{m}) =\boldsymbol{\theta} - \beta \nabla L(\boldsymbol{\theta}, \mathbf{A}^{-1}, \mathbf{m})|_{\hat{\mathfrak{D}}}, 
 \]
 $\gamma$ --- длина шага градиентного спуска, $\boldsymbol{\theta}_0$ --- начальное значение параметров $\boldsymbol{\theta}$, $\hat{\mathfrak{D}}$ --- случайная подвыборка исходной выборки $\mathfrak{D}$.
 \end{block}
 
 Перепишем итоговую задачу оптимизации:
 \[
-	\hat{\mathbf{h}} = \argmax_{\mathbf{h}} Q\left( T^\eta(\boldsymbol{\theta}_0, \mathbf{A}^{-1})\right),
+	\hat{\mathbf{h}} = \argmax_{\mathbf{h}} Q\left( T^\eta(\boldsymbol{\theta}_0, \mathbf{A}^{-1}, \mathbf{m})\right),
 \]
 где $\boldsymbol{\theta}_0$ --- начальное значение $\boldsymbol{\theta}$.
 
