@@ -66,7 +66,7 @@
 \institute[]{Диссертация на соискание ученой степени\\
 кандидата физико-математических наук\\05.13.17 --- Теоретические основы информатики\\Научный руководитель: д.ф.-м.н. В.В. Стрижов\\}     
 %\institute[МФТИ]{Московский Физико-Технический Институт (Государственный Университет)}
-\date[2019]{Московский физико-технический институт\\16 июня 2019 г.}
+\date[2019]{Московский физико-технический институт\\5 июня 2019 г.}
 \begin{document}
 
 \begin{frame}
@@ -165,24 +165,24 @@
 
 \begin{frame}{Графовое представление модели глубокого обучения}
 \footnotesize
-Пусть:
+Заданы:
 \begin{enumerate}
- \item задан ациклический граф $(V,E)$;
-\item для каждого ребра $(j,k) \in E$ определен вектор базовых липшецевых функций  $\mathbf{g}^{j,k} = [\mathbf{g}^{j,k}_0, \dots, \mathbf{g}^{j,k}_{K^{j,k}}]$  мощности $K^{j,k}$;
-\item для каждой вершины $v \in V$ определена липшецевая функция агрегации $\textbf{agg}_v$.
+ \item ациклический граф $(V,E)$;
+\item для каждого ребра $(j,k) \in E$: вектор базовых липшецевых функций  $\mathbf{g}^{j,k} = [\mathbf{g}^{j,k}_0, \dots, \mathbf{g}^{j,k}_{K^{j,k}}]$  мощности $K^{j,k}$;
+\item для каждой вершины $v \in V$: липшецевая функция агрегации $\textbf{agg}_v$.
 \item Функция $\mathbf{f} = \mathbf{f}_{|V|-1}$, задаваемая по правилу 
 \begin{equation}
 \label{eq:modelfam}
     \mathbf{f}_{v}(\mathbf{w}, \mathbf{x}) = \textbf{agg}_{v}\left(\{ \langle \boldsymbol{\gamma}^{j,k}, \mathbf{g}^{j,k} \rangle \circ  \mathbf{f}_j(\mathbf{x})| j \in \text{Adj}(v_k)\}\right), v \in \{1,\dots,|V|-1\}, \quad \mathbf{f}_0(\mathbf{x}) = \mathbf{x}
 \end{equation}
-является функцией из признакового пространства $\mathbb{X}$ в пространство меток $\mathbb{Y}$ при значениях векторов, $\boldsymbol{\gamma}^{j,k} \in [0,1]^{K^{j,k}}$.
+и являющаяся функцией из признакового пространства $\mathbb{X}$ в пространство меток $\mathbb{Y}$ при значениях векторов, $\boldsymbol{\gamma}^{j,k} \in [0,1]^{K^{j,k}}$.
 \end{enumerate}
 
 \begin{block}{Определение}
-Граф $(V, E)$ со множестом векторов базовых функций $\{\mathbf{g}^{j,k}, (j,k) \in E\}$ и функций агрегаций $\{ \textbf{agg}_v, {v \in V}\}$ назовем \textit{параметрическое семейство моделей} $\mathfrak{F}$.
+Граф $(V, E)$ со множестом векторов базовых функций $\{\mathbf{g}^{j,k}, (j,k) \in E\}$ и функций агрегаций $\{ \textbf{agg}_v, {v \in V}\}$ назовем \textit{параметрическим семейством моделей} $\mathfrak{F}$.
 \end{block}
 \begin{block}{Утверждение}
-Для любого значения $\boldsymbol{\gamma}^{j,k} \in [0,1]^{K^{j,k}}$ функция $\mathbf{f}$ является моделью.
+Для любого значения $\boldsymbol{\gamma}^{j,k} \in [0,1]^{K^{j,k}}$ функция $\mathbf{f} \in \mathfrak{F}$ является моделью.
 \end{block}
 \end{frame}
 
@@ -412,10 +412,10 @@ $
 \end{block}
 Модель $\mathbf{f}$ задается следующими величинами:
 \begin{itemize}
-\item \textbf{Параметры} $\mathbf{W}$ задают суперпозиции $\mathbf{f}_v$, из которых состоит модель $\mathbf{f}$.
-\item \textbf{Структурные параметры} $\boldsymbol{\Gamma}$ задают вклад суперпозиций $\mathbf{f}_v$ в модель $\mathbf{f}$.
-\item \textbf{Гиперпараметры} $\mathbf{h}$ задают распределение параметров и структурных параметров модели.
-\item \textbf{Метапараметры} $\boldsymbol{\beta}$ задают вид оптимизации модели.
+\item \textbf{Параметры} $\mathbf{W} \in \mathbb{W}$ задают суперпозиции $\mathbf{f}_v$, из которых состоит модель $\mathbf{f}$.
+\item \textbf{Структурные параметры} $\boldsymbol{\Gamma} \in \amsmathbb{\Gamma}$ задают вклад суперпозиций $\mathbf{f}_v$ в модель $\mathbf{f}$.
+\item \textbf{Гиперпараметры} $\mathbf{h} \in \mathbb{H}$ задают распределение параметров и структурных параметров модели.
+\item \textbf{Метапараметры} $\boldsymbol{\beta} \in \mathbb{B}$ задают вид оптимизации модели.
 \end{itemize}
 
 \end{frame}
@@ -518,7 +518,7 @@ y={(0cm,1.7cm)},
 Базовая модель %https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/bishop-variational-icann-98.pdf
 \begin{itemize}
 \item \textbf{Параметры} модели:\\ $\mathbf{W} \sim \mathcal{N}(0, \alpha^{-1}),$
-\item \textbf{Гиперпараметры} модели: $\mathbf{h} = \{\alpha\}.$
+\item \textbf{Гиперпараметры} модели: $\mathbf{h} = [\alpha].$
 \end{itemize}
 \begin{figure}
 \includegraphics[width=\textwidth]{simple_plate_concrete.pdf}
@@ -631,7 +631,7 @@ $$
 \textit{Функцией валидации} $Q(\mathbf{h}| \boldsymbol{\theta}, \mathbf{X}, \mathbf{y} )$ назовем дифференцируемую функцию, качество модели при векторе $\boldsymbol{\theta}$, заданном неявно.
 \end{block}
 \begin{block}{}
-\textit{Задачей выбора модели} $\mathbf{f}$ назовем решение двухуровневой задачи оптимизации:
+\textit{Задачей выбора модели} $\mathbf{f}$ назовем двухуровневую задачу оптимизации:
 
 \[
 	\mathbf{h}^{*} = \argmin_{\mathbf{h} \in \mathbb{H}} Q(\mathbf{h}|  \boldsymbol{\theta}^{*}, \mathbf{X}, \mathbf{y} ),
@@ -651,48 +651,46 @@ $$
 
 
 
-
-\begin{frame}{Выбор оптимальной модели}
-
-~\\
-\textbf{Требуется}\\ 
-Предложить метод поиска субоптимального решения задачи оптимизации, обобщающего различные алгоритмы оптимизации:
-\begin{itemize}
-\item Оптимизация правдоподобия.
-\item Последовательное увеличение и снижение сложности модели.
-\item Полный перебор вариантов структуры модели.
-\end{itemize}
-
-\end{frame}    
-
                                                                                                               
 
 
    
 \begin{frame}{Общая задача}
+\tiny
 \begin{block}{Определение}
-Задачу выбора модели $\mathbf{h}^{*}, \boldsymbol{\theta}^{*}$ назовем общей(?), если выполнены следующие условия:
+Задачу выбора модели $\mathbf{h}^{*}, \boldsymbol{\theta}^{*}$ назовем обобщаюшей, если выполнены следующие условия:
 \begin{enumerate}
-\item Условие максимума правдоподобия выборки: $\exists \boldsymbol{\beta} \exists C: \mathsf{E}\text{log}_{q_1} p(\mathbf{y}|\mathbf{X},\boldsymbol{\theta}) - \mathsf{E}\text{log}_{q_2} p(\mathbf{y}|\mathbf{X},\boldsymbol{\theta}) > C => Q_2 > Q_1.$
-\item Условие максимума правдоподобия выборки: $\exists \boldsymbol{\beta}: Q = \text{log}p(\mathbf{y}|\mathbf{X}, c_\text{temp}).$
-\item Условие минимума сложности: $\exists \boldsymbol{\beta}, \exists C: \mathsf{E}\text{log}_{q_1} p(\mathbf{y}|\mathbf{X},\boldsymbol{\theta}) = \mathsf{E}\text{log}_{q_2} p(\mathbf{y}|\mathbf{X},\boldsymbol{\theta}), \frac{C_p(q_1)}{C_p(q_2)}>C => Q_2>Q_1$.
-\item Условие многоэкстремальности: $\exists \boldsymbol{\beta_1},\boldsymbol{\beta_2}: \boldsymbol{\theta}_1  = \max L, \boldsymbol{\theta}_2  = \max L => Q(\boldsymbol{\theta}_1, \beta_1) > Q(\boldsymbol{\theta}_1, \beta_1), Q(\boldsymbol{\theta}_1, \beta_1) < Q(\boldsymbol{\theta}_1, \beta_1)$.
+\item \textit{Условие оптимизации максимума правдоподобия выборки:} существует значение гиперпараметров $\boldsymbol{\beta}$ и константа $K$, такие что для любых векторов гиперпараметров $\mathbf{h}_1, \mathbf{h}_2, Q(\mathbf{h}_1) - Q(\mathbf{h}_2) > K:$ соответствующие матожидания правдоподбия выборок упорядочены как $\mathsf{E}_q \text{log}~p(\mathbf{y}|\boldsymbol{\theta}_1, c_{\text{temp}})>\text{log}\mathsf{E}_q ~p(\mathbf{y}|\boldsymbol{\theta}_2, c_{\text{temp}})$
+
+\item \textit{Условие минимизации сложности модели:} существует значение гиперпараметров $\boldsymbol{\beta}$ и константа $K$, такие что для любых векторов гиперпараметров $\mathbf{h}_1, \mathbf{h}_2, Q(\mathbf{h}_1) - Q(\mathbf{h}_2) > K$ и таких что  соответствующие матожидания правдоподбия выборок равны: $\mathsf{E}_q \text{log}~p(\mathbf{y}|\boldsymbol{\theta}_1, c_{\text{temp}}) = \text{log}\mathsf{E}_q ~p(\mathbf{y}|\boldsymbol{\theta}_2, c_{\text{temp}})$, количество ненулевых параметров у первой модели меньше, чем у второй.
+
+\item \textit{Условие достижения максимума правдоподобия модели:} существует значение гиперпараметров $\boldsymbol{\beta}$, такое что оптимизация задачи эквивалента оптимизации правдоподобия модели:
+\[
+    \mathbf{h}^{*} = \argmax_{h'} p(\mathbf{y}|\mathbf{X}, \mathbf{h}', c_{\text{temp}}),
+\]
+\[
+    q(\boldsymbol{\theta}^{*}) = p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, c_{\text{temp}}).
+\]
+
+\item \textit{Условие многоэкстремальености:}
+ для любых двух векторов $\mathbf{h}_{1}, \mathbf{h}_2$ и соответствующих векторов $\boldsymbol{\theta}_1^{*},\boldsymbol{\theta}_2^{*}$ существуют значения гиперпараметров $\exists \boldsymbol{\beta_1},\boldsymbol{\beta_2}$, такие что  $Q(\mathbf{h}_1, \beta_1) > Q(\mathbf{h}_2, \beta_1), Q(\mathbf{h}_1, \beta_1) < Q(\mathbf{h}_2, \beta_2)$.
+
 \item Условие непрерывности: $\mathbf{h}^{*}, \boldsymbol{\theta}^{*}$ непрерывны по гиперпараметрам.
-\item Возможность оптимизировать гиперпараметры --- TODO.
+
 \end{enumerate}
 \end{block}
 \end{frame}
-\begin{frame}{Необщие задачи выбора}
+\begin{frame}{Анализ задач выбора моделей}
 \begin{block}{Теорема}
-Следующие задачи выбора модели не являются общими:
+Следующие задачи выбора модели не являются обобщающими:
 \begin{enumerate}
-\item метод максимума правдоподобия;
-\item метод максимума апостериорной вероятности;
-\item метод максимума вариационной оценки правдоподобия модели;
-\item кросс-валидация;
-\item AIC;
-\item BIC;
-\item перебор структуры модели.
+\item метод максимума правдоподобия: $\textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, c_\text{temp})} \to \max_{\boldsymbol{\theta}};$
+\item метод максимума апостериорной вероятности $\textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X},  \boldsymbol{\theta})}\textcolor{red}{p( \boldsymbol{\theta}| \mathbf{h}, c_\text{temp})} \to \max_{\boldsymbol{\theta}};$
+\item метод максимума вариационной оценки правдоподобия модели $\max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma})}} - \textcolor{red}{\text{D}_{KL}(q(\mathbf{W}, \boldsymbol{\Gamma})||p(\mathbf{w}, \boldsymbol{\Gamma}, c_\text{temp}))} \to \max_{\mathbf{h}};$
+\item кросс-валидация $\textcolor{blue}{\mathsf{E}_q \text{log}p(\mathbf{y}_\text{valid}|\mathbf{X}_\text{valid}, \boldsymbol{\theta}^{*})} \to \max_{\mathbf{h}}$, $\boldsymbol{\theta}^{*} = \argmax_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log}p(\mathbf{y}_\text{train}|\mathbf{X}_\text{train}, \boldsymbol{\theta})}\textcolor{red}{p(\boldsymbol{\theta}| \mathbf{h})}$.
+\item AIC: $\textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, c_\text{temp})} + \textcolor{red}{|\theta_i: \theta_i \neq 0|} \to \max$;
+\item BIC: $\textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, c_\text{temp})} + \textcolor{red}{\text{log}(m)|\theta_i: \theta_i \neq 0|} \to \max$;
+\item перебор структуры модели:  $\max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, c_\text{temp})}\textcolor{red}{\mathbb{I}(\boldsymbol{\Gamma} = \boldsymbol{\Gamma}') }\to \max{\boldsymbol{\Gamma}'}.$
 \end{enumerate}
 \end{block}
 \end{frame}
@@ -956,21 +954,31 @@ $$\text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{h}) \geq \mathsf{E}_{q(\mathbf{W)}}
 
 
 \begin{frame}{Структурная сложность}
+\footnotesize
 \begin{block}{Определение}
-Структурной сложностью $C_s$ модели назовем энтропию распределения структуры модели $\boldsymbol{\Gamma}$.
+Структурной сложностью $C_s$ модели назовем энтропию структур $\boldsymbol{\Gamma}$, полученных из вариационного распределения $q$:
 \[
-    C_s = -\mathbb{E}_q \text{log} q_{\boldsymbol{\Gamma}}.
+    C_s = -\mathsf{E}_q \mathsf{E}_\Gamma \text{log} p_{\boldsymbol{\Gamma}}.
 \]
 \end{block}
 
 \begin{block}{Теорема}
-Пусть для каждого ребра $(i,j)$ семейства моделей $\mathfrak{F}$ априорное распределение $$p(\boldsymbol{\gamma}_{i,j}) =  \lim_{c_{\text{temp}} \to 0} \mathcal{GS}(c_{\text{temp}}).$$
-Пусть $c_{\text{reg}} >0, c_{\text{train}} >0, c_{\text{prior}}, c_{\text{comb}}=0$, $\mathbf{f}$ --- глобавльный оптимум задачи оптимизации.
-Тогда структурная сложность модели $\mathbf{f}$ равняется нулю.
-\[
+Пусть задано априорное распределение на структуре: $$p(\boldsymbol{\gamma}_{i,j}) =  \lim_{c_{\text{temp}} \to 0} \mathcal{GS}(c_{\text{temp}}).$$
+Пусть $c_{\text{reg}} >0, c_{\text{train}} >0, c_{\text{prior}}>0, c_{\text{comb}}=0$, $\mathbf{f}$ --- глобальный оптимум задачи оптимизации.
+Тогда 
+$
     C_s(\mathbf{f}) = 0.
+$
+\end{block}
+
+\begin{block}{}
+Пусть $$p(\boldsymbol{\gamma}_{i,j}) =  \lim_{c_{\text{temp}} \to \infty} \mathcal{GS}(c_{\text{temp}}).$$
+Тогда структурная сложность глобального оптимума $\mathbf{f}$ равняется максимуму:
+\[
+    C_s(\mathbf{f}) = \mathsf{E}\text{log}\mathcal{U}.
 \]
 \end{block}
+
 % NB: https://stats.stackexchange.com/questions/69125/is-it-possible-to-apply-kl-divergence-between-discrete-and-continuous-distributi, 2nd answer
 % 1.Если аккуратно расписать, по stackoverflow, то получается то что и нужно
 %  Для любого q, отличающегося от дискретного мы получим D_KL = inf. Итого, q - дискретно.
@@ -979,28 +987,24 @@ $$\text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{h}) \geq \mathsf{E}_{q(\mathbf{W)}}
 % 4. Поскольку вся фигня сконцентрирована на одно вершине, E_q = 0.
 
 \end{frame}
-\begin{frame}{Оптимизация структурной сложности: TODO}
-\small
-Здесь еще одна теорема об отношении того, что на вершинах и вне веришн
+\begin{frame}{Оптимизация структурной сложности}
+\begin{block}{Теорема}
 
-\begin{block}{Теорема [Бахтеев, 2018].}
-Пусть $\mathbf{f}_1 \in F(c_{\text{reg}}, c_{\text{train}},  c_{\text{prior}}, 0, \varnothing,  c^1_{\text{temp}}), \mathbf{f}_2   \in \lim_{c^2_{\text{temp}} \to \infty} F(c_{\text{reg}}, c_{\text{train}},  c_{\text{prior}}, 0, \varnothing,  c^2_{\text{temp}})$.
-Пусть вариационные параметры моделей $f_1$ и $f_2$ лежат в области $U$, в которой соответствующие функции $L$ и $Q$ являются локально-выпуклыми. 
-Тогда разница структурных сложностей моделей ограничена выражением:
-\[
-    C_\text{struct}(\mathbf{f}_1)  - C_\text{struct}(\mathbf{f}_2) \leq \textcolor{blue}{\mathsf{E}_q^1 \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma}. \mathbf{A}^{-1}, c^1_{\text{temp}})}} - \textcolor{blue}{\mathsf{E}_q^2 \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma}, \mathbf{A}^{-1})}}.
+Пусть $c_{\text{train}} >0$, $\boldsymbol{\theta}_1, \boldsymbol{\theta}_2$ --- вариационные параметры, такие что $\boldsymbol{\theta}_1$ лежит внутри произведения симплексов структуры, $\boldsymbol{\theta}_2$ --- на вершинах симплексов.
+Тогда \[
+\lim_{c_\text{temp} \to 0} \frac{L(\boldsymbol{\theta}_2)}{L(\boldsymbol{\theta}_1)} \to 0.
 \]
 \end{block}
+\begin{block}{Теорема}
 
-% Схема доказательства:
-% расписываем неравенства вида: L_1 - DKL(q_1|p1) <L_2 - DKL(q_2|p1)
-% Замечаем, что при стремлении к бесконечности гумбель превращается в равномерное
-% выражаем все в равномерном
-% замечаем, что D_KL = Entropy + const для равномерного
-% все
+Пусть $c_{\text{train}} >0$, $\boldsymbol{\theta}_1, \boldsymbol{\theta}_2$ --- вариационные параметры, такие что $\boldsymbol{\theta}_1$ лежит внутри произведения симплексов структуры, $\boldsymbol{\theta}_2$ --- в центре симплексов.
+Тогда \[
+\lim_{c_\text{temp} \to \infty} \frac{L(\boldsymbol{\theta}_2)}{L(\boldsymbol{\theta}_1)} \to 0.
+\]
+\end{block}
 \end{frame}
 
-
+\iffalse
 \begin{frame}{Полный перебор: TODO}
 \small
 Пусть для каждого ребра $(i,j)$ семейства моделей $\mathfrak{F}$ априорное распределение $$p(\boldsymbol{\gamma}_{i,j}) =  lim_{c_{\text{temp}} \to 0} \mathcal{GS}(c_{\text{temp}}).$$
@@ -1018,7 +1022,7 @@ $$f_3 \in F(c_{\text{reg}}, 0, 0, \{q_1(\boldsymbol{\Gamma}), q_2(\boldsymbol{\G
 Последовательность соответствует полному перебору структуры $\boldsymbol{\Gamma}$.
 \end{block}
 \end{frame}
-
+\fi
 
 \begin{frame}{Результаты, выносимые на защиту}
 \begin{enumerate}
