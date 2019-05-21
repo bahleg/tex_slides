@@ -112,7 +112,7 @@
 \begin{frame}{Модель глубокого обучения}
 \small
 \begin{block}{Определение}
-\textit{Моделью} $\mathbf{f}(\mathbf{w}, \mathbf{x})$ назовем непрерывно-дифференцируемую по параметрам $\mathbf{w}$ функцию из множества признаковых описаний объекта во множество меток:
+\textit{Моделью} $\mathbf{f}(\mathbf{w}, \mathbf{x})$ назовем дифференцируемую по параметрам $\mathbf{w}$ функцию из множества признаковых описаний объекта во множество меток:
 \[
     \mathbf{f}: \mathbb{X} \times \mathbb{W} \to \mathbb{Y},
 \] 
@@ -121,8 +121,8 @@
 ~\\
 \textbf{Особенность задачи}  выбора модели \textit{глубокого обучения} --- значительное число параметров моделей приводит к неприменимости ряда методов оптимизации и выбора структуры модели  (AIC, BIC, кросс-валидация). \\
 
-Модель определяется параметрами $\mathbf{w}$ и структурой $\boldsymbol{\Gamma}$.\\
-\textbf{Структура} задает набор суперпозиций, входящих в модель и выбирается в согласно статистическим критериям сложности модели.\\
+Модель определяется параметрами $\mathbf{W}$ и структурой $\boldsymbol{\Gamma}$.\\
+\textbf{Структура} задает набор суперпозиций, входящих в модель и выбирается согласно статистическим критериям сложности модели.\\
 
 \textbf{Эмпирические оценки статистической сложности модели:}
 \begin{enumerate}
@@ -137,7 +137,7 @@
 Модель $\mathbf{f}$ задана \textbf{структурой}  $\boldsymbol{\Gamma} = [\boldsymbol{\gamma}^{0,1}, {\boldsymbol{\gamma}^{1,2}}].$
 
 \[
-    \text{Модель: }\mathbf{f}(\mathbf{x}) = \textbf{softmax}\left(\mathbf{W}^{1,2}_0{\mathbf{f}_1}(\mathbf{x})\right), \quad \mathbf{f}(\mathbf{x}): \mathbb{R}^n \to [0,1]^{|\mathbb{Y}|}, \quad \mathbf{x} \in \mathbb{R}^n.
+    \text{Модель: }\mathbf{f}(\mathbf{x}) = \textbf{softmax}\left({\mathbf{f}_1}(\mathbf{x})\mathbf{W}^{1,2}_0\right), \quad \mathbf{f}(\mathbf{x}): \mathbb{R}^n \to [0,1]^{|\mathbb{Y}|}, \quad \mathbf{x} \in \mathbb{R}^n.
 \]
 \[
 \mathbf{f}_1(\mathbf{x}) = {\gamma}^{0,1}_{0}\mathbf{g}^{0,1}_{0}(\mathbf{x}) + {\gamma}^{0,1}_{1}\mathbf{g}^{0,1}_{1}(\mathbf{x}),
@@ -153,9 +153,9 @@
   \node (f1)  at (7,6)                 {$\mathbf{f}_1(\mathbf{x})$};% = \gamma^{1,1}\mathbf{g}^{1,1}(\mathbf{x}) +  \gamma^{1,2}\mathbf{g}^{1,2}(\mathbf{x})$};
   %\node (g21) at (12,6)                   {$\mathbf{g}^{2,1}(\mathbf{x})$};% = \boldsymbol{\sigma}(\mathbf{w}^{2,1}\mathbf{x})$};
   \node (f2)  at (12,6)                   {$\mathbf{f}_2(\mathbf{x})$};% = \gamma^{2,1}\mathbf{g}^{2,1}(\mathbf{x})$};
-  \path[->]  (f0) edge [bend left=50] node {$\gamma^{0,1}_0\mathbf{g}^{0,1}_0(\mathbf{x}) = \gamma^{0,1}_0\boldsymbol{\sigma}(\mathbf{W}^{0,1}_0\mathbf{x})$}(f1);
-  \path[->] (f0)  edge[bend right=50] node[below] {$\gamma^{0,1}_1\mathbf{g}^{0,1}_1(\mathbf{x}) = \gamma^{0,1}_1\boldsymbol{\sigma}(\mathbf{W}^{0,1}_1\mathbf{x})$}(f1);
-  \path[->] (f1)  edge node {$\gamma^{1,2}_0\mathbf{g}^{1,2}_0(\mathbf{x}) = \gamma^{1,2}_0\textbf{softmax}(\mathbf{W}^{1,2}_0\mathbf{x})$}(f2);       
+  \path[->]  (f0) edge [bend left=50] node {$\gamma^{0,1}_0\mathbf{g}^{0,1}_0(\mathbf{x}) = \gamma^{0,1}_0\boldsymbol{\sigma}(\mathbf{x}\mathbf{W}^{0,1}_0)$}(f1);
+  \path[->] (f0)  edge[bend right=50] node[below] {$\gamma^{0,1}_1\mathbf{g}^{0,1}_1(\mathbf{x}) = \gamma^{0,1}_1\boldsymbol{\sigma}(\mathbf{x}\mathbf{W}^{0,1}_1)$}(f1);
+  \path[->] (f1)  edge node {$\gamma^{1,2}_0\mathbf{g}^{1,2}_0(\mathbf{x}) = \gamma^{1,2}_0\textbf{softmax}(\mathbf{x}\mathbf{W}^{1,2}_0)$}(f2);       
   \draw[->] (f1) to (f2);
  
 \end{tikzpicture}
@@ -168,8 +168,8 @@
 Заданы:
 \begin{enumerate}
  \item ациклический граф $(V,E)$;
-\item для каждого ребра $(j,k) \in E$: вектор базовых липшецевых функций  $\mathbf{g}^{j,k} = [\mathbf{g}^{j,k}_0, \dots, \mathbf{g}^{j,k}_{K^{j,k}}]$  мощности $K^{j,k}$;
-\item для каждой вершины $v \in V$: липшецевая функция агрегации $\textbf{agg}_v$.
+\item для каждого ребра $(j,k) \in E$: вектор базовых дифференцируемых функций  $\mathbf{g}^{j,k} = [\mathbf{g}^{j,k}_0, \dots, \mathbf{g}^{j,k}_{K^{j,k}}]$  мощности $K^{j,k}$;
+\item для каждой вершины $v \in V$: дифференцируемая функция агрегации $\textbf{agg}_v$.
 \item Функция $\mathbf{f} = \mathbf{f}_{|V|-1}$, задаваемая по правилу 
 \begin{equation}
 \label{eq:modelfam}
@@ -672,8 +672,8 @@ $$
     q(\boldsymbol{\theta}^{*}) = p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, c_{\text{temp}}).
 \]
 
-\item \textit{Условие многоэкстремальености:}
- для любых двух векторов $\mathbf{h}_{1}, \mathbf{h}_2$ и соответствующих векторов $\boldsymbol{\theta}_1^{*},\boldsymbol{\theta}_2^{*}$ существуют значения гиперпараметров $\exists \boldsymbol{\beta_1},\boldsymbol{\beta_2}$, такие что  $Q(\mathbf{h}_1, \beta_1) > Q(\mathbf{h}_2, \beta_1), Q(\mathbf{h}_1, \beta_1) < Q(\mathbf{h}_2, \beta_2)$.
+\item \textit{Условие многоэкстремальности:}
+Существует константа $K$, такая что для любых двух векторов $\mathbf{h}_{1}, \mathbf{h}_2$ и соответствующих векторов $\boldsymbol{\theta}_1^{*},\boldsymbol{\theta}_2^{*}: D_\text{KL}(\boldsymbol{\theta}_1^{*}, \boldsymbol{\theta}_2^{*})>K, D_\text{KL}(\boldsymbol{\theta}_2^{*}, \boldsymbol{\theta}_1^{*})>K$:  существуют значения гиперпараметров $\exists \boldsymbol{\beta_1},\boldsymbol{\beta_2}$, такие что  $Q(\mathbf{h}_1, \beta_1) > Q(\mathbf{h}_2, \beta_1), Q(\mathbf{h}_1, \beta_1) < Q(\mathbf{h}_2, \beta_2)$.
 
 \item Условие непрерывности: $\mathbf{h}^{*}, \boldsymbol{\theta}^{*}$ непрерывны по гиперпараметрам.
 
@@ -733,7 +733,7 @@ $c_\text{train}, c_\text{prior}, c_{\text{temp}}, c_{\text{comb}}, \mathbf{P}$ -
 \begin{enumerate}
 \item Задача оптимизации~\eqref{eq:qopt} доставляет максимум апостериорной вероятности гиперпараметров с использованием вариационной оценки правдоподобия:
 \[
-    \text{log}\hat{p}(\mathbf{y}|\mathbf{X}, \mathbf{h}, c_\text{temp})p(\mathbf{h}|c_1,c_2) \to \max_{\mathbf{h}}.
+    \text{log}\hat{p}(\mathbf{y}|\mathbf{X}, \mathbf{h}, c_\text{temp}) + \text{log}p(\mathbf{h}|c_1,c_2) \to \max_{\mathbf{h}}.
 \]
 \item Вариационное распределение $q$ приближает апостериорное распределение $p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, c_\text{temp})$ наилучим образом среди множества распределений $\mathfrak{Q}$:
 \[
