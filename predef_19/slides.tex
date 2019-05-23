@@ -413,7 +413,7 @@ $
 Модель $\mathbf{f}$ задается следующими величинами:
 \begin{itemize}
 \item \textbf{Параметры} $\mathbf{W} \in \mathbb{W}$ задают суперпозиции $\mathbf{f}_v$, из которых состоит модель $\mathbf{f}$.
-\item \textbf{Структурные параметры} $\boldsymbol{\Gamma} \in \amsmathbb{\Gamma}$ задают вклад суперпозиций $\mathbf{f}_v$ в модель $\mathbf{f}$.
+\item \textbf{Структурные параметры} $\boldsymbol{\Gamma}=\{\gamma^{j,k}\}_{(j,k)\in E} \in \amsmathbb{\Gamma}$ задают вклад суперпозиций $\mathbf{f}_v$ в модель $\mathbf{f}$.
 \item \textbf{Гиперпараметры} $\mathbf{h} \in \mathbb{H}$ задают распределение параметров и структурных параметров модели.
 \item \textbf{Метапараметры} $\boldsymbol{\beta} \in \mathbb{B}$ задают вид оптимизации модели.
 \end{itemize}
@@ -515,7 +515,7 @@ y={(0cm,1.7cm)},
 
 \begin{columns}
 \begin{column}{0.4\textwidth}
-Базовая модель %https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/bishop-variational-icann-98.pdf
+\textbf{Базовая модель} %https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/bishop-variational-icann-98.pdf
 \begin{itemize}
 \item \textbf{Параметры} модели:\\ $\mathbf{W} \sim \mathcal{N}(0, \alpha^{-1}),$
 \item \textbf{Гиперпараметры} модели: $\mathbf{h} = [\alpha].$
@@ -553,14 +553,16 @@ $\mathbf{A}_r^{j,k}$ --- диагональная матрица парамет�
 \]
 где $\delta\mathfrak{D}$ --- допустимая точность передачи информации о выборке $\mathfrak{D}$.\\~\\
 
-Выбор значений гиперпараметров производится в согласно \textbf{правдоподобию модели} $Q$:                                      
-\[                                                                                                                                              
-        Q(\mathbf{h}|  \boldsymbol{\theta}^{*}, \mathbf{X}, \mathbf{y} ) = \text{log}p(\mathbf{h}|\mathbf{X}, \mathbf{y})= \textcolor{OliveGreen}{\text{log}p(\mathbf{h})} +  \text{log}\iint\limits_{\mathbf{W}, \boldsymbol{\Gamma}} \textcolor{red}{p(\mathbf{y}|\mathbf{X},\mathbf{W},  \boldsymbol{\Gamma})} \textcolor{blue}{p(\mathbf{W}, \boldsymbol{\Gamma}| \mathbf{h})} d\mathbf{W}d{\boldsymbol{\Gamma}},                         
-\]       
 Выбор значений параметров $\mathbf{W}$ производится  согласно \textbf{апостериорному распределению параметров} $L$:                                      
 \[
-     L(\boldsymbol{\theta}|  \mathbf{h},  \mathbf{X}, \mathbf{y}) =   \text{log} p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{X}, \mathbf{y}, \mathbf{h}) \propto  \textcolor{red}{\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{W},\boldsymbol{\Gamma}, \mathbf{h})} +  \textcolor{blue}{\text{log} p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{h})}.
+     L = \text{log} p(\mathbf{W}|\mathbf{X}, \mathbf{y}, \mathbf{h}) \propto  \textcolor{red}{\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{W}, \mathbf{h})} +  \textcolor{blue}{\text{log} p(\mathbf{W} |\mathbf{h})}.
 \]
+
+Выбор значений гиперпараметров производится в согласно \textbf{правдоподобию модели} $Q$:                                      
+\[                                                                                                                                              
+        Q = \text{log}p(\mathbf{h}|\mathbf{X}, \mathbf{y})= \textcolor{OliveGreen}{\text{log}p(\mathbf{h})} +  \text{log}\int\limits_{\mathbf{W}} \textcolor{red}{p(\mathbf{y}|\mathbf{X},\mathbf{W})} \textcolor{blue}{p(\mathbf{W}| \mathbf{h})} d\mathbf{W},                         
+\]       
+
 
 \begin{figure}
 \vspace{-0.5cm}
@@ -576,6 +578,7 @@ $\mathbf{A}_r^{j,k}$ --- диагональная матрица парамет�
 \footnotesize
 
 Интеграл правдоподобия невычислим аналитически.\\
+TODO: непонятно что делать с prior на гиперпараметры
 \textbf{Правдоподобие модели:}
 \[
 p(\mathbf{y}|\mathbf{X}, c_\text{temp}) =
@@ -655,50 +658,67 @@ $$
 
 
    
-\begin{frame}{Общая задача}
-\tiny
-\begin{block}{Определение}
-Задачу выбора модели $\mathbf{h}^{*}, \boldsymbol{\theta}^{*}$ назовем обобщаюшей, если выполнены следующие условия:
+\begin{frame}{Обобщающая задача}
+\footnotesize
+%\begin{block}{Определение}
+Задачу выбора модели $\mathbf{h}^{*}, \boldsymbol{\theta}^{*}$ назовем обобщаюшей на множестве $U_{\theta}\times U_{h} \times U_{\beta} \subset \mathbb{R}^{u} \times \mathbb{H} \times \mathbb{B}$, если выполнены условия:
 \begin{enumerate}
-\item \textit{Условие оптимизации максимума правдоподобия выборки:} существует значение гиперпараметров $\boldsymbol{\beta}$ и константа $K$, такие что для любых векторов гиперпараметров $\mathbf{h}_1, \mathbf{h}_2, Q(\mathbf{h}_1) - Q(\mathbf{h}_2) > K:$ соответствующие матожидания правдоподбия выборок упорядочены как $\mathsf{E}_q \text{log}~p(\mathbf{y}|\boldsymbol{\theta}_1, c_{\text{temp}})>\text{log}\mathsf{E}_q ~p(\mathbf{y}|\boldsymbol{\theta}_2, c_{\text{temp}})$
+\item Для каждого $\mathbf{h} \in U_h$ и каждого $\boldsymbol{\beta} \in U_{\beta}$ решение $\boldsymbol{\theta}^{*}$ определено однозначно.
+\item \textit{Условие максимизации правдоподобия выборки:} существует $\boldsymbol{\beta} \in U_{\beta}$ и  $K_1 \in \mathbb{R}_{+}$, такие что для любых векторов гиперпараметров $\mathbf{h}_1, \mathbf{h}_2 \in  U_{h}, Q(\mathbf{h}_1) - Q(\mathbf{h}_2) > K:$ соответствующие матожидания правдоподбия выборок упорядочены как $\mathsf{E}_q \text{log}~p(\mathbf{y}|\boldsymbol{\theta}_1, c_{\text{temp}})>\text{log}\mathsf{E}_q ~p(\mathbf{y}|\boldsymbol{\theta}_2, c_{\text{temp}})$.
 
-\item \textit{Условие минимизации сложности модели:} существует значение гиперпараметров $\boldsymbol{\beta}$ и константа $K$, такие что для любых векторов гиперпараметров $\mathbf{h}_1, \mathbf{h}_2, Q(\mathbf{h}_1) - Q(\mathbf{h}_2) > K$ и таких что  соответствующие матожидания правдоподбия выборок равны: $\mathsf{E}_q \text{log}~p(\mathbf{y}|\boldsymbol{\theta}_1, c_{\text{temp}}) = \text{log}\mathsf{E}_q ~p(\mathbf{y}|\boldsymbol{\theta}_2, c_{\text{temp}})$, количество ненулевых параметров у первой модели меньше, чем у второй.
+% здесь мы имеем ввиду что для любого lambda, такого что мы считаем параметр неинформативными
+\item \textit{Условие минимизации сложности модели:} существует  $\boldsymbol{\beta} \in U_{\beta}$ и $K_2 \in \mathbb{R}_{+}$, такие что для любых векторов гиперпараметров $\mathbf{h}_1, \mathbf{h}_2 \in U_h, Q(\mathbf{h}_1) - Q(\mathbf{h}_2) > K$,  $\mathsf{E}_q \text{log}~p(\mathbf{y}|\boldsymbol{\theta}_1, c_{\text{temp}}) = \text{log}\mathsf{E}_q ~p(\mathbf{y}|\boldsymbol{\theta}_2, c_{\text{temp}})$, количество ненулевых параметров у первой модели меньше, чем у второй.
 
-\item \textit{Условие достижения максимума правдоподобия модели:} существует значение гиперпараметров $\boldsymbol{\beta}$, такое что оптимизация задачи эквивалента оптимизации правдоподобия модели:
+\item \textit{Условие достижения максимума правдоподобия модели:} существует значение гиперпараметров $\boldsymbol{\beta}$, такое что оптимизация задачи эквивалента оптимизации вариационной оценки правдоподобия модели:
+\vspace{-0.2cm}
 \[
-    \mathbf{h}^{*} = \argmax_{h'} p(\mathbf{y}|\mathbf{X}, \mathbf{h}', c_{\text{temp}}),
+    \mathbf{h}^{*} = \argmax_{} p(\mathbf{y}|\mathbf{X}, \mathbf{h}', c_{\text{temp}}),\quad
+    \boldsymbol{\theta}^{*} = \argmin D_\text{KL}(q| p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, c_{\text{temp}})).
 \]
-\[
-    q(\boldsymbol{\theta}^{*}) = p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, c_{\text{temp}}).
-\]
-
+\vspace{-0.6cm}
 \item \textit{Условие многоэкстремальности:}
-Существует константа $K$, такая что для любых двух векторов $\mathbf{h}_{1}, \mathbf{h}_2$ и соответствующих векторов $\boldsymbol{\theta}_1^{*},\boldsymbol{\theta}_2^{*}: D_\text{KL}(\boldsymbol{\theta}_1^{*}, \boldsymbol{\theta}_2^{*})>K, D_\text{KL}(\boldsymbol{\theta}_2^{*}, \boldsymbol{\theta}_1^{*})>K$:  существуют значения гиперпараметров $\exists \boldsymbol{\beta_1},\boldsymbol{\beta_2}$, такие что  $Q(\mathbf{h}_1, \beta_1) > Q(\mathbf{h}_2, \beta_1), Q(\mathbf{h}_1, \beta_1) < Q(\mathbf{h}_2, \beta_2)$.
+Существует константа $K_3$, такая что для любых двух векторов $\mathbf{h}_{1}, \mathbf{h}_2$ и соответствующих векторов $\boldsymbol{\theta}_1^{*},\boldsymbol{\theta}_2^{*}: D_\text{KL}(q_{\boldsymbol{\Gamma}_2}, q_{\boldsymbol{\Gamma}_1})>K_3, D_\text{KL}(q_{\boldsymbol{\Gamma}_1}, q_{\boldsymbol{\Gamma}_2})>K_3$:  существуют значения гиперпараметров $\exists \boldsymbol{\beta_1},\boldsymbol{\beta_2}$, такие что  $Q(\mathbf{h}_1, \beta_1) > Q(\mathbf{h}_2, \beta_1), Q(\mathbf{h}_1, \beta_1) < Q(\mathbf{h}_2, \beta_2)$.
 
-\item Условие непрерывности: $\mathbf{h}^{*}, \boldsymbol{\theta}^{*}$ непрерывны по гиперпараметрам.
+\item Условие непрерывности: $\mathbf{h}^{*}, \boldsymbol{\theta}^{*}$ непрерывны по метапараметрам.
 
 \end{enumerate}
-\end{block}
+%\end{block}
 \end{frame}
 \begin{frame}{Анализ задач выбора моделей}
 \begin{block}{Теорема}
 Следующие задачи выбора модели не являются обобщающими:
 \begin{enumerate}
-\item метод максимума правдоподобия: $\textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, c_\text{temp})} \to \max_{\boldsymbol{\theta}};$
-\item метод максимума апостериорной вероятности $\textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X},  \boldsymbol{\theta})}\textcolor{red}{p( \boldsymbol{\theta}| \mathbf{h}, c_\text{temp})} \to \max_{\boldsymbol{\theta}};$
-\item метод максимума вариационной оценки правдоподобия модели $\max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma})}} - \textcolor{red}{\text{D}_{KL}(q(\mathbf{W}, \boldsymbol{\Gamma})||p(\mathbf{w}, \boldsymbol{\Gamma}, c_\text{temp}))} \to \max_{\mathbf{h}};$
-\item кросс-валидация $\textcolor{blue}{\mathsf{E}_q \text{log}p(\mathbf{y}_\text{valid}|\mathbf{X}_\text{valid}, \boldsymbol{\theta}^{*})} \to \max_{\mathbf{h}}$, $\boldsymbol{\theta}^{*} = \argmax_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log}p(\mathbf{y}_\text{train}|\mathbf{X}_\text{train}, \boldsymbol{\theta})}\textcolor{red}{p(\boldsymbol{\theta}| \mathbf{h})}$.
-\item AIC: $\textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, c_\text{temp})} + \textcolor{red}{|\theta_i: \theta_i \neq 0|} \to \max$;
-\item BIC: $\textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, c_\text{temp})} + \textcolor{red}{\text{log}(m)|\theta_i: \theta_i \neq 0|} \to \max$;
-\item перебор структуры модели:  $\max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, c_\text{temp})}\textcolor{red}{\mathbb{I}(\boldsymbol{\Gamma} = \boldsymbol{\Gamma}') }\to \max{\boldsymbol{\Gamma}'}.$
+% задача не является строго двууровневой, нельзя проомтимизировать ELBO
+\item метод максимума правдоподобия: $\max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, c_\text{temp})};$
+
+% нет возможности оптимизации структуры
+\item метод максимума апостериорной вероятности $\max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X},  \boldsymbol{\theta})}\textcolor{red}{p( \boldsymbol{\theta}| \mathbf{h}, c_\text{temp})}\textcolor{OliveGreen}{p(\mathbf{h}|\boldsymbol{\beta})};$
+
+% нет возможности оптимизации правдоподобия модели - структа не подчиняется beta
+\item метод максимума вариационной оценки правдоподобия модели $\max_{\mathbf{h}} \max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma})}} - \textcolor{red}{\text{D}_{KL}(q(\mathbf{W}, \boldsymbol{\Gamma})||p(\mathbf{w}, \boldsymbol{\Gamma}, c_\text{temp}))}\textcolor{OliveGreen}{p(\mathbf{h}|\boldsymbol{\beta})};$
+
+\item кросс-валидация $\max_{\mathbf{h}} \textcolor{blue}{\mathsf{E}_q \text{log}p(\mathbf{y}_\text{valid}|\mathbf{X}_\text{valid}, \boldsymbol{\theta}^{*}, c_\text{temp})}\textcolor{OliveGreen}{p(\mathbf{h}|\boldsymbol{\beta})}$, $\boldsymbol{\theta}^{*} = \argmax_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log}p(\mathbf{y}_\text{train}|\mathbf{X}_\text{train}, \boldsymbol{\theta}, c_\text{temp})}\textcolor{red}{p(\boldsymbol{\theta}| \mathbf{h})}$.
+
+% задача не является строго двууровневой, нельзя проомтимизировать ELBO
+\item AIC: $\max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, c_\text{temp})} + \textcolor{red}{|\theta_i: \theta_i \neq 0|}$;
+
+% задача не является строго двууровневой, нельзя проомтимизировать ELBO
+\item BIC: $\max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, c_\text{temp})} + \textcolor{red}{\text{log}(m)|\theta_i: \theta_i \neq 0|}$;
+
+% задача не является двухуровневой. Даже если добавить как ELBO, потребуется еще и C_prior, чтобы можно было оптимизировать МП.
+\item перебор структуры модели:  $\max{\boldsymbol{\Gamma}'} \max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, c_\text{temp})}\textcolor{red}{\mathbb{I}(\boldsymbol{\Gamma} = \boldsymbol{\Gamma}') }.$
 \end{enumerate}
 \end{block}
 \end{frame}
 
-\begin{frame}{Общая задача оптимизации}
-\small
+\begin{frame}{Предлагаемая задача оптимизации}
+
+\footnotesize
+\begin{columns}
+\begin{column}{0.8\textwidth}
 \begin{block}{Теорема}
-Следующая задача является общей.
+Пусть функции потерь и валидации $L,Q$ являются непрерывно-дифференцируемыми на некоторой области $U$.
+Тогда следующая задача является обобщающей на $U$.
 \begin{equation}
 \tag{$Q^{*}$}
 \label{eq:qopt}
@@ -709,7 +729,7 @@ $$
  -\]
 \[- \textcolor{red}{c_\text{prior}\text{D}_{KL}(p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, c_{\text{temp}}) || q^{*}(\mathbf{W}, \boldsymbol{\Gamma}))}  -\]
 \[
- - \textcolor{OliveGreen}{c_{\text{comb}}\sum_{p' \in \mathbf{P}} \text{D}_{KL}(\boldsymbol{\Gamma} | p') + \text{log}p(\mathbf{h}|c_1,c_2)}, 
+ - \textcolor{OliveGreen}{\sum_{p',c \in \mathbf{P}, \mathbf{c}_{\text{comb}} c\text{D}_{KL}(\boldsymbol{\Gamma} | p') + \text{log}p(\mathbf{h}|c_1,c_2)}}, 
 \]
 где 
 \begin{equation}
@@ -720,24 +740,48 @@ $$
 \[- \textcolor{red}{c_\text{reg}\text{D}_{KL}(p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{A}^{-1}, \mathbf{m}, c_{\text{temp}}) || q(\mathbf{W}), q(\boldsymbol{\Gamma}))}.
 \]
 \end{block}
-$c_\text{train}, c_\text{prior}, c_{\text{temp}}, c_{\text{comb}}, \mathbf{P}$ --- метапараметры оптимизации.\\
+$c_\text{train}, c_\text{prior}, c_{\text{temp}}, \mathbf{c}_{\text{comb}}, \mathbf{P}$ --- метапараметры оптимизации.\\
 Оптимизационная задача обобщает алгоритмы оптимизации: оптимизация правдоподобия, последовательное увеличение и снижение сложности модели, полный перебор вариантов структуры модели.
+\end{column}
+\begin{column}{0.2\textwidth}
+\begin{figure}
+\centering
+\includegraphics[width=0.75\textwidth]{combinations_1.png}
+\end{figure}
+\vspace{-0.2cm}
+$\mathbf{c}_{\text{comb},1}=[0;0;0].$
+\begin{figure}
+\centering
+\includegraphics[width=0.75\textwidth]{combinations_2.png}
+\end{figure}
+\vspace{-0.2cm}
+$\mathbf{c}_{\text{comb},1}=[1;0;0].$
+\begin{figure}
+\centering
+\includegraphics[width=0.75\textwidth]{combinations_3.png}
+\end{figure}
+\vspace{-0.2cm}
+$\mathbf{c}_{\text{comb},1}=[1;1;0].$
+\end{column}
+\end{columns}
 \end{frame}
 
 
 \begin{frame}{Адекватность задачи оптимизации}
-\tiny   
+\footnotesize
 \begin{block}{Теорема}
-Пусть задано параметрическое множество вариационных распределений: $q \in \mathfrak{Q}$. 
+Пусть задано параметрическое множество вариационных распределений: $q(\boldsymbol{\theta})$. 
 Пусть $c_\text{train} = c_\text{prior}=c_\text{reg}>1, c_{\text{comb}}=0$. Тогда:
 \begin{enumerate}
 \item Задача оптимизации~\eqref{eq:qopt} доставляет максимум апостериорной вероятности гиперпараметров с использованием вариационной оценки правдоподобия:
+\vspace{-0.3cm}
 \[
     \text{log}\hat{p}(\mathbf{y}|\mathbf{X}, \mathbf{h}, c_\text{temp}) + \text{log}p(\mathbf{h}|c_1,c_2) \to \max_{\mathbf{h}}.
 \]
-\item Вариационное распределение $q$ приближает апостериорное распределение $p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, c_\text{temp})$ наилучим образом среди множества распределений $\mathfrak{Q}$:
+\item Вариационное распределение $q$ приближает апостериорное распределение $p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, c_\text{temp})$ наилучшим образом:
+\vspace{-0.3cm}
 \[
-    {D}_\text{KL}(q||p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, c_\text{temp})) \to \min_{q \in \mathfrak{Q}}.
+    {D}_\text{KL}(q||p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, c_\text{temp})) \to \min_{\boldsymbol{\theta}}.
 \]
 \end{enumerate}
 \end{block}
@@ -749,7 +793,7 @@ $c_\text{train}, c_\text{prior}, c_{\text{temp}}, c_{\text{comb}}, \mathbf{P}$ -
 \[
     q = q_{\mathbf{W}}q_{\boldsymbol{\Gamma}}, q_{\boldsymbol{\Gamma}} \approx p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}), q_{\mathbf{W}} \approx p(\mathbf{W}|\boldsymbol{\Gamma},\mathbf{y}, \mathbf{X}, \mathbf{h}).
 \]
-Тогда вариационные распределения $q_{\mathbf{W}}, q_{\boldsymbol{\Gamma}}$приближают апостериорные распределения $ p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, c_\text{temp}), p(\mathbf{W}|\boldsymbol{\Gamma},\mathbf{y}, \mathbf{X}, \mathbf{h}, c_\text{temp})$ наилушчим образом:
+Тогда вариационные распределения $q_{\mathbf{W}}, q_{\boldsymbol{\Gamma}}$приближают апостериорные распределения $ p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, c_\text{temp}), p(\mathbf{W}|\boldsymbol{\Gamma},\mathbf{y}, \mathbf{X}, \mathbf{h}, c_\text{temp})$ наилучшим образом:
 \[
     {D}_\text{KL}(q_{\boldsymbol{\Gamma}}||p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, c_\text{temp})) \to \min, \quad
     {D}_\text{KL}(q_{\mathbf{W}}||p(\mathbf{W}|\mathbf{y}, \mathbf{X}, \mathbf{h})) \to \min.
@@ -768,15 +812,15 @@ $c_\text{train}, c_\text{prior}, c_{\text{temp}}, c_{\text{comb}}, \mathbf{P}$ -
 \begin{frame}{Оператор оптимизации}
 \footnotesize
 \begin{block}{Определение}
-Назовем \textit{оператором оптимизации} алгоритм $T$ выбора вектора параметров $\boldsymbol{\theta}'$  по параметрам предыдущего шага $\boldsymbol{\theta}$.
+Назовем \textit{оператором оптимизации}  $T$ выбор вектора параметров $\boldsymbol{\theta}'$  по параметрам предыдущего шага $\boldsymbol{\theta}$.
 \end{block}
 Оператор стохастического градиентного спуска:
 \[
 	 \hat{\boldsymbol{\theta}} = T \circ T \circ \dots \circ T(\boldsymbol{\theta}_0, \mathbf{A}^{-1}, \mathbf{m}) = T^\eta(\boldsymbol{\theta}_0, \mathbf{A}^{-1}, \mathbf{m}), \quad\text{где}	T(\boldsymbol{\theta}, \mathbf{A}^{-1}, \mathbf{m}) =
 \]
-\[=\boldsymbol{\theta} - \beta \nabla L(\boldsymbol{\theta}, \mathbf{A}^{-1}, \mathbf{m})|_{\hat{\mathfrak{D}}}, 
+\[=\boldsymbol{\theta} - \beta_\text{lr} \nabla L(\boldsymbol{\theta}, \mathbf{A}^{-1}, \mathbf{m})|_{\hat{\mathfrak{D}}}, 
 \]
-$\gamma$ --- длина шага градиентного спуска, $\boldsymbol{\theta}_0$ --- начальное значение параметров $\boldsymbol{\theta}$, $\hat{\mathfrak{D}}$ --- случайная подвыборка исходной выборки $\mathfrak{D}$.
+$\beta_{\text{lr}}$ --- длина шага градиентного спуска, $\boldsymbol{\theta}_0$ --- начальное значение параметров $\boldsymbol{\theta}$, $\hat{\mathfrak{D}}$ --- случайная подвыборка исходной выборки $\mathfrak{D}$.
 
 
 Перепишем итоговую задачу оптимизации:
@@ -868,7 +912,7 @@ $$\text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{h}) \geq \mathsf{E}_{q(\mathbf{W)}}
 
 
 
-\begin{frame}{Оптимизация правдоподобия модели}
+\begin{frame}{Анализ обобщающей задачи оптимизации}
 
 \begin{block}{Теорема.}
 Пусть $c_\text{reg} > 0, m \gg 0, \frac{m}{c_\text{reg}} \in \mathbb{N}.$ \\Тогда оптимизация функции \[L = 
