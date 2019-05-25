@@ -529,7 +529,7 @@ y={(0cm,1.7cm)},
 \begin{itemize}
 \item \textbf{Параметры} модели:\\ $\mathbf{w}_r^{j,k} \sim \mathcal{N}(0, \gamma_{r}^{j,k} (\mathbf{A}_r^{j,k})^{-1}),$
 $\mathbf{A}_r^{j,k}$ --- диагональная матрица параметров, соответствующих базовых функций $\mathbf{g}_r^{j,k}$,
-\\$\mathbf{A}_r^{j,k} \sim \text{inv-gamma}(\lambda_1,\lambda_2)$.
+\\$(\mathbf{A}_r^{j,k})^{-1} \sim \text{inv-gamma}(\lambda_1,\lambda_2)$.
 
 \item \textbf{Структурные параметры} модели:\\$\boldsymbol{\Gamma} = \{\boldsymbol{\gamma}^{j,k}, (j,k) \in E\},$ \\$\boldsymbol{\gamma}^{j,k} \sim \text{GS}(\mathbf{s}^{j,k}, \lambda_\text{temp}).$ 
 \item \textbf{Гиперпараметры} модели: $\mathbf{h} = [\text{diag}(\mathbf{A}), \mathbf{s} ].$
@@ -606,15 +606,15 @@ p(\mathbf{y}|\mathbf{X}, \lambda_\text{temp}) =
 
 %Пусть $q(\mathbf{W}, \boldsymbol{\Gamma}) = q_{\mathbf{W}}(\mathbf{W})q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma})$ --- непрерывное распределение, аппроксимирующее 
 %апостериорное распределение $p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X})$.
-~\\Получим нижнюю оценку интеграла правдоподобия.
+~\\Получим нижнюю оценку интеграла:
 $$                                                                                                                                              
         \text{log}~p(\mathbf{y}|\mathbf{X}, \lambda_\text{temp}) \geq 
-\textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma})}} - \textcolor{red}{\text{D}_{KL}(q(\mathbf{w}, \boldsymbol{\Gamma})||p(\mathbf{w}, \boldsymbol{\Gamma}, \lambda_\text{temp}))} = \text{log}\hat{{p}}(\mathbf{y}|\mathbf{X}, \lambda_\text{temp}).
+\textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma})}} - \textcolor{red}{\text{D}_{KL}(q(\mathbf{w}, \boldsymbol{\Gamma})||p(\mathbf{w}, \boldsymbol{\Gamma}| \mathbf{h}, \lambda_\text{temp}))} = \text{log}\hat{{p}}(\mathbf{y}|\mathbf{X}, \lambda_\text{temp}).
 $$ 
 
 
 
-Оценка совпадает с интегралом правдоподобия при $$D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma})|(p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \lambda_\text{temp}))=0.$$
+Оценка совпадает с интегралом обоснованности при $$D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma})|(p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \lambda_\text{temp}))=0.$$
 
 \end{frame}      
 
@@ -636,11 +636,11 @@ $$
 \textit{Задачей выбора модели} $\mathbf{f}$ назовем двухуровневую задачу оптимизации:
 
 \[
-	\mathbf{h}^{*} = \argmin_{\mathbf{h} \in \mathbb{H}} Q(\mathbf{h}|  \boldsymbol{\theta}^{*}, \mathbf{X}, \mathbf{y} ),
+	\mathbf{h}^{*} = \argmax_{\mathbf{h} \in \mathbb{H}} Q(\mathbf{h}|  \boldsymbol{\theta}^{*}, \mathbf{X}, \mathbf{y} ),
 \]
 где $\boldsymbol{\theta}^{*}$ --- решение задачи оптимизации
 \[
-   \boldsymbol{\theta}^{*} = \argmin_{\boldsymbol{\theta} \in \mathbb{R}^u} L(\boldsymbol{\theta}|  \mathbf{h},  \mathbf{X}, \mathbf{y}).
+   \boldsymbol{\theta}^{*} = \argmax_{\boldsymbol{\theta} \in \mathbb{R}^u} L(\boldsymbol{\theta}|  \mathbf{h},  \mathbf{X}, \mathbf{y}).
 \]
 \end{block}
 
@@ -751,19 +751,19 @@ $\lambda_\text{train}, \lambda_\text{prior}, \lambda_{\text{temp}}, \boldsymbol{
 \includegraphics[width=0.75\textwidth]{combinations_1.png}
 \end{figure}
 \vspace{-0.2cm}
-$\boldsymbol{\lambda}_{\text{comb},1}=[0;0;0].$
+$\boldsymbol{\lambda}_{\text{comb}}=[0;0;0].$
 \begin{figure}
 \centering
 \includegraphics[width=0.75\textwidth]{combinations_2.png}
 \end{figure}
 \vspace{-0.2cm}
-$\boldsymbol{\lambda}_{\text{comb},1}=[1;0;0].$
+$\boldsymbol{\lambda}_{\text{comb}}=[1;0;0].$
 \begin{figure}
 \centering
 \includegraphics[width=0.75\textwidth]{combinations_3.png}
 \end{figure}
 \vspace{-0.2cm}
-$\boldsymbol{\lambda}_{\text{comb},1}=[1;1;0].$
+$\boldsymbol{\lambda}_{\text{comb}}=[1;1;0].$
 \end{column}
 \end{columns}
 \end{frame}
@@ -832,7 +832,7 @@ $\lambda_{\text{lr}}$ --- длина шага градиентного спус�
 где $\boldsymbol{\theta}_0$ --- начальное значение $\boldsymbol{\theta}$.
 
 \begin{block}{Теорема}
-Пусть $Q,L$ --- локально выпуклы и непрерывны в некоторой области $U_{W} \times U_{\Gamma} \times U_H \times U_B \subset \mathbb{W}\times\amsmathbb{\Gamma}\times\mathbb{H}\times\mathbb{B}$, при  этом $U_H \times U_B$ --- компакт. 
+Пусть $Q,L$ --- локально выпуклы и непрерывны в некоторой области $U_{W} \times U_{\Gamma} \times U_H \times U_\lambda \subset \mathbb{W}\times\amsmathbb{\Gamma}\times\mathbb{H}\times\amsmathbb{\Lambda}$, при  этом $U_H \times U_\lambda$ --- компакт. 
 Тогда решение задачи градиентной оптимизации стремится к локальному минимуму  $\mathbf{h}^{*} \in U$ исходной задачи оптимизации~\eqref{eq:qopt} при $\eta \to \infty$,
 $\mathbf{h}^{*}$ является непрерывной функцией по метапараметрам модели.
 \end{block}
@@ -850,12 +850,12 @@ $\mathbf{h}^{*}$ является непрерывной функцией по �
 $$\text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{h}) \geq \mathsf{E}_{q(\mathbf{W)}}\text{log~}p (\mathbf{y}, \mathbf{w}|\mathbf{X}, \mathbf{h}) - \mathsf{E}_{q_{\mathbf{w}}}(-\text{log}(q_\mathbf{w})).$$
 
 \begin{block}{Теорема [Бахтеев, 2016]}Пусть $L$ --- функция потерь, градиент которой ---  непрерывно-дифференцируемая функция с константой Липшица $C$. \\
-Пусть $\boldsymbol{\theta} = [\mathbf{w}^1,\dots,\mathbf{w}^k]$ ---  начальные приближения оптимизации модели, $\lambda$ --- шаг градиентного спуска.
+Пусть $\boldsymbol{\theta} = [\mathbf{w}^1,\dots,\mathbf{w}^k]$ ---  начальные приближения оптимизации модели, $\lambda_\text{lr}$ --- шаг градиентного спуска.
 
 Тогда разность энтропий на смежных шагах оптимизации приближается следующим образом:
 \small
 \[
-	\mathsf{E}_{q^{\tau}_{\mathbf{w}}}(-\text{log}(q^{\tau}_\mathbf{w})) -  \mathsf{E}_{q^{\tau-1}_{\mathbf{w}}}(-\text{log}(q^{\tau-1}_\mathbf{w}))  \approx  \frac{1}{k}\sum_{r=1}^k \bigl(\lambda Tr[\mathbf{H}(\mathbf{w}^r)] - \lambda^2 Tr[\mathbf{H}(\mathbf{w}^r)\mathbf{H}(\mathbf{w}^r)]  \bigr),
+	\mathsf{E}_{q^{\tau}_{\mathbf{w}}}(-\text{log}(q^{\tau}_\mathbf{w})) -  \mathsf{E}_{q^{\tau-1}_{\mathbf{w}}}(-\text{log}(q^{\tau-1}_\mathbf{w}))  \approx  \frac{1}{k}\sum_{r=1}^k \bigl(\lambda_\text{lr} Tr[\mathbf{H}(\mathbf{w}^r)] - \lambda_\text{lr}^2 Tr[\mathbf{H}(\mathbf{w}^r)\mathbf{H}(\mathbf{w}^r)]  \bigr),
 \]
 где $\mathbf{H}$ --- гессиан функции потерь $L$, $q^{\tau}_\mathbf{w}$ --- распределение $q^{\tau}_\mathbf{w}$ в момент оптимизации $\tau$.
 \end{block}
@@ -928,7 +928,7 @@ $$\text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{h}) \geq \mathsf{E}_{q(\mathbf{W)}}
 \begin{block}{Определение}
 Параметрической сложностью модели назовем минимальную дивергенцию между априорным и вариационным распределением:
 \[
-    C_p = \min_{\mathbf{h}} D_\text{KL}(q||p(\mathbf{w}, \boldsymbol{\Gamma}|\lambda_\text{temp})).
+    C_p = \min_{\mathbf{h}} D_\text{KL}(q||p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h},\lambda_\text{temp})).
 \]
 \end{block}
 \begin{block}{Вариационное удаление параметров модели}
@@ -962,7 +962,7 @@ $$\text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{h}) \geq \mathsf{E}_{q(\mathbf{W)}}
 \lim_{\lambda_\text{prior} \to \infty} \lim_{\eta \to \infty}   T^\eta\bigl(Q, \mathbf{h}, T^\eta(L, \boldsymbol{\theta}_0, \mathbf{h})\bigr)
 \]  
 доставляет минимум параметрической сложности. 
-Существует компактная область $\hat{U} \subset  U(\mathbf{0})$, такая что для любой точки $\boldsymbol{\theta}_0 \in \hat{U}$ предел данной оптимизации доставляет нулевую параметрическую сложность: $C_p = 0$.
+Существует компактная область ${U}$, такая что для любой точки $\boldsymbol{\theta}_0 \in U$ предел данной оптимизации доставляет нулевую параметрическую сложность: $C_p = 0$.
 \end{block}
 % proof
 
