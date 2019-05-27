@@ -1,0 +1,1042 @@
+\documentclass[usenames,dvipsnames,11pt,pdf,utf8,russian,aspectratio=43]{beamer}
+\usepackage{cmap}
+\usepackage[T2A]{fontenc}
+\usepackage[english,russian]{babel}
+\usepackage{subfig}
+\usepackage{color}
+\usepackage{multicol}
+\usepackage{appendixnumberbeamer}
+\usepackage{multicol}
+\usepackage{tikz}
+\usepackage{mathbbol}
+\usepackage{amssymb}             % AMS Math
+
+\DeclareSymbolFontAlphabet{\mathbb}{AMSb}%
+\DeclareSymbolFontAlphabet{\amsmathbb}{bbold}%
+
+
+\usetikzlibrary{arrows,automata}
+\usetikzlibrary{positioning}
+
+
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+%
+% Choose how your presentation looks.
+%
+% For more themes, color themes and font themes, see:
+% http://deic.uab.es/~iblanes/beamer_gallery/index_by_theme.html
+%
+\mode<presentation>
+{
+  \usetheme{Boadilla}      % or try Darmstadt, Madrid, Warsaw, ...
+  \usecolortheme{seagull} % or try albatross, beaver, crane, ..
+
+  \usefonttheme{structurebold}  % or try serif, structurebold, ...
+  \setbeamertemplate{navigation symbols}{}
+  \setbeamertemplate{caption}[numbered]
+
+} 
+\setbeamercolor{mygray}{fg=gray,bg=white}
+
+
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.9\paperwidth,ht=2.25ex,dp=1ex,center]{}%
+   
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.1\paperwidth,ht=2.25ex,dp=1ex]{mygray}%
+   
+    \insertframenumber{} / \inserttotalframenumber\hspace*{1ex}
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+
+
+\captionsetup[subfloat]{labelformat=empty}
+\title[Выбор структуры модели]{Байесовский выбор\\ субоптимальной структуры\\ модели глубокого обучения}
+\author{О.\,Ю.\,Бахтеев}
+
+
+\institute[]{Диссертация на соискание ученой степени\\
+кандидата физико-математических наук\\05.13.17 --- Теоретические основы информатики\\Научный руководитель: д.ф.-м.н. В.В. Стрижов\\}     
+%\institute[МФТИ]{Московский Физико-Технический Институт (Государственный Университет)}
+\date[2019]{Московский физико-технический институт\\5 июня 2019 г.}
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+
+
+\begin{frame}{Выбор  структуры модели глубокого обучения}
+\small
+\textbf{Цель: } предложить метод выбора структуры модели глубокого обучения.\\
+\textbf{Задачи}
+\begin{enumerate}
+\item Предложить критерии оптимальной и субоптимальной сложности модели глубокого обучения.
+\item Предложить алгоритм построения модели субоптимальной сложности и оптимизации параметров.
+\end{enumerate}
+\textbf{Исследуемые проблемы}
+\begin{enumerate}
+\item Большое число параметров и гиперпараметров модели, высокая вычислительная сложность оптимизации.
+\item Многоэкстремальность и невыпуклость задачи оптимизации.
+\end{enumerate}
+\textbf{Методы исследования}\\ 
+Рассматриваются графовое представление нейронной сети. Используются методы вариационного байесовского вывода.  Для получения модели субоптимальной сложности используется метод автоматического определения релевантности параметров с использоваением градиентных методов оптимизации гиперпараметров и структурных параметров модели.
+\end{frame}
+
+
+
+\begin{frame}    
+                                                                                                                        
+\frametitle{Проблема выбора оптимальной структуры }                                                                                                          
+Правдоподобие моделей с избыточным числом параметров значимо не меняется при их удалении.                                                       
+\begin{figure}[h]                                                                                                                               
+\centering                                                                                                                                      
+\subfloat[Избыточность параметров модели]{\includegraphics[width=0.55\textwidth]{./slide_plots/pruning.pdf}}   
+\hspace*{-1cm}                                       
+\subfloat[Устойчивость модели]{\includegraphics[width=0.55\textwidth]{./slide_plots/noise.pdf}}                                                     
+\end{figure}                                                                                                   
+\textcolor{gray}{Глубокое обучение предполагает оптимизацию моделей с заведомо избыточной сложностью.}  
+
+                                                                                                                                             
+\end{frame}    
+
+\begin{frame}{Модель глубокого обучения}
+\small
+\begin{block}{Определение}
+\textit{Моделью} $\mathbf{f}(\mathbf{w}, \mathbf{x})$ назовем дифференцируемую по параметрам $\mathbf{w}$ функцию из множества признаковых описаний объекта во множество меток:
+\[
+    \mathbf{f}: \mathbb{X} \times \mathbb{W} \to \mathbb{Y},
+\] 
+где $\mathbb{W}$ --- пространство параметров функции $\mathbf{f}$.
+\end{block}
+~\\
+\textbf{Особенность задачи}  выбора модели \textit{глубокого обучения} --- значительное число параметров моделей приводит к неприменимости ряда методов оптимизации и выбора структуры модели  (AIC, BIC, кросс-валидация). \\~\\
+Модель определяется параметрами $\mathbf{W}$ и структурой $\boldsymbol{\Gamma}$.\\
+\textbf{Структура} задает набор суперпозиций, входящих в модель и выбирается согласно статистическим критериям сложности модели.\\
+
+\textbf{Эмпирические оценки статистической сложности модели:}
+\begin{enumerate}
+\item число параметров;
+\item число суперпозиций, из которых состоит модель.
+\end{enumerate}
+\end{frame}
+
+
+\begin{frame}{Выбор структуры: двуслойная нейросеть}
+\small
+Модель $\mathbf{f}$ задана \textbf{структурой}  $\boldsymbol{\Gamma} = [\boldsymbol{\gamma}^{0,1}, {\boldsymbol{\gamma}^{1,2}}].$
+
+\[
+    \text{Модель: }\mathbf{f}(\mathbf{x}) = \textbf{softmax}\left({\mathbf{f}_1}(\mathbf{x})\mathbf{W}^{1,2}_0\right), \quad \mathbf{f}(\mathbf{x}): \mathbb{R}^n \to [0,1]^{|\mathbb{Y}|}, \quad \mathbf{x} \in \mathbb{R}^n.
+\]
+\[
+\mathbf{f}_1(\mathbf{x}) = {\gamma}^{0,1}_{0}\mathbf{g}^{0,1}_{0}(\mathbf{x}) + {\gamma}^{0,1}_{1}\mathbf{g}^{0,1}_{1}(\mathbf{x}),
+\]
+где $\mathbf{w} = [\mathbf{W}^{0,1}_0, \mathbf{W}^{0,1}_1, \mathbf{W}^{1,2}_0]^{\text{T}}$ --- матрицы параметров, $\{\mathbf{g}^{0}_{0,1},\mathbf{g}^{1}_{0,1},{\mathbf{g}^{0}_{1,2}\}}$ --- обобщенно-линейные функции скрытых слоев нейросети.
+
+\begin{tikzpicture}[node distance=0.5cm, auto]
+  %\tikzstyle{every state}=[fill=red,draw=none,text=white]
+
+  \node (f0)  at (1,6)                  {$\mathbf{f}_0(\mathbf{x}) = \mathbf{x}$};
+  %\node (g11) at (6,3)                    {$\mathbf{g}^{1,1}(\mathbf{x})$};% = \text{Conv}(\mathbf{x}, 3, 32, 1)$};
+  %\node (g12)  at (6,9)                   {$\mathbf{g}^{1,2}(\mathbf{x})$};% = \text{Conv}(\mathbf{x}, 4, 32, 1)$};
+  \node (f1)  at (7,6)                 {$\mathbf{f}_1(\mathbf{x})$};% = \gamma^{1,1}\mathbf{g}^{1,1}(\mathbf{x}) +  \gamma^{1,2}\mathbf{g}^{1,2}(\mathbf{x})$};
+  %\node (g21) at (12,6)                   {$\mathbf{g}^{2,1}(\mathbf{x})$};% = \boldsymbol{\sigma}(\mathbf{w}^{2,1}\mathbf{x})$};
+  \node (f2)  at (12,6)                   {$\mathbf{f}_2(\mathbf{x})$};% = \gamma^{2,1}\mathbf{g}^{2,1}(\mathbf{x})$};
+  \path[->]  (f0) edge [bend left=50] node {$\gamma^{0,1}_0\mathbf{g}^{0,1}_0(\mathbf{x}) = \gamma^{0,1}_0\boldsymbol{\sigma}(\mathbf{x}\mathbf{W}^{0,1}_0)$}(f1);
+  \path[->] (f0)  edge[bend right=50] node[below] {$\gamma^{0,1}_1\mathbf{g}^{0,1}_1(\mathbf{x}) = \gamma^{0,1}_1\boldsymbol{\sigma}(\mathbf{x}\mathbf{W}^{0,1}_1)$}(f1);
+  \path[->] (f1)  edge node {$\gamma^{1,2}_0\mathbf{g}^{1,2}_0(\mathbf{x}) = \gamma^{1,2}_0\textbf{softmax}(\mathbf{x}\mathbf{W}^{1,2}_0)$}(f2);       
+  \draw[->] (f1) to (f2);
+ 
+\end{tikzpicture}
+
+\end{frame}
+
+
+\begin{frame}{Графовое представление модели глубокого обучения}
+\footnotesize
+Заданы:
+\begin{enumerate}
+ \item ациклический граф $(V,E)$;
+\item для каждого ребра $(j,k) \in E$: вектор базовых дифференцируемых функций  $\mathbf{g}^{j,k} = [\mathbf{g}^{j,k}_0, \dots, \mathbf{g}^{j,k}_{K^{j,k}}]$  мощности $K^{j,k}$;
+\item для каждой вершины $v \in V$: дифференцируемая функция агрегации $\textbf{agg}_v$.
+\item Функция $\mathbf{f} = \mathbf{f}_{|V|-1}$, задаваемая по правилу 
+\begin{equation}
+\label{eq:modelfam}
+    \mathbf{f}_{v}(\mathbf{w}, \mathbf{x}) = \textbf{agg}_{v}\left(\{ \langle \boldsymbol{\gamma}^{j,k}, \mathbf{g}^{j,k} \rangle \circ  \mathbf{f}_j(\mathbf{x})| j \in \text{Adj}(v_k)\}\right), v \in \{1,\dots,|V|-1\}, \quad \mathbf{f}_0(\mathbf{x}) = \mathbf{x}
+\end{equation}
+и являющаяся функцией из признакового пространства $\mathbb{X}$ в пространство меток $\mathbb{Y}$ при значениях векторов, $\boldsymbol{\gamma}^{j,k} \in [0,1]^{K^{j,k}}$.
+\end{enumerate}
+
+\begin{block}{Определение}
+Граф $(V, E)$ со множестом векторов базовых функций $\{\mathbf{g}^{j,k}, (j,k) \in E\}$ и функций агрегаций $\{ \textbf{agg}_v, {v \in V}\}$ назовем \textit{параметрическим семейством моделей} $\mathfrak{F}$.
+\end{block}
+\begin{block}{Утверждение}
+Для любого значения $\boldsymbol{\gamma}^{j,k} \in [0,1]^{K^{j,k}}$ функция $\mathbf{f} \in \mathfrak{F}$ является моделью.
+\end{block}
+\end{frame}
+
+      
+
+\begin{frame}{Ограничения на структурные параметры}
+Примеры ограничений для одного структурного параметра $\boldsymbol{\gamma}, |\boldsymbol{\gamma}| = 3$.
+\begin{figure}
+ \begin{minipage}[t]{.45\textwidth}
+        \centering
+%1 limit
+\begin{tikzpicture}[%
+x={(1.5cm,0cm)},
+y={(0cm,1.5cm)},
+z={({0.5*cos(45)},{0.5*sin(45)})},
+]
+
+\coordinate (A) at (0,0,0); 
+\coordinate (B) at (1,0,0) ;
+\coordinate (C) at (1,1,0); 
+\coordinate (D) at (0,1,0); 
+\coordinate (E) at (0,0,1); 
+\coordinate (F) at (1,0,1); 
+\coordinate (G) at (1,1,1); 
+\coordinate (H) at (0,1,1   );
+
+%Ecken
+\node[circle,scale=0.5,fill=black,draw=black](Ap) at (0,0,0){};
+\node[circle,scale=0.5,fill=black,draw=black](Bp) at (1,0,0){};
+\node[circle,scale=0.5,fill=black,draw=black](Cp) at (1,1,0){};
+\node[circle,scale=0.5,fill=black,draw=black](Dp) at (0,1,0){};
+\node[circle,scale=0.5,fill=black,draw=black](Ep) at (0,0,1){};
+\node[circle,scale=0.5,fill=black,draw=black](Fp) at (1,0,1){};
+\node[circle,scale=0.5,fill=black,draw=black](Gp) at (1,1,1){};
+\node[circle,scale=0.5,fill=black,draw=black](Hp) at (0,1,1){};
+\node[left= 1pt of A]{[0,0,0]};
+\node[right= 1pt of B]{[1,0,0]};
+\node[right= 1pt of C]{[1,1,0]};
+\node[left= 1pt of D]{[0,1,0]};
+\node[left= 1pt of E]{[0,0,1]};
+\node[right= 1pt of F]{[1,0,1]};
+\node[right= 1pt of G]{[1,1,1]};
+\node[left= 1pt of H]{[0,1,1]};
+
+%Kanten
+\draw[] (A)
+-- (B)  node[midway, below]{}
+-- (C)      node[midway, right]{}
+-- (D)  node[midway, above]{}
+-- (A)  node[midway, left]{};
+\draw[] (B) -- (F) -- (G) -- (C);
+\draw[] (G) -- (H) -- (D);
+\draw[densely dashed] (A) -- (E) -- (F);
+\draw[densely dashed] (E) -- (H);
+
+\end{tikzpicture}
+\caption*{На вершинах куба}
+\end{minipage}
+\hfill
+ \begin{minipage}[t]{.45\textwidth}
+        \centering
+
+%2 limit
+\begin{tikzpicture}[%
+x={(1.5cm,0cm)},
+y={(0cm,1.5cm)},
+z={({0.5*cos(45)},{0.5*sin(45)})},
+]
+
+\coordinate (A) at (0,0,0); 
+\coordinate (B) at (1,0,0) ;
+\coordinate (C) at (1,1,0); 
+\coordinate (D) at (0,1,0); 
+\coordinate (E) at (0,0,1); 
+\coordinate (F) at (1,0,1); 
+\coordinate (G) at (1,1,1); 
+\coordinate (H) at (0,1,1   );
+
+%Ecken
+\node[left= 1pt of A]{[0,0,0]};
+\node[right= 1pt of B]{[1,0,0]};
+\node[right= 1pt of C]{};
+\node[left= 1pt of D]{[0,1,0]};
+\node[left= 1pt of E]{};
+\node[right= 1pt of F]{[1,0,1]};
+\node[right= 1pt of G]{[1,1,1]};
+\node[left= 1pt of H]{[0,1,1]};
+
+%Kanten
+\draw[fill=gray] (A)
+-- (B)  node[midway, below]{}
+-- (C)      node[midway, right]{}
+-- (D)  node[midway, above]{}
+-- (A)  node[midway, left]{};
+\draw[fill=gray] (B) -- (F) -- (G) -- (C);
+\draw[fill=gray] (G) -- (H) -- (D);
+\draw[fill=gray] (A) -- (E) -- (F);
+\draw[fill=gray] (E) -- (H);
+\draw[fill=gray] (D) -- (H) -- (G) -- (C);
+\end{tikzpicture}
+\caption*{Внутри куба}
+\end{minipage}
+\hfill
+ \begin{minipage}[t]{.45\textwidth}
+        \centering
+%3 limit
+\begin{tikzpicture}[%
+x={(1.5cm,0cm)},
+y={(0cm,1.5cm)},
+z={({0.5*cos(45)},{0.5*sin(45)})},
+]
+
+\coordinate (A) at (0,0,0); 
+\coordinate (B) at (1,0,0) ;
+\coordinate (C) at (1,1,0); 
+\coordinate (D) at (0,1,0); 
+\coordinate (E) at (0,0,1); 
+\coordinate (F) at (1,0,1); 
+\coordinate (G) at (1,1,1); 
+\coordinate (H) at (0,1,1   );
+
+%Ecken
+\node[circle,scale=0.5,fill=black,draw=black](Bp) at (1,0,0){};
+\node[circle,scale=0.5,fill=black,draw=black](Dp) at (0,1,0){};
+\node[circle,scale=0.5,fill=black,draw=black](Ep) at (0,0,1){};
+\node[left= 1pt of A]{};
+\node[right= 1pt of B]{[1,0,0]};
+\node[right= 1pt of C]{};
+\node[left= 1pt of D]{[0,1,0]};
+\node[left= 1pt of E]{[0,0,1]};
+\node[right= 1pt of F]{};
+\node[right= 1pt of G]{};
+\node[left= 1pt of H]{};
+
+%Kanten
+\draw[] (A)
+-- (B)  node[midway, below]{}
+-- (C)      node[midway, right]{}
+-- (D)  node[midway, above]{}
+-- (A)  node[midway, left]{};
+\draw[] (B) -- (F) -- (G) -- (C);
+\draw[] (G) -- (H) -- (D);
+\draw[densely dashed] (A) -- (E) -- (F);
+\draw[densely dashed] (E) -- (H);
+
+\end{tikzpicture}
+\caption*{На вершинах симплекса}
+\end{minipage}
+\hfill
+ \begin{minipage}[t]{.45\textwidth}
+        \centering
+%4 limit
+\begin{tikzpicture}[%
+x={(1.5cm,0cm)},
+y={(0cm,1.5cm)},
+z={({0.5*cos(45)},{0.5*sin(45)})},
+]
+
+\coordinate (A) at (0,0,0); 
+\coordinate (B) at (1,0,0) ;
+\coordinate (C) at (1,1,0); 
+\coordinate (D) at (0,1,0); 
+\coordinate (E) at (0,0,1); 
+\coordinate (F) at (1,0,1); 
+\coordinate (G) at (1,1,1); 
+\coordinate (H) at (0,1,1   );
+
+%Ecken
+\node[left= 1pt of A]{};
+\node[right= 1pt of B]{[1,0,0]};
+\node[right= 1pt of C]{};
+\node[left= 1pt of D]{[0,1,0]};
+\node[left= 1pt of E]{[0,0,1]};
+\node[right= 1pt of F]{};
+\node[right= 1pt of G]{};
+\node[left= 1pt of H]{};
+
+%Kanten
+\draw[] (A)
+-- (B)  node[midway, below]{}
+-- (C)      node[midway, right]{}
+-- (D)  node[midway, above]{}
+-- (A)  node[midway, left]{};
+\draw[] (B) -- (F) -- (G) -- (C);
+\draw[] (G) -- (H) -- (D);
+\draw[densely dashed] (A) -- (E) -- (F);
+\draw[densely dashed] (E) -- (H);
+\draw[fill=gray] (B) -- (D) -- (E);
+
+
+\end{tikzpicture}
+\caption*{Внутри симплекса}
+\end{minipage}
+
+\end{figure}
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}{Априорное распределение параметров}
+\footnotesize   
+\begin{columns}
+\begin{column}{0.6\textwidth}
+   \begin{block}{Определение}
+\textit{Априорным распределением} параметров $\mathbf{w}$ и структуры  $\boldsymbol{\Gamma}$ модели $\mathbf{f}$ назовем вероятностное распределение
+$
+    \textcolor{red}{p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{h})}: \mathbb{W} \times \amsmathbb{\Gamma} \times \mathbb{H} \to \mathbb{R}^{+}, 
+$
+где $\mathbb{W}$ --- множество значений параметров модели, $\amsmathbb{\Gamma}$~---~множество значений структуры модели.
+\end{block}
+
+\end{column}
+\begin{column}{0.4\textwidth}  %%<--- here
+    \begin{center}
+     \includegraphics[width=\textwidth]{simple_plate.pdf}
+     \end{center}
+\end{column}
+\end{columns}
+\vspace*{-0.5cm}
+\begin{block}{Определение}
+\textit{Гиперпараметрами} $\mathbf{h}\in \mathbb{H}$ модели  назовем параметры распределения $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h})$ (параметры распределения параметров модели $\mathbf{f}$).
+ 
+\end{block}
+Модель $\mathbf{f}$ задается следующими величинами:
+\begin{itemize}
+\item \textbf{Параметры} $\mathbf{w} \in \mathbb{W}$ задают суперпозиции $\mathbf{f}_v$, из которых состоит модель $\mathbf{f}$.
+\item \textbf{Структурные параметры} $\boldsymbol{\Gamma}=\{\gamma^{j,k}\}_{(j,k)\in E} \in \amsmathbb{\Gamma}$ задают вклад суперпозиций $\mathbf{f}_v$ в модель $\mathbf{f}$.
+\item \textbf{Гиперпараметры} $\mathbf{h} \in \mathbb{H}$ задают распределение параметров и структурных параметров модели.
+\item \textbf{Метапараметры} $\boldsymbol{\lambda} \in \amsmathbb{\Lambda}$ задают вид оптимизации модели.
+\end{itemize}
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}{Априорное распределение на структуре модели}
+Каждая точка на симплексе задает модель.
+
+\textbf{Распределение Дирихле: }$\textcolor{red}{\boldsymbol{\Gamma}\sim \text{Dir}(\mathbf{s}, \lambda_\text{temp})}$\\
+\begin{figure}
+ \begin{minipage}[t]{.3\textwidth}
+        \centering
+\begin{tikzpicture}[%
+x={(1.7cm,0cm)},
+y={(0cm,1.7cm)},
+]
+
+\coordinate (A) at (0,0); 
+\coordinate (B) at (1,0) ;
+\coordinate (C) at (0.5,0.86); 
+
+%Ecken
+\node[circle,scale=0.5,fill=black,draw=black](Ap) at (0,0){};
+\node[circle,scale=0.5,fill=black,draw=black](Bp) at (1,0){};
+\node[circle,scale=0.5,fill=black,draw=black](Cp) at (0.5,0.86){};
+
+%Kanten
+\draw[] (A)
+-- (B)  node[midway, below]{}
+-- (C)      node[midway, right]{}
+-- (A)  node[midway, left]{};
+
+\end{tikzpicture}
+\caption*{$\lambda_\text{temp}\to0$}
+\end{minipage}
+\hfill
+ \begin{minipage}[t]{.3\textwidth}
+   \includegraphics[width=\textwidth]{dir0995.png}
+\caption*{$\lambda_\text{temp}=0.995$}
+\end{minipage}
+\hfill
+ \begin{minipage}[t]{.3\textwidth}
+   \includegraphics[width=\textwidth]{dir5.png}
+\caption*{$\lambda_\text{temp}=5.0$}
+\end{minipage}
+
+\end{figure}
+
+\textbf{Распределение Гумбель-софтмакс: }$\textcolor{red}{\boldsymbol{\Gamma}\sim \text{GS}(\mathbf{s}, \lambda_\text{temp})}$\\
+\begin{figure}
+ \begin{minipage}[t]{.3\textwidth}
+        \centering
+\begin{tikzpicture}[%
+x={(1.7cm,0cm)},
+y={(0cm,1.7cm)},
+]
+
+\coordinate (A) at (0,0); 
+\coordinate (B) at (1,0) ;
+\coordinate (C) at (0.5,0.86); 
+
+%Ecken
+\node[circle,scale=0.5,fill=black,draw=black](Ap) at (0,0){};
+\node[circle,scale=0.5,fill=black,draw=black](Bp) at (1,0){};
+\node[circle,scale=0.5,fill=black,draw=black](Cp) at (0.5,0.86){};
+
+%Kanten
+\draw[] (A)
+-- (B)  node[midway, below]{}
+-- (C)      node[midway, right]{}
+-- (A)  node[midway, left]{};
+
+\end{tikzpicture}
+\caption*{$\lambda_\text{temp}\to0$}
+\end{minipage}
+\hfill
+ \begin{minipage}[t]{.3\textwidth}
+   \includegraphics[width=\textwidth]{gs0995.png}
+\caption*{$\lambda_\text{temp}=0.995$}
+\end{minipage}
+\hfill
+ \begin{minipage}[t]{.3\textwidth}
+   \includegraphics[width=\textwidth]{gs5.png}
+\caption*{$\lambda_\text{temp}=5.0$}
+\end{minipage}
+
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Байесовский выбор модели}
+
+
+\begin{columns}
+\begin{column}{0.4\textwidth}
+\textbf{Базовая модель} %https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/bishop-variational-icann-98.pdf
+\begin{itemize}
+\item \textbf{Параметры} модели:\\ $\textcolor{red}{\mathbf{w} \sim \mathcal{N}(0, \alpha^{-1})},$
+\item \textbf{Гиперпараметры} модели: $\mathbf{h} = [\alpha].$
+\end{itemize}
+\begin{figure}
+\includegraphics[width=\textwidth]{simple_plate_concrete.pdf}
+\end{figure}
+\end{column}
+\begin{column}{0.6\textwidth}
+\textbf{Предлагаемая модель  }
+\begin{itemize}
+\item \textbf{Параметры} модели:\\ $\textcolor{red}{\mathbf{w}_r^{j,k} \sim \mathcal{N}(0, \gamma_{r}^{j,k} (\mathbf{A}_r^{j,k})^{-1})},$
+$\mathbf{A}_r^{j,k}$ --- диагональная матрица параметров, соответствующих базовых функций $\mathbf{g}_r^{j,k}$,
+\\$\textcolor{OliveGreen}{(\mathbf{A}_r^{j,k})^{-1} \sim \text{inv-gamma}(\lambda_1,\lambda_2)}$.
+
+\item \textbf{Структурные параметры} модели:\\$\boldsymbol{\Gamma} = \{\boldsymbol{\gamma}^{j,k}, (j,k) \in E\},$ \\$\textcolor{red}{\boldsymbol{\gamma}^{j,k} \sim \text{GS}(\mathbf{s}^{j,k}, \lambda_\text{temp})}.$ 
+\item \textbf{Гиперпараметры} модели: $\mathbf{h} = [\text{diag}(\mathbf{A}), \mathbf{s} ].$
+\item \textbf{Метапараметры:} $\lambda_1,\lambda_2,\lambda_\text{temp}$.
+\end{itemize}
+
+\end{column}
+
+\end{columns}
+
+%
+
+\end{frame}
+
+
+\begin{frame}{Обоснованность как статистическая сложность}  
+\footnotesize
+\textbf{Статистическая сложность} модели $\mathbf{f}$:
+\[
+	\text{MDL}(\mathbf{y},\mathbf{f}) = \textcolor{OliveGreen}{-\text{log}~p(\mathbf{h})} - \textcolor{red}{\text{log}~p(\hat{\mathbf{w}} | \mathbf{h})}-  \textcolor{blue}{\text{log}~\left(p(\mathbf{y}|\mathbf{X}, \hat{\mathbf{w}})\delta\mathfrak{D}\right)},
+\]
+где $\delta\mathfrak{D}$ --- допустимая точность передачи информации о выборке $\mathfrak{D}$, $\hat{w}$ --- оптимальные значения параметров.\\~\\
+
+Выбор значений параметров $\mathbf{w}$ производится  согласно \textbf{апостериорному распределению параметров} $L$:                                      
+\[
+     L = \text{log} p(\mathbf{w}|\mathbf{X}, \mathbf{y}, \mathbf{h}) \propto  \textcolor{red}{\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \mathbf{h})} +  \textcolor{blue}{\text{log} p(\mathbf{w} |\mathbf{h})}.
+\]
+
+Выбор значений гиперпараметров производится в согласно \textbf{апостериорному распределению гиперпараметров} $Q$:                                      
+\[                                                                                                                                              
+        Q = \text{log}p(\mathbf{h}|\mathbf{X}, \mathbf{y}) \propto \textcolor{OliveGreen}{\text{log}p(\mathbf{h})} +  \text{log}\int\limits_{\mathbf{w}} \textcolor{red}{p(\mathbf{y}|\mathbf{X},\mathbf{w})} \textcolor{blue}{p(\mathbf{w}| \mathbf{h})} d\mathbf{w},                         
+\]       
+
+
+\begin{figure}
+\vspace{-0.5cm}
+  \centering
+ \subfloat[Выбор модели по обоснованности]{\includegraphics[width=0.45\textwidth]{slide_plots/evidence.pdf}} 
+ \subfloat[Аппроксимация выборки полиномами]{\includegraphics[width=0.45\textwidth]{slide_plots/example.pdf}}
+
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Вариационная нижняя оценка обоснованности} 
+\footnotesize
+
+Интеграл обоснованности невычислим аналитически.\\
+\textbf{Обоснованность модели:}
+\[
+p(\mathbf{y}|\mathbf{X}, \lambda_\text{temp}) =
+ \iint\limits_{\mathbf{w}, \boldsymbol{\Gamma}}  \textcolor{red}{p(\mathbf{y}|\mathbf{X},\mathbf{w},  \boldsymbol{\Gamma})} \textcolor{blue}{p(\mathbf{w}, \boldsymbol{\Gamma}| \lambda_\text{temp})}d\mathbf{w}d{\boldsymbol{\Gamma}}.                         
+\]
+
+\begin{columns}
+\begin{column}{0.55\textwidth}
+  
+\begin{block}{Определение}
+\textit{Вариационными параметрами} модели $\boldsymbol{\theta} \in \mathbb{R}^{{u}}$ назовем параметры распределения $q$, приближающие апостериорное распределение параметров и структуры $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{X}, \mathbf{y}, \mathbf{h}, \lambda_\text{temp})$:
+\[
+    q \approx  \frac{\textcolor{blue}{p(\mathbf{y}|\mathbf{X},\mathbf{w},\boldsymbol{\Gamma})}\textcolor{red}{p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \lambda_\text{temp})}}{\iint\limits_{\mathbf{w}', \boldsymbol{\Gamma'}}\textcolor{blue}{p(\mathbf{y}|\mathbf{X},\mathbf{w}',\boldsymbol{\Gamma}')}\textcolor{red}{p(\mathbf{w}', \boldsymbol{\Gamma}'|\mathbf{h}, \lambda_\text{temp})}d\mathbf{w}'d\boldsymbol{\Gamma}'}.
+\]
+\end{block} 
+
+\end{column}
+\begin{column}{0.45\textwidth}  %%<--- here
+    \begin{center}
+     \includegraphics[width=\textwidth]{plate.pdf}
+     \end{center}
+\end{column}
+\end{columns}
+
+
+
+%Пусть $q(\mathbf{W}, \boldsymbol{\Gamma}) = q_{\mathbf{W}}(\mathbf{W})q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma})$ --- непрерывное распределение, аппроксимирующее 
+%апостериорное распределение $p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X})$.
+~\\Получим нижнюю оценку интеграла:
+$$                                                                                                                                              
+        \text{log}~p(\mathbf{y}|\mathbf{X}, \lambda_\text{temp}) \geq 
+\textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma})}} - \textcolor{red}{\text{D}_{KL}(q(\mathbf{w}, \boldsymbol{\Gamma})||p(\mathbf{w}, \boldsymbol{\Gamma}| \mathbf{h}, \lambda_\text{temp}))} = \text{log}\hat{{p}}(\mathbf{y}|\mathbf{X}, \lambda_\text{temp}).
+$$ 
+
+
+
+Оценка совпадает с интегралом обоснованности при $$D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma})|(p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \lambda_\text{temp}))=0.$$
+
+\end{frame}      
+
+
+\begin{frame}{Задача выбора модели}
+\footnotesize
+Зададим вариационное распределение $q=q_\mathbf{w}q_{\boldsymbol{\Gamma}}$ с параметрами $\boldsymbol{\theta}$, приближающие апостериорное распределение $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{X}, \mathbf{y}, \mathbf{h})$ параметров и структуры.
+
+
+
+\begin{block}{Определение}
+
+\textit{Функцией потерь} $L( \boldsymbol{\theta}| \mathbf{h}, \mathbf{X}, \mathbf{y})$   назовем дифференцируемую функцию, качество модели на обучающей выборки при параметрах $\boldsymbol{\theta}$ распределения $q$.
+\end{block}
+\begin{block}{}
+\textit{Функцией валидации} $Q(\mathbf{h}| \boldsymbol{\theta}, \mathbf{X}, \mathbf{y} )$ назовем дифференцируемую функцию, качество модели при векторе $\boldsymbol{\theta}$, заданном неявно.
+\end{block}
+\begin{block}{}
+\textit{Задачей выбора модели} $\mathbf{f}$ назовем двухуровневую задачу оптимизации:
+
+\[
+	\mathbf{h}^{*} = \argmax_{\mathbf{h} \in \mathbb{H}} Q(\mathbf{h}|  \boldsymbol{\theta}^{*}, \mathbf{X}, \mathbf{y} ),
+\]
+где $\boldsymbol{\theta}^{*}$ --- решение задачи оптимизации
+\[
+   \boldsymbol{\theta}^{*} = \argmax_{\boldsymbol{\theta} \in \mathbb{R}^u} L(\boldsymbol{\theta}|  \mathbf{h},  \mathbf{X}, \mathbf{y}).
+\]
+\end{block}
+
+
+\end{frame}
+
+
+
+
+
+
+
+                                                                                                              
+
+
+   
+\begin{frame}{Обобщающая задача}
+\footnotesize
+%\begin{block}{Определение}
+Задачу выбора модели $\mathbf{h}^{*}, \boldsymbol{\theta}^{*}$ назовем обобщаюшей на множестве $U_{\theta}\times U_{h} \times U_{\lambda} \subset \mathbb{R}^{u} \times \mathbb{H} \times \amsmathbb{\Lambda}$, если выполнены условия:
+\begin{enumerate}
+\item Для каждого $\mathbf{h} \in U_h$ и каждого $\boldsymbol{\lambda} \in U_{\lambda}$ решение $\boldsymbol{\theta}^{*}$ определено однозначно.
+\item \textit{Условие максимизации правдоподобия выборки:}\textcolor{gray}{ существует $\boldsymbol{\lambda} \in U_{\lambda}$ и  $K_1 \in \mathbb{R}_{+}$, такие что для любых векторов гиперпараметров $\mathbf{h}_1, \mathbf{h}_2 \in  U_{h}, Q(\mathbf{h}_1) - Q(\mathbf{h}_2) > K_1:$ матожидания правдоподбия выборок: $\mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}_1, \lambda_{\text{temp}})>\text{log}\mathsf{E}_q ~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}_2, \lambda_{\text{temp}})$.}
+
+% здесь мы имеем ввиду что для любого lambda, такого что мы считаем параметр неинформативными
+\item \textit{Условие минимизации сложности модели:}\textcolor{gray}{ существует  $\boldsymbol{\lambda} \in U_{\lambda}$ и $K_2 \in \mathbb{R}_{+}$, такие что для любых векторов гиперпараметров $\mathbf{h}_1, \mathbf{h}_2 \in U_h, Q(\mathbf{h}_1) - Q(\mathbf{h}_2) > K_2$,  $\mathsf{E}_q \text{log}~p(\mathbf{y}|\boldsymbol{\theta}_1, \lambda_{\text{temp}}) = \text{log}\mathsf{E}_q ~p(\mathbf{y}|\boldsymbol{\theta}_2, \lambda_{\text{temp}})$, количество ненулевых параметров у первой модели меньше, чем у второй.}
+
+\item \textit{Условие максимизации обоснованности модели:}\textcolor{gray}{ существует значение гиперпараметров $\boldsymbol{\lambda}$, такое что оптимизация задачи эквивалента оптимизации вариационной оценки обоснованности модели:
+\vspace{-0.2cm}
+\[
+    \mathbf{h}^{*} = \argmax_{} p(\mathbf{y}|\mathbf{X}, \mathbf{h}', \lambda_{\text{temp}}),\quad
+    \boldsymbol{\theta}^{*} = \argmin D_\text{KL}(q| p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \lambda_{\text{temp}})).
+\]}
+\vspace{-0.6cm}
+\item \textit{Условие перехода между структурами:}
+\textcolor{gray}{
+Существует константа $K_3$, такая что для любых двух векторов $\mathbf{h}_{1}, \mathbf{h}_2$ и соответствующих векторов $\boldsymbol{\theta}_1^{*},\boldsymbol{\theta}_2^{*}: D_\text{KL}(q_{\boldsymbol{\Gamma}_2}, q_{\boldsymbol{\Gamma}_1})>K_3, D_\text{KL}(q_{\boldsymbol{\Gamma}_1}, q_{\boldsymbol{\Gamma}_2})>K_3$:  существуют значения гиперпараметров $\boldsymbol{\lambda_1},\boldsymbol{\lambda_2}$, такие что  $Q(\mathbf{h}_1, \lambda_1) > Q(\mathbf{h}_2, \lambda_1), Q(\mathbf{h}_1, \lambda_1) < Q(\mathbf{h}_2, \lambda_2)$.
+}
+\item Условие непрерывности: $\mathbf{h}^{*}, \boldsymbol{\theta}^{*}$ непрерывны по метапараметрам.
+
+\end{enumerate}
+%\end{block}
+\end{frame}
+\begin{frame}{Анализ задач выбора моделей}
+\begin{block}{Теорема}
+Следующие задачи выбора модели не являются обобщающими:
+\begin{enumerate}
+% задача не является строго двууровневой, нельзя проомтимизировать ELBO
+\item метод максимума правдоподобия: $\max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, \lambda_\text{temp})};$
+
+% нет возможности оптимизации структуры
+\item метод максимума апостериорной вероятности $\max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X},  \boldsymbol{\theta})}\textcolor{red}{p( \boldsymbol{\theta}| \mathbf{h}, \lambda_\text{temp})}\textcolor{OliveGreen}{p(\mathbf{h}|\boldsymbol{\lambda})};$
+
+% нет возможности оптимизации правдоподобия модели - структа не подчиняется beta
+\item метод максимума вариационной оценки обоснованности модели $\max_{\mathbf{h}} \max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma})}} - \textcolor{red}{\text{D}_{KL}(q(\mathbf{w}, \boldsymbol{\Gamma})||p(\mathbf{w}, \boldsymbol{\Gamma}, \lambda_\text{temp}))}\textcolor{OliveGreen}{p(\mathbf{h}|\boldsymbol{\lambda})};$
+
+\item кросс-валидация $\max_{\mathbf{h}} \textcolor{blue}{\mathsf{E}_q \text{log}p(\mathbf{y}_\text{valid}|\mathbf{X}_\text{valid}, \boldsymbol{\theta}^{*}, \lambda_\text{temp})}\textcolor{OliveGreen}{p(\mathbf{h}|\boldsymbol{\lambda})}$, $\boldsymbol{\theta}^{*} = \argmax_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log}p(\mathbf{y}_\text{train}|\mathbf{X}_\text{train}, \boldsymbol{\theta}, \lambda_\text{temp})}\textcolor{red}{p(\boldsymbol{\theta}| \mathbf{h})}$.
+
+% задача не является строго двууровневой, нельзя проомтимизировать ELBO
+\item AIC: $\max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, \lambda_\text{temp})} + \textcolor{red}{|\theta_i: \theta_i \neq 0|}$;
+
+% задача не является строго двууровневой, нельзя проомтимизировать ELBO
+\item BIC: $\max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, \lambda_\text{temp})} + \textcolor{red}{\text{log}(m)|\theta_i: \theta_i \neq 0|}$;
+
+% задача не является двухуровневой. Даже если добавить как ELBO, потребуется еще и C_prior, чтобы можно было оптимизировать МП.
+\item перебор структуры модели:  $\max{\boldsymbol{\Gamma}'} \max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, \lambda_\text{temp})}\textcolor{red}{\mathbb{I}(\boldsymbol{\Gamma} = \boldsymbol{\Gamma}') }.$
+\end{enumerate}
+\end{block}
+\end{frame}
+
+\begin{frame}{Предлагаемая задача оптимизации}
+
+\footnotesize
+\begin{columns}
+\begin{column}{0.8\textwidth}
+\begin{block}{Теорема}
+Пусть функции потерь и валидации $L,Q$ являются непрерывно-дифференцируемыми на некоторой области $U$.
+Тогда следующая задача является обобщающей на $U$.
+\begin{equation}
+\tag{$Q^{*}$}
+\label{eq:qopt}
+\mathbf{h}^{*} = \argmax_{\mathbf{h}} Q = 
+\end{equation}
+\[
+= \textcolor{blue}{\lambda_\text{likelihood}^\text{Q}\mathsf{E}_{{q}^{*}} \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w},\boldsymbol{\Gamma}, \mathbf{h}, \lambda_\text{temp})}}
+ -\]
+\vspace{-0.3cm}
+\[- \textcolor{red}{^\text{prior}_\text{Q}\text{D}_{KL}(p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}}) || q^{*}(\mathbf{w}, \boldsymbol{\Gamma}))}  -\]
+\vspace{-0.3cm}
+\[
+ - \textcolor{OliveGreen}{\sum_{p' \in \mathbf{P}, \lambda \in \boldsymbol{\lambda}^\text{struct}_\text{Q}} \lambda\text{D}_{KL}(\boldsymbol{\Gamma} | p') + \text{log}p(\mathbf{h}|\lambda_1,\lambda_2)}, 
+\]
+где 
+\begin{equation}
+\tag{$L^{*}$}
+{q}^{*} = \argmax_{q} L = 
+\textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A}^{-1}, \lambda_{\text{temp}})}}
+\end{equation}
+\vspace{-0.3cm}
+\[- \textcolor{red}{^\text{prior}_\text{L}\text{D}_{KL}(p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{A}^{-1}, \mathbf{m}, \lambda_{\text{temp}}) || q(\mathbf{w}), q(\boldsymbol{\Gamma}))}.
+\]
+\end{block}
+%$\lambda^\text{likelihood}_\text{L}, \lambda^\text{prior}_\text{L}, \lambda^\text{prior}_\text{Q},  \boldsymbol{\lambda}_{\text{struct}}^Q, \lambda_{\text{temp}}$ и параметры распределений $\mathbf{P}$ --- метапараметры оптимизации.\\
+Оптимизационная задача обобщает алгоритмы оптимизации: оптимизация правдоподобия и обоснованности, последовательное увеличение и снижение сложности модели, полный перебор структуры.
+\end{column}
+\begin{column}{0.2\textwidth}
+\begin{figure}
+\centering
+\includegraphics[width=0.75\textwidth]{combinations_1.png}
+\end{figure}
+\vspace{-0.2cm}
+$ \textcolor{OliveGreen}{\boldsymbol{\lambda}_{\text{struct}}^Q=[0;0;0].}$
+\begin{figure}
+\centering
+\includegraphics[width=0.75\textwidth]{combinations_2.png}
+\end{figure}
+\vspace{-0.2cm}
+$ \textcolor{OliveGreen}{\boldsymbol{\lambda}_{\text{struct}}^Q=[1;0;0].}$
+\begin{figure}
+\centering
+\includegraphics[width=0.75\textwidth]{combinations_3.png}
+\end{figure}
+\vspace{-0.2cm}
+$ \textcolor{OliveGreen}{\boldsymbol{\lambda}_{\text{struct}}^Q=[1;1;0].}$
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}{Адекватность задачи оптимизации}
+\footnotesize
+\begin{block}{Теорема}
+Пусть задано параметрическое множество вариационных распределений: $q(\boldsymbol{\theta})$. 
+Пусть $\textcolor{blue}{\lambda^L_\text{likelihood}} = \textcolor{red}{\lambda^L_\text{prior}=\lambda^Q_\text{prior}}>0, \textcolor{OliveGreen}{\boldsymbol{\lambda}^Q_{\text{struct}}}=\mathbf{0}$. Тогда:
+\begin{enumerate}
+\item Задача оптимизации~\eqref{eq:qopt} доставляет максимум апостериорной вероятности гиперпараметров с использованием вариационной оценки обоснованности:
+\vspace{-0.3cm}
+\[
+    \text{log}\hat{p}(\mathbf{y}|\mathbf{X}, \mathbf{h}, \lambda_\text{temp}) + \textcolor{OliveGreen}{\text{log}p(\mathbf{h}|\lambda_1,\lambda_2) \to \max_{\mathbf{h}}}.
+\]
+\item Вариационное распределение $q$ приближает апостериорное распределение $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \lambda_\text{temp})$ наилучшим образом:
+\vspace{-0.3cm}
+\[
+    {D}_\text{KL}(q||p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \lambda_\text{temp})) \to \min_{\boldsymbol{\theta}}.
+\]
+\end{enumerate}
+\end{block}
+% proof
+% 1. по определению
+% 2. тоже по определению
+\begin{block}{}
+Пусть также распределение $q$ декомпозируется на два независимых распределения для параметров $\mathbf{w}$ и структуры $\boldsymbol{\Gamma}$ модели $\mathbf{f}$:
+\[
+    q = q_{\mathbf{w}}q_{\boldsymbol{\Gamma}}, q_{\boldsymbol{\Gamma}} \approx p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}), q_{\mathbf{w}} \approx p(\mathbf{w}|\boldsymbol{\Gamma},\mathbf{y}, \mathbf{X}, \mathbf{h}).
+\]
+Тогда вариационные распределения $q_{\mathbf{w}}, q_{\boldsymbol{\Gamma}}$приближают апостериорные распределения $ p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \lambda_\text{temp}), p(\mathbf{w}|\boldsymbol{\Gamma},\mathbf{y}, \mathbf{X}, \mathbf{h}, \lambda_\text{temp})$ наилучшим образом:
+\[
+    {D}_\text{KL}(q_{\boldsymbol{\Gamma}}||p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \lambda_\text{temp})) \to \min, \quad
+    {D}_\text{KL}(q_{\mathbf{w}}||p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{h})) \to \min.
+\]
+
+\end{block}
+%http://akosiorek.github.io/ml/2017/09/10/kl-hierarchical-vae.html. Важно: D_KL во втором случае - условная
+% декомпозируем на два D_KL
+% обе D_KL независимы как функции, поэтому ок, можем минимизировать
+\end{frame}
+
+
+
+
+
+\begin{frame}{Оператор оптимизации}
+\footnotesize
+\begin{block}{Определение}
+Назовем \textit{оператором оптимизации}  $T$ выбор вектора параметров $\boldsymbol{\theta}'$  по параметрам предыдущего шага $\boldsymbol{\theta}$.
+\end{block}
+Оператор стохастического градиентного спуска:
+\[
+	 \hat{\boldsymbol{\theta}} = T \circ T \circ \dots \circ T(\boldsymbol{\theta}_0, \mathbf{A}^{-1}, \mathbf{m}) = T^\eta(\boldsymbol{\theta}_0, \mathbf{A}^{-1}, \mathbf{m}), \quad\text{где}	T(\boldsymbol{\theta}, \mathbf{A}^{-1}, \mathbf{m}) =
+\]
+\[=\boldsymbol{\theta} - \lambda_\text{lr} \nabla L(\boldsymbol{\theta}, \mathbf{A}^{-1}, \mathbf{m})|_{\hat{\mathfrak{D}}}, 
+\]
+$\lambda_{\text{lr}}$ --- длина шага градиентного спуска, $\boldsymbol{\theta}_0$ --- начальное значение параметров $\boldsymbol{\theta}$, $\hat{\mathfrak{D}}$ --- случайная подвыборка исходной выборки $\mathfrak{D}$.
+
+
+Перепишем итоговую задачу оптимизации:
+\[
+	 \mathbf{h}' = T^\eta\bigl(Q, \mathbf{h}, T^\eta(L, \boldsymbol{\theta}_0, \mathbf{h})\bigr),
+\]
+где $\boldsymbol{\theta}_0$ --- начальное значение $\boldsymbol{\theta}$.
+
+\begin{block}{Теорема}
+Пусть $Q,L$ --- локально выпуклы и непрерывны в некоторой области $U_{W} \times U_{\Gamma} \times U_H \times U_\lambda \subset \mathbb{W}\times\amsmathbb{\Gamma}\times\mathbb{H}\times\amsmathbb{\Lambda}$, при  этом $U_H \times U_\lambda$ --- компакт. 
+Тогда решение задачи градиентной оптимизации стремится к локальному минимуму  $\mathbf{h}^{*} \in U$ исходной задачи оптимизации~\eqref{eq:qopt} при $\eta \to \infty$,
+$\mathbf{h}^{*}$ является непрерывной функцией по метапараметрам модели.
+\end{block}
+% proof
+% https://arxiv.org/pdf/1806.04910.pdf теорема 1,2 отсюда
+% remark про strong convex совпадает с http://www.stat.cmu.edu/~ryantibs/convexopt-F13/scribes/lec6.pdf
+
+\end{frame}
+
+
+
+\begin{frame}
+\small
+\frametitle{Нижняя вариационная оценка обоснованности на основе мультистарта}
+$$\text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{h}) \geq \mathsf{E}_{q(\mathbf{W)}}\text{log~}p (\mathbf{y}, \mathbf{w}|\mathbf{X}, \mathbf{h}) - \mathsf{E}_{q_{\mathbf{w}}}(-\text{log}(q_\mathbf{w})).$$
+
+\begin{block}{Теорема [Бахтеев, 2016]}Пусть $L$ --- функция потерь, градиент которой ---  непрерывно-дифференцируемая функция с константой Липшица $C$. \\
+Пусть $\boldsymbol{\theta} = [\mathbf{w}^1,\dots,\mathbf{w}^k]$ ---  начальные приближения оптимизации модели, $\lambda_\text{lr}$ --- шаг градиентного спуска.
+
+Тогда разность энтропий на смежных шагах оптимизации приближается следующим образом:
+\small
+\[
+	\mathsf{E}_{q^{\tau}_{\mathbf{w}}}(-\text{log}(q^{\tau}_\mathbf{w})) -  \mathsf{E}_{q^{\tau-1}_{\mathbf{w}}}(-\text{log}(q^{\tau-1}_\mathbf{w}))  \approx  \frac{1}{k}\sum_{r=1}^k \bigl(\lambda_\text{lr} Tr[\mathbf{H}(\mathbf{w}^r)] - \lambda_\text{lr}^2 Tr[\mathbf{H}(\mathbf{w}^r)\mathbf{H}(\mathbf{w}^r)]  \bigr),
+\]
+где $\mathbf{H}$ --- гессиан функции потерь $L$, $q^{\tau}_\mathbf{w}$ --- распределение $q^{\tau}_\mathbf{w}$ в момент оптимизации $\tau$.
+\end{block}
+\end{frame}
+
+
+
+\begin{frame}
+
+\frametitle{Градиентный спуск как вариационная оценка обоснованности модели}
+\small
+Эмпирическая плотность, основанная на точках старта оптимизации --- вариационное распределение.\\
+Снижение вариационной оценки обоснованности ---  начало переобучения.
+
+
+\begin{multicols}{2}
+
+\begin{figure}
+\vspace*{-0.2cm}
+\subfloat{\includegraphics[width=0.52\textwidth]{./slide_plots/sgd_estimate.png}}
+\end{figure}
+
+\columnbreak
+
+
+\begin{figure}
+{\includegraphics[width=0.52\textwidth]{./slide_plots/sgd_show.pdf}}
+\end{figure}
+\end{multicols}
+\end{frame}
+
+
+
+
+
+
+
+
+\begin{frame}{Оптимизация гиперпараметров: пример}
+\begin{multicols}{2}
+\begin{figure}[h]
+\includegraphics[width=0.4\textwidth]{./slide_plots/poly_cv.png}
+\caption*{Кросс-Валидация}
+\end{figure}
+
+\begin{figure}[h]
+\includegraphics[width=0.4\textwidth]{./slide_plots/poly_var.png}
+\caption*{Вариационная оценка}
+\end{figure}
+\end{multicols}
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}{Анализ обобщающей задачи оптимизации}
+\footnotesize
+\begin{block}{Определение}
+Параметрической сложностью модели назовем минимальную дивергенцию между априорным и вариационным распределением:
+\vspace{-0.2cm}
+\[
+    C_p = \min_{\mathbf{h}} \textcolor{red}{D_\text{KL}(q||p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h},\lambda_\text{temp})).}
+\]
+\end{block}
+
+\begin{block}{Теорема}
+При устремлении параметрической сложности модели к нулю относительная плотность параметров модели стремится к единице:
+\vspace{-0.3cm}
+\[
+    C_p \to 0 => \boldsymbol{\rho}(\mathbf{w}) \to 1, \quad \rho(w) = \frac{q(0)}{q(w)} = \text{exp}\left(-\frac{\mu^2}{\sigma^2}\right).
+\]
+\end{block}
+
+
+
+\begin{block}{Теорема.}
+Пусть $\textcolor{red}{\lambda_\text{prior}^L} > 0, m \gg 0, \frac{m}{\lambda_\text{prior}^L} \in \mathbb{N}.$ Тогда оптимизация функции\vspace{-0.3cm} \[L = 
+\textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A}^{-1}, \lambda_{\text{temp}})}} - \textcolor{red}{\lambda_\text{prior}^L\text{D}_{KL}(p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{A}^{-1}, \mathbf{m}, \lambda_{\text{temp}}) || q(\mathbf{w}), q(\boldsymbol{\Gamma}))}\vspace{-0.2cm}\] эквивалентна минимизации ожидаемой дивергенции $\mathsf{E}_{\hat{\mathbf{X}}, \hat{\mathbf{y}}\sim p(\mathbf{X}, \mathbf{y})}\text{D}_{KL}(q||p(\mathbf{w}, \boldsymbol{\Gamma} | \hat{\mathbf{X}}, \hat{\mathbf{y}})),$ где $\hat{\mathbf{X}}, \hat{\mathbf{y}}$ --- случайные подвыборки мощностью $\frac{m}{\textcolor{red}{\lambda_\text{prior}^L}}$ из генеральной совопкупности.
+\end{block}
+
+
+\end{frame}
+
+
+
+
+\begin{frame}{Оптимизация параметрической сложности}
+\small
+%
+\begin{block}{Теорема}
+Пусть $\textcolor{blue}{\lambda_{\text{likelihood}}^Q}= \textcolor{red}{\lambda_{\text{prior}}^L}>0, \textcolor{OliveGreen}{\boldsymbol{\lambda}^Q_{\text{struct}} }= \bf{0}$.
+Тогда предел оптимизации
+\[
+\lim_{\textcolor{red}{\lambda^Q_\text{prior}} \to \infty} \lim_{\eta \to \infty}   T^\eta\bigl(Q, \mathbf{h}, T^\eta(L, \boldsymbol{\theta}_0, \mathbf{h})\bigr)
+\]  
+доставляет минимум параметрической сложности. 
+Существует компактная область ${U}$, такая что для любой точки $\boldsymbol{\theta}_0 \in U$ предел данной оптимизации доставляет нулевую параметрическую сложность: $C_p = 0$.
+\end{block}
+% proof
+
+% 1. Если посмотреть исходную оптимизацию (к которой стремится наша оптимизация), то это C1*Dkl - loss. Ничего не поменяется, если делить эту оптимизацию на (c1+1)
+% 2. Если при этом устремить c1 > infty, то получим что коэффициент при loss стремится к нулю. Тут надо более аккуратно, но думаю здесь все ок
+% 3. Рассмотрим отношение L(q = prior, m- произвольное)/L(q!=prior). Он стремится к нулю
+% 4. По определению предела в некоторой окрестности эта штука тоже лежит в окрестности нуля. (скорее всего с одной стороны как непрерывная функция)
+% 5. То есть в некоторой окрестности q=prior является экстремумом, при этом функция все еще непрерывная
+% 6. Заметим, что для некоторой окрестности он является эктсреммумо для любой функции вида L-C*DKL, где C>0
+% 6. нужно еще что-то с областью сделать
+
+
+
+
+\begin{block}{Теорема}
+
+Пусть $\textcolor{blue}{\lambda^L_{\text{likelihood}}} = 1 , \textcolor{OliveGreen}{\boldsymbol{\lambda}^Q_{\text{struct}}} = \bf 0$.
+Пусть  $\mathbf{f}_1, \mathbf{f}_2$ --- результаты градиентной оптимизации при разных значениях гиперпараметров $\textcolor{red}{\lambda_{\text{prior}}^{Q,1},\lambda_{\text{prior}}^{Q,2}, \lambda_{\text{prior}}^{Q,1}<\lambda_{\text{prior}}^{Q,2}}$, полученных при начальном значении вариационных параметров $\boldsymbol{\theta}_0$ и гиперпараметров $\mathbf{h}_0$.
+Пусть $\boldsymbol{\theta}_0, \mathbf{h}_0$ принадлежат области  $U$, в которой соответствующие функции $L$ и $Q$ являются локально-выпуклыми.
+Тогда:
+\[
+    C_p(\mathbf{f}_1) - C_p(\mathbf{f}_2)  \geq \textcolor{red}{\lambda_\text{prior}^L(\lambda_\text{prior}^L - \lambda_\text{prior}^{Q,1})}\text{sup}_{\boldsymbol{\theta}, \mathbf{h} \in U}|\nabla^2_{\boldsymbol{\theta}, \mathbf{h}} \textcolor{red}{D_{KL}(q|p)} (\nabla^2_{\boldsymbol{\theta}} L)^{-1}   \nabla_{\boldsymbol{\theta}} \textcolor{red}{D_{KL}(q|p))}|.
+\]
+\end{block}
+% 1. Заметим, что покомпонентная проекция выпулкых функций - выпукла (по определению вроде). поэтому L и Q можно рассматривать как большие мета-функции.
+% 2. По условиям:  L_1(q1) - \lambda_1 DKL(q1) = max, L_2 - \lambda_2 DKL(q_2) = max.
+% 3. L_1(q1) - \lambda_1 DKL(q1) - L_2(q2)  + \lambda_1 DKL(q2) >= 0
+%    L_2(q2) - \lambda_2 DKL(q2) - L_1(q1) +  \lambda_2 DKL(q1) >= 0
+% 4. Складываем
+%    \lambda_1 DKL(q2) - \lambda_2DKL(q2) >= c1 DKL(q1) - c2 DKL(q1), DKL (q2) <= DKL(q1)
+% 5. Заметим, что это DKL и есть параметрической сложностью.
+% Пусть существует h': DKL(q|h')<DKL(q|h).
+% Так как L не зависит от h, то получается что L-DKL|h' > L-DKL|h, противоречие.
+\end{frame}
+
+\begin{frame}{Результаты, выносимые на защиту}
+\begin{enumerate}
+\item Предложен метод выбора модели наиболее правдоподобной структуры, обобщающий ранее описанные алгоритмы оптимизации:
+\begin{itemize}
+\item оптимизация обоснованности;
+\item последовательное увеличение сложности модели;
+\item последовательное снижение сложности модели;
+\item полный перебор вариантов структуры модели.
+\end{itemize}
+
+\item Предложен алгоритм оптимизации параметров, гиперпараметров и структурных
+параметров моделей глубокого обучения.
+
+\item Проведено исследование свойств алгоритмов выбора модели при различных значениях мета-параметров.
+
+\item Проведен вычислительный эксперимент, иллюстрирующий работу предложенного метода.
+
+\end{enumerate}
+\end{frame}
+
+
+
+\begin{frame}{Список работ автора по теме диссертации}
+\tiny
+\textbf{Публикации ВАК}
+\begin{enumerate}
+\item Бахтеев О.Ю., Попова М.С., Стрижов В.В. Системы и средства глубокого обучения в задачах классификации. // Системы и средства информатики. 2016. № 26.2. С. 4-22.
+\item Бахтеев О.Ю., Стрижов В.В. Выбор моделей глубокого обучения субоптимальной сложности. // Автоматика и телемеханика. 2018. №8. С. 129-147.
+\item Огальцов А.В., Бахтеев О.Ю. Автоматическое извлечение метаданных из научных PDF-документов. // Информатика и её применения. 2018.
+\item Смердов А.Н., Бахтеев О.Ю., Стрижов В.В. Выбор оптимальной модели рекуррентной сети в задачах поиска парафраза. // Информатика и ее применения. 2019.
+\item Грабовой А.В., Бахтеев О.Ю., Стрижов В.В. Определение релевантности параметров нейросети. // Информатика и её применения. 2019.
+\end{enumerate}
+\textbf{Выступления с докладом}
+\begin{enumerate}
+\item ``Восстановление панельной матрицы и ранжирующей модели в разнородных шкалах'', Всероссийская конеренция <<57-я научная конеренция МФТИ>>, 2014.
+\item ``A monolingual approach to detection of text reuse in Russian-English collection'', Международная конференция <<Artificial Intelligence and Natural Language Conference>>, 2015.
+\item ``Выбор модели глубокого обучения субоптимальной сложности с использованием вариационной оценки правдоподобия'', Международная конференция <<Интеллектуализация обработки информации>>, 2016.
+\item ``Author Masking using Sequence-to-Sequence Models'', Международная конференция <<Conference and Labs of the Evaluation Forum>>, 2017.
+\item ``Градиентные методы оптимизации гиперпараметров моделей глубокого обучения'', Всероссийская конференция <<Математические методы распознавания образов ММРО>>, 2017.
+\item ``Детектирование переводных заимствований в текстах научных статей из журналов, входящих в РИНЦ'', Всероссийская конференция <<Математические методы распознавания образов ММРО>>, 2017.
+\item ``Байесовский выбор наиболее правдоподобной структуры модели глубокого обучения'', Международная конференция <<Интеллектуализация обработки информации>>, 2018.
+\end{enumerate}
+\end{frame}
+
+
+
+
+
+\end{document}
