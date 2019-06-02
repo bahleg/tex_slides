@@ -548,18 +548,18 @@ $\mathbf{A}_r^{j,k}$ --- диагональная матрица парамет�
 \footnotesize
 \textbf{Статистическая сложность} модели $\mathbf{f}$:
 \[
-	\text{MDL}(\mathbf{y},\mathbf{f}) = \textcolor{OliveGreen}{-\text{log}~p(\mathbf{h})} - \textcolor{red}{\text{log}~p(\hat{\mathbf{w}} | \mathbf{h})}-  \textcolor{blue}{\text{log}~\bigl(p(\mathbf{y}|\mathbf{X}, \hat{\mathbf{w}})\delta\mathfrak{D}\bigr)},
+	\text{MDL}(\mathbf{y},\mathbf{f}) = \textcolor{OliveGreen}{-\text{log}~p(\mathbf{h})} - \textcolor{red}{\text{log}~p(\hat{\mathbf{w}} | \mathbf{h})}-  \textcolor{blue}{\text{log}~\bigl(p(\mathbf{y}|\mathbf{X}, \hat{\mathbf{w}},\mathbf{f})\delta\mathfrak{D}\bigr)},
 \]
 где $\delta\mathfrak{D}$ --- допустимая точность передачи информации о выборке $\mathfrak{D}$.\\~\\
 
 Оптимизация параметров $\mathbf{w}$ производится  согласно \textbf{апостериорному распределению параметров}:                                      
 \[
-     L = \text{log} p(\mathbf{w}|\mathbf{X}, \mathbf{y}, \mathbf{h}) \propto  \textcolor{red}{\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \mathbf{h})} +  \textcolor{blue}{\text{log} p(\mathbf{w} |\mathbf{h})}.
+     L = \text{log} p(\mathbf{w}|\mathbf{X}, \mathbf{y}, \mathbf{h},\mathbf{f}) \propto  \textcolor{red}{\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \mathbf{h},\mathbf{f})} +  \textcolor{blue}{\text{log} p(\mathbf{w} |\mathbf{h})}.
 \]
 
 Оптимизация гиперпараметров производится в согласно \textbf{апостериорному распределению гиперпараметров}:                                      
 \[                                                                                                                                              
-        Q = \text{log}p(\mathbf{h}|\mathbf{X}, \mathbf{y}) \propto \textcolor{OliveGreen}{\text{log}p(\mathbf{h})} +  \text{log}\int\limits_{\mathbf{w}} \textcolor{red}{p(\mathbf{y}|\mathbf{X},\mathbf{w})} \textcolor{blue}{p(\mathbf{w}| \mathbf{h})} d\mathbf{w}.                     
+        Q = \text{log}p(\mathbf{f}|\mathbf{X}, \mathbf{y}) \propto \textcolor{OliveGreen}{\text{log}p(\mathbf{h}|\mathbf{f})} +  \text{log}\int\limits_{\mathbf{w}} \textcolor{red}{p(\mathbf{y}|\mathbf{X},\mathbf{w},\mathbf{f})} \textcolor{blue}{p(\mathbf{w}| \mathbf{h})} d\mathbf{w}.                     
 \]       
 
 
@@ -579,17 +579,17 @@ $\mathbf{A}_r^{j,k}$ --- диагональная матрица парамет�
 Интеграл обоснованности невычислим аналитически.\\
 \textbf{Обоснованность модели:}
 \[
-p(\mathbf{y}|\mathbf{X}, \lambda_\text{temp}) =
- \iint\limits_{\mathbf{w}, \boldsymbol{\Gamma}}  \textcolor{red}{p(\mathbf{y}|\mathbf{X},\mathbf{w},  \boldsymbol{\Gamma})} \textcolor{blue}{p(\mathbf{w}, \boldsymbol{\Gamma}| \lambda_\text{temp})}d\mathbf{w}d{\boldsymbol{\Gamma}}.                         
+p(\mathbf{y}|\mathbf{X}, \lambda_\text{temp},\mathbf{f}) =
+ \iint\limits_{\mathbf{w}, \boldsymbol{\Gamma}}  \textcolor{red}{p(\mathbf{y}|\mathbf{X},\mathbf{w},  \boldsymbol{\Gamma}, \mathbf{f})} \textcolor{blue}{p(\mathbf{w}, \boldsymbol{\Gamma}| \lambda_\text{temp})}d\mathbf{w}d{\boldsymbol{\Gamma}}.                         
 \]
 
 \begin{columns}
 \begin{column}{0.55\textwidth}
   
 \begin{block}{Определение}
-\textit{Вариационными параметрами} модели $\boldsymbol{\theta} \in \mathbb{R}^{{u}}$ назовем параметры распределения $q$, приближающие апостериорное распределение параметров и структуры $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{X}, \mathbf{y}, \mathbf{h}, \lambda_\text{temp})$:
+\textit{Вариационными параметрами} модели $\boldsymbol{\theta} \in \mathbb{R}^{{u}}$ назовем параметры распределения $q$, приближающие апостериорное распределение параметров и структуры $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{X}, \mathbf{y}, \mathbf{h}, \mathbf{f}, \lambda_\text{temp})$:
 \[
-    q \approx  \frac{\textcolor{blue}{p(\mathbf{y}|\mathbf{X},\mathbf{w},\boldsymbol{\Gamma})}\textcolor{red}{p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \lambda_\text{temp})}}{\iint\limits_{\mathbf{w}', \boldsymbol{\Gamma'}}\textcolor{blue}{p(\mathbf{y}|\mathbf{X},\mathbf{w}',\boldsymbol{\Gamma}')}\textcolor{red}{p(\mathbf{w}', \boldsymbol{\Gamma}'|\mathbf{h}, \lambda_\text{temp})}d\mathbf{w}'d\boldsymbol{\Gamma}'}.
+    q \approx  \frac{\textcolor{blue}{p(\mathbf{y}|\mathbf{X},\mathbf{w},\boldsymbol{\Gamma}, \mathbf{f})}\textcolor{red}{p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \lambda_\text{temp})}}{\iint\limits_{\mathbf{w}', \boldsymbol{\Gamma'}}\textcolor{blue}{p(\mathbf{y}|\mathbf{X},\mathbf{w}',\boldsymbol{\Gamma}',\mathbf{f})}\textcolor{red}{p(\mathbf{w}', \boldsymbol{\Gamma}'|\mathbf{h}, \lambda_\text{temp})}d\mathbf{w}'d\boldsymbol{\Gamma}'}.
 \]
 \end{block} 
 
@@ -605,39 +605,39 @@ p(\mathbf{y}|\mathbf{X}, \lambda_\text{temp}) =
 
 %Пусть $q(\mathbf{W}, \boldsymbol{\Gamma}) = q_{\mathbf{W}}(\mathbf{W})q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma})$ --- непрерывное распределение, аппроксимирующее 
 %апостериорное распределение $p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X})$.
-~\\Получим нижнюю оценку интеграла
+~\\Получим нижнюю оценку $\text{log}\hat{{p}}(\mathbf{y}|\mathbf{X}, \lambda_\text{temp},\mathbf{f})$ интеграла
 $$                                                                                                                                              
-        \text{log}~p(\mathbf{y}|\mathbf{X}, \lambda_\text{temp}) \geq 
-\textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma})}} - \textcolor{red}{\text{D}_{KL}\bigl(q(\mathbf{w}, \boldsymbol{\Gamma})||p(\mathbf{w}, \boldsymbol{\Gamma}| \mathbf{h}, \lambda_\text{temp})\bigr)} = \text{log}\hat{{p}}(\mathbf{y}|\mathbf{X}, \lambda_\text{temp}).
+        \text{log}~p(\mathbf{y}|\mathbf{X}, \lambda_\text{temp},\mathbf{f}) \geq 
+\textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma},\mathbf{f})}} - \textcolor{red}{\text{D}_{KL}\bigl(q(\mathbf{w}, \boldsymbol{\Gamma})||p(\mathbf{w}, \boldsymbol{\Gamma}| \mathbf{h}, \lambda_\text{temp})\bigr)}.
 $$ 
 
 
 
-Она совпадает с интегралом обоснованности при $$D_\text{KL}\bigl(q(\mathbf{w}, \boldsymbol{\Gamma})|p\left(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \lambda_\text{temp}\right)\bigr)=0.$$
+Она совпадает с интегралом обоснованности при $$D_\text{KL}\bigl(q(\mathbf{w}, \boldsymbol{\Gamma})|p\left(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \lambda_\text{temp},\mathbf{f}\right)\bigr)=0.$$
 
 \end{frame}      
 
 
 \begin{frame}{Задача выбора модели}
 \footnotesize
-Зададим вариационное распределение $q=q_\mathbf{w}q_{\boldsymbol{\Gamma}}$ с параметрами $\boldsymbol{\theta}$, приближающие апостериорное распределение $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{X}, \mathbf{y}, \mathbf{h})$ параметров и структуры.
+Зададим вариационное распределение $q=q_\mathbf{w}q_{\boldsymbol{\Gamma}}$ с параметрами $\boldsymbol{\theta}$, приближающие апостериорное распределение $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{X}, \mathbf{y}, \mathbf{h}, \mathbf{f})$ параметров и структуры.
 
 
 
 \begin{block}{Определение}
 
-\textit{Функцией потерь} $L( \boldsymbol{\theta}| \mathbf{h}, \mathbf{X}, \mathbf{y})$   назовем дифференцируемую функцию, качество модели на обучающей выборки при параметрах $\boldsymbol{\theta}$ распределения $q$.~\\~\\
-\textit{Функцией валидации} $Q(\mathbf{h}| \boldsymbol{\theta}, \mathbf{X}, \mathbf{y} )$ назовем дифференцируемую функцию, качество модели при векторе $\boldsymbol{\theta}$, заданном неявно.
+\textit{Функцией потерь} $L( \boldsymbol{\theta}| \mathbf{h}, \mathbf{X}, \mathbf{y}, \mathbf{f})$   назовем дифференцируемую функцию, качество модели на обучающей выборки при параметрах $\boldsymbol{\theta}$ распределения $q$.~\\~\\
+\textit{Функцией валидации} $Q(\mathbf{h}| \boldsymbol{\theta}, \mathbf{X}, \mathbf{y}, \mathbf{f} )$ назовем дифференцируемую функцию, качество модели при векторе $\boldsymbol{\theta}$, заданном неявно.
 \end{block}
 \begin{block}{}
 \textit{Задачей выбора модели} $\mathbf{f}$ назовем двухуровневую задачу оптимизации:
 
 \[
-	\mathbf{h}^{*} = \argmax_{\mathbf{h} \in \mathbb{H}} Q(\mathbf{h}|  \boldsymbol{\theta}^{*}, \mathbf{X}, \mathbf{y} ),
+	\mathbf{h}^{*} = \argmax_{\mathbf{h} \in \mathbb{H}} Q(\mathbf{h}|  \boldsymbol{\theta}^{*}, \mathbf{X}, \mathbf{y}, \mathbf{f} ),
 \]
 где $\boldsymbol{\theta}^{*}$ --- решение задачи оптимизации
 \[
-   \boldsymbol{\theta}^{*} = \argmax_{\boldsymbol{\theta} \in \mathbb{R}^u} L(\boldsymbol{\theta}|  \mathbf{h},  \mathbf{X}, \mathbf{y}).
+   \boldsymbol{\theta}^{*} = \argmax_{\boldsymbol{\theta} \in \mathbb{R}^u} L(\boldsymbol{\theta}|  \mathbf{h},  \mathbf{X}, \mathbf{y}, \mathbf{f}).
 \]
 \end{block}
 
@@ -660,23 +660,23 @@ $$
 Задачу выбора модели $\mathbf{h}^{*}, \boldsymbol{\theta}^{*}$ назовем обобщаюшей на множестве $U_{\theta}\times U_{h} \times U_{\lambda} \subset \mathbb{R}^{u} \times \mathbb{H} \times \amsmathbb{\Lambda}$, если выполнены условия:
 \begin{enumerate}
 \item Для каждого $\mathbf{h} \in U_h$ и каждого $\boldsymbol{\lambda} \in U_{\lambda}$ решение $\boldsymbol{\theta}^{*}$ определено однозначно.
-\item \textbf{Условие \textcolor{blue}{максимизации правдоподобия выборки:}}\textcolor{darkgray}{ существует $\boldsymbol{\lambda} \in U_{\lambda}$ и  $K_1 \in \mathbb{R}_{+}$, такие что для любых векторов гиперпараметров $\mathbf{h}_1, \mathbf{h}_2 \in  U_{h}, Q(\mathbf{h}_1) - Q(\mathbf{h}_2) > K_1:$ матожидания правдоподбия выборок: $\mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}_1, \lambda_{\text{temp}})>\text{log}\mathsf{E}_q ~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}_2, \lambda_{\text{temp}})$.}
+\item \textbf{Условие \textcolor{blue}{максимизации правдоподобия выборки: }}\textcolor{darkgray}{ существует $\boldsymbol{\lambda} \in U_{\lambda}$ и  $K_1 \in \mathbb{R}_{+}$, такие что для любых векторов гиперпараметров $\mathbf{h}_1, \mathbf{h}_2 \in  U_{h}, Q(\mathbf{h}_1) - Q(\mathbf{h}_2) > K_1:$ матожидания правдоподбия выборок: $\mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}_1, \lambda_{\text{temp}}, \mathbf{f})>\text{log}\mathsf{E}_q ~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}_2, \lambda_{\text{temp}}, \mathbf{f})$.}
 
 % здесь мы имеем ввиду что для любого lambda, такого что мы считаем параметр неинформативными
-\item \textbf{Условие \textcolor{red}{минимизации сложности модели:}}\textcolor{darkgray}{ существует  $\boldsymbol{\lambda} \in U_{\lambda}$ и $K_2 \in \mathbb{R}_{+}$, такие что для любых векторов гиперпараметров $\mathbf{h}_1, \mathbf{h}_2 \in U_h, Q(\mathbf{h}_1) - Q(\mathbf{h}_2) > K_2$,  $\mathsf{E}_q \text{log}~p(\mathbf{y}|\boldsymbol{\theta}_1, \lambda_{\text{temp}}) = \text{log}\mathsf{E}_q ~p(\mathbf{y}|\boldsymbol{\theta}_2, \lambda_{\text{temp}})$, количество ненулевых параметров у первой модели меньше, чем у второй.}
+\item \textbf{Условие \textcolor{red}{минимизации сложности модели: }}\textcolor{darkgray}{ существует  $\boldsymbol{\lambda} \in U_{\lambda}$ и $K_2 \in \mathbb{R}_{+}$, такие что для любых векторов гиперпараметров $\mathbf{h}_1, \mathbf{h}_2 \in U_h, Q(\mathbf{h}_1) - Q(\mathbf{h}_2) > K_2$,  $\mathsf{E}_q \text{log}~p(\mathbf{y}|\boldsymbol{\theta}_1, \lambda_{\text{temp}}, \mathbf{f}) = \text{log}\mathsf{E}_q ~p(\mathbf{y}|\boldsymbol{\theta}_2, \lambda_{\text{temp}}, \mathbf{f})$, количество ненулевых параметров у первой модели меньше, чем у второй.}
 
-\item \textbf{Условие максимизации обоснованности модели:}\textcolor{darkgray}{ существует значение гиперпараметров $\boldsymbol{\lambda}$, такое что оптимизация задачи эквивалента оптимизации вариационной оценки обоснованности модели:
+\item \textbf{Условие максимизации обоснованности модели: }\textcolor{darkgray}{ существует значение гиперпараметров $\boldsymbol{\lambda}$, такое что оптимизация задачи эквивалента оптимизации вариационной оценки обоснованности модели:
 \vspace{-0.2cm}
 \[
-    \mathbf{h}^{*} = \argmax_{} p(\mathbf{y}|\mathbf{X}, \mathbf{h}', \lambda_{\text{temp}}),\quad
-    \boldsymbol{\theta}^{*} = \argmin D_\text{KL}(q| p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \lambda_{\text{temp}})).
+    \mathbf{h}^{*} = \argmax_{} p(\mathbf{y}|\mathbf{X}, \mathbf{h}', \lambda_{\text{temp}}, \mathbf{f}),\quad
+    \boldsymbol{\theta}^{*} = \argmin D_\text{KL}(q| p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \lambda_{\text{temp}}, \mathbf{f})).
 \]}
 \vspace{-0.6cm}
-\item \textbf{Условие \textcolor{OliveGreen}{перехода между структурами:}}
+\item \textbf{Условие \textcolor{OliveGreen}{перехода между структурами: }}
 \textcolor{darkgray}{
 Существует константа $K_3$, такая что для любых двух векторов $\mathbf{h}_{1}, \mathbf{h}_2$ и соответствующих векторов $\boldsymbol{\theta}_1^{*},\boldsymbol{\theta}_2^{*}: D_\text{KL}(q_{\boldsymbol{\Gamma}_2}, q_{\boldsymbol{\Gamma}_1})>K_3, D_\text{KL}(q_{\boldsymbol{\Gamma}_1}, q_{\boldsymbol{\Gamma}_2})>K_3$:  существуют значения гиперпараметров $\boldsymbol{\lambda_1},\boldsymbol{\lambda_2}$, такие что  $Q(\mathbf{h}_1, \lambda_1) > Q(\mathbf{h}_2, \lambda_1), Q(\mathbf{h}_1, \lambda_1) < Q(\mathbf{h}_2, \lambda_2)$.
 }
-\item \textbf{Условие непрерывности:} $\mathbf{h}^{*}, \boldsymbol{\theta}^{*}$ непрерывны по метапараметрам.
+\item \textbf{Условие непрерывности: } $\mathbf{h}^{*}, \boldsymbol{\theta}^{*}$ непрерывны по метапараметрам.
 
 \end{enumerate}
 %\end{block}
@@ -686,24 +686,24 @@ $$
 Следующие задачи выбора модели не являются обобщающими:
 \begin{enumerate}
 % задача не является строго двууровневой, нельзя проомтимизировать ELBO
-\item метод максимума правдоподобия: $\max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, \lambda_\text{temp})};$
+\item метод максимума правдоподобия: $\max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, \lambda_\text{temp}, \mathbf{f})};$
 
 % нет возможности оптимизации структуры
-\item метод максимума апостериорной вероятности $\max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X},  \boldsymbol{\theta})}\textcolor{red}{p( \boldsymbol{\theta}| \mathbf{h}, \lambda_\text{temp})}\textcolor{OliveGreen}{p(\mathbf{h}|\boldsymbol{\lambda})};$
+\item метод максимума апостериорной вероятности $\max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X},  \boldsymbol{\theta}, \mathbf{f})}\textcolor{red}{p( \boldsymbol{\theta}| \mathbf{h}, \lambda_\text{temp})}\textcolor{OliveGreen}{p(\mathbf{h}|\boldsymbol{\lambda})};$
 
 % нет возможности оптимизации правдоподобия модели - структа не подчиняется beta
-\item метод максимума вариационной оценки обоснованности модели $\max_{\mathbf{h}} \max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma})}} - \textcolor{red}{\text{D}_{KL}\bigl(q(\mathbf{w}, \boldsymbol{\Gamma})||p(\mathbf{w}, \boldsymbol{\Gamma}, \lambda_\text{temp})\bigr)}\textcolor{OliveGreen}{p(\mathbf{h}|\boldsymbol{\lambda})};$
+\item метод максимума вариационной оценки обоснованности модели $\max_{\mathbf{h}} \max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{f})}} - \textcolor{red}{\text{D}_{KL}\bigl(q(\mathbf{w}, \boldsymbol{\Gamma})||p(\mathbf{w}, \boldsymbol{\Gamma}, \lambda_\text{temp})\bigr)}\textcolor{OliveGreen}{p(\mathbf{h}|\boldsymbol{\lambda})};$
 
-\item кросс-валидация $\max_{\mathbf{h}} \textcolor{blue}{\mathsf{E}_q \text{log}p(\mathbf{y}_\text{valid}|\mathbf{X}_\text{valid}, \boldsymbol{\theta}^{*}, \lambda_\text{temp})}\textcolor{OliveGreen}{p(\mathbf{h}|\boldsymbol{\lambda})}$, $\boldsymbol{\theta}^{*} = \argmax_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log}p(\mathbf{y}_\text{train}|\mathbf{X}_\text{train}, \boldsymbol{\theta}, \lambda_\text{temp})}\textcolor{red}{p(\boldsymbol{\theta}| \mathbf{h})}$.
-
-% задача не является строго двууровневой, нельзя проомтимизировать ELBO
-\item AIC: $\max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, \lambda_\text{temp})} + \textcolor{red}{|\theta_i: \theta_i \neq 0|}$;
+\item кросс-валидация $\max_{\mathbf{h}} \textcolor{blue}{\mathsf{E}_q \text{log}p(\mathbf{y}_\text{valid}|\mathbf{X}_\text{valid}, \boldsymbol{\theta}^{*}, \lambda_\text{temp}, \mathbf{f})}\textcolor{OliveGreen}{p(\mathbf{h}|\boldsymbol{\lambda})}$, $\boldsymbol{\theta}^{*} = \argmax_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log}p(\mathbf{y}_\text{train}|\mathbf{X}_\text{train}, \boldsymbol{\theta}, \lambda_\text{temp}, \mathbf{f})}\textcolor{red}{p(\boldsymbol{\theta}| \mathbf{h})}$.
 
 % задача не является строго двууровневой, нельзя проомтимизировать ELBO
-\item BIC: $\max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, \lambda_\text{temp})} + \textcolor{red}{\text{log}(m)|\theta_i: \theta_i \neq 0|}$;
+\item AIC: $\max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, \lambda_\text{temp}, \mathbf{f})} + \textcolor{red}{|\theta_i: \theta_i \neq 0|}$;
+
+% задача не является строго двууровневой, нельзя проомтимизировать ELBO
+\item BIC: $\max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, \lambda_\text{temp}, \mathbf{f})} + \textcolor{red}{\text{log}(m)|\theta_i: \theta_i \neq 0|}$;
 
 % задача не является двухуровневой. Даже если добавить как ELBO, потребуется еще и C_prior, чтобы можно было оптимизировать МП.
-\item перебор структуры модели:  $\max{\boldsymbol{\Gamma}'} \max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, \lambda_\text{temp})}\textcolor{red}{\mathbb{I}(\boldsymbol{\Gamma} = \boldsymbol{\Gamma}') }.$
+\item перебор структуры модели:  $\max{\boldsymbol{\Gamma}'} \max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, \lambda_\text{temp}, \mathbf{f})}\textcolor{red}{\mathbb{I}(\boldsymbol{\Gamma} = \boldsymbol{\Gamma}') }.$
 \end{enumerate}
 \end{block}
 \end{frame}
@@ -713,7 +713,7 @@ $$
 \footnotesize
 \begin{columns}
 \begin{column}{0.8\textwidth}
-\begin{block}{Теорема}
+\begin{block}{Теорема [Бахтеев, 2018]}
 Пусть функции потерь и валидации $L,Q$ являются непрерывно-дифференцируемыми на некоторой области $U$.
 Тогда следующая задача является обобщающей на $U$.
 \begin{equation}
@@ -722,7 +722,7 @@ $$
 \mathbf{h}^{*} = \argmax_{\mathbf{h}} Q = 
 \end{equation}
 \[
-= \textcolor{blue}{\lambda_\text{likelihood}^\text{Q}\mathsf{E}_{{q}^{*}} \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w},\boldsymbol{\Gamma}, \mathbf{h}, \lambda_\text{temp})}}
+= \textcolor{blue}{\lambda_\text{likelihood}^\text{Q}\mathsf{E}_{{q}^{*}} \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w},\boldsymbol{\Gamma}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f})}}
  -\]
 \vspace{-0.3cm}
 \[- \textcolor{red}{^\text{prior}_\text{Q}\text{D}_{KL}\bigl( q^{*}(\mathbf{w}, \boldsymbol{\Gamma}) || p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}}) \bigr)}  -\]
@@ -734,7 +734,7 @@ $$
 \begin{equation}
 \tag{$L^{*}$}
 {q}^{*} = \argmax_{q} L = 
-\textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A}^{-1}, \lambda_{\text{temp}})}}
+\textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \lambda_{\text{temp}}, \mathbf{f})}}
 \end{equation}
 \vspace{-0.3cm}
 \[- \textcolor{red}{^\text{prior}_\text{L}\text{D}_{KL}\bigl( q^{*}(\mathbf{w}, \boldsymbol{\Gamma}) || p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}}) \bigr)}.
@@ -776,12 +776,12 @@ $ \textcolor{OliveGreen}{\boldsymbol{\lambda}_{\text{struct}}^Q=[1;1;0].}$
 \item Задача оптимизации~\eqref{eq:qopt} доставляет максимум апостериорной вероятности гиперпараметров с использованием вариационной оценки обоснованности:
 \vspace{-0.3cm}
 \[
-    \text{log}\hat{p}(\mathbf{y}|\mathbf{X}, \mathbf{h}, \lambda_\text{temp}) + \textcolor{OliveGreen}{\text{log}p(\mathbf{h}|\lambda_1,\lambda_2) \to \max_{\mathbf{h}}}.
+    \text{log}\hat{p}(\mathbf{y}|\mathbf{X}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f}) + \textcolor{OliveGreen}{\text{log}p(\mathbf{h}|\lambda_1,\lambda_2) \to \max_{\mathbf{h}}}.
 \]
-\item Вариационное распределение $q$ приближает апостериорное распределение $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \lambda_\text{temp})$ наилучшим образом:
+\item Вариационное распределение $q$ приближает апостериорное распределение $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \lambda_\text{temp},, \mathbf{f})$ наилучшим образом:
 \vspace{-0.3cm}
 \[
-    {D}_\text{KL}(q||p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \lambda_\text{temp})) \to \min_{\boldsymbol{\theta}}.
+    {D}_\text{KL}(q||p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f})) \to \min_{\boldsymbol{\theta}}.
 \]
 \end{enumerate}
 \end{block}
@@ -791,12 +791,12 @@ $ \textcolor{OliveGreen}{\boldsymbol{\lambda}_{\text{struct}}^Q=[1;1;0].}$
 \begin{block}{}
 Пусть также распределение $q$ декомпозируется на два независимых распределения для параметров $\mathbf{w}$ и структуры $\boldsymbol{\Gamma}$ модели $\mathbf{f}$:
 \[
-    q = q_{\mathbf{w}}q_{\boldsymbol{\Gamma}}, q_{\boldsymbol{\Gamma}} \approx p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}), q_{\mathbf{w}} \approx p(\mathbf{w}|\boldsymbol{\Gamma},\mathbf{y}, \mathbf{X}, \mathbf{h}).
+    q = q_{\mathbf{w}}q_{\boldsymbol{\Gamma}}, q_{\boldsymbol{\Gamma}} \approx p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \mathbf{f}), q_{\mathbf{w}} \approx p(\mathbf{w}|\boldsymbol{\Gamma},\mathbf{y}, \mathbf{X}, \mathbf{h}, \mathbf{f}).
 \]
-Тогда вариационные распределения $q_{\mathbf{w}}, q_{\boldsymbol{\Gamma}}$приближают апостериорные распределения $ p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \lambda_\text{temp}), p(\mathbf{w}|\boldsymbol{\Gamma},\mathbf{y}, \mathbf{X}, \mathbf{h}, \lambda_\text{temp})$ наилучшим образом:
+Тогда вариационные распределения $q_{\mathbf{w}}, q_{\boldsymbol{\Gamma}}$приближают апостериорные распределения $ p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f}), p(\mathbf{w}|\boldsymbol{\Gamma},\mathbf{y}, \mathbf{X}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f})$ наилучшим образом:
 \[
-    {D}_\text{KL}(q_{\boldsymbol{\Gamma}}||p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \lambda_\text{temp})) \to \min, \quad
-    {D}_\text{KL}(q_{\mathbf{w}}||p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{h})) \to \min.
+    {D}_\text{KL}(q_{\boldsymbol{\Gamma}}||p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f})) \to \min, \quad
+    {D}_\text{KL}(q_{\mathbf{w}}||p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \mathbf{f})) \to \min.
 \]
 
 \end{block}
@@ -816,9 +816,9 @@ $ \textcolor{OliveGreen}{\boldsymbol{\lambda}_{\text{struct}}^Q=[1;1;0].}$
 \end{block}
 Оператор стохастического градиентного спуска:
 \[
-	 \hat{\boldsymbol{\theta}} = T \circ T \circ \dots \circ T(\boldsymbol{\theta}_0, \mathbf{A}^{-1}, \mathbf{m}) = T^\eta(\boldsymbol{\theta}_0, \mathbf{A}^{-1}, \mathbf{m}), \quad\text{где}	T(\boldsymbol{\theta}, \mathbf{A}^{-1}, \mathbf{m}) =
+	 \hat{\boldsymbol{\theta}} = T \circ T \circ \dots \circ T(\boldsymbol{\theta}_0, \mathbf{h}) = T^\eta(\boldsymbol{\theta}_0, \mathbf{h}), \quad\text{где}	T(\boldsymbol{\theta}, \mathbf{h}) =
 \]
-\[=\boldsymbol{\theta} - \lambda_\text{lr} \nabla L(\boldsymbol{\theta}, \mathbf{A}^{-1}, \mathbf{m})|_{\hat{\mathfrak{D}}}, 
+\[=\boldsymbol{\theta} - \lambda_\text{lr} \nabla L(\boldsymbol{\theta}, \mathbf{h})|_{\hat{\mathfrak{D}}}, 
 \]
 $\lambda_{\text{lr}}$ --- длина шага градиентного спуска, $\boldsymbol{\theta}_0$ --- начальное значение параметров $\boldsymbol{\theta}$, $\hat{\mathfrak{D}}$ --- случайная подвыборка исходной выборки $\mathfrak{D}$.
 
@@ -845,7 +845,7 @@ $\mathbf{h}^{*}$ является непрерывной функцией по �
 \begin{frame}
 \small
 \frametitle{Нижняя вариационная оценка обоснованности на основе мультистарта}
-$$\text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{h}) \geq \mathsf{E}_{q(\mathbf{W)}}\text{log~}p (\mathbf{y}, \mathbf{w}|\mathbf{X}, \mathbf{h}) - \mathsf{E}_{q_{\mathbf{w}}}(-\text{log}(q_\mathbf{w})).$$
+$$\text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{h},\mathbf{f}) \geq \mathsf{E}_{q(\mathbf{W)}}\text{log~}p (\mathbf{y}, \mathbf{w}|\mathbf{X}, \mathbf{h},\mathbf{f}) - \mathsf{E}_{q_{\mathbf{w}}}(-\text{log}(q_\mathbf{w})).$$
 
 \begin{block}{Теорема [Бахтеев, 2016]}Пусть $L$ --- функция потерь, градиент которой ---  непрерывно-дифференцируемая функция с константой Липшица $C$. \\
 Пусть $\boldsymbol{\theta} = [\mathbf{w}^1,\dots,\mathbf{w}^k]$ ---  начальные приближения оптимизации модели, $\lambda_\text{lr}$ --- шаг градиентного спуска.
@@ -865,7 +865,7 @@ $$\text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{h}) \geq \mathsf{E}_{q(\mathbf{W)}}
 
 \frametitle{Градиентный спуск как вариационная оценка обоснованности модели}
 \footnotesize
-Эмпирическая плотность, основанная на точках старта оптимизации --- вариационное распределение.\\
+Эмпирическое распределение на точках старта оптимизации --- вариационное распределение.\\
 
 
 \begin{multicols}{2}
@@ -892,7 +892,7 @@ $$\text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{h}) \geq \mathsf{E}_{q(\mathbf{W)}}
 
 
 
-
+\iffalse
 \begin{frame}{Оптимизация гиперпараметров: пример}
 
 \begin{multicols}{2}
@@ -911,6 +911,7 @@ $$\text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{h}) \geq \mathsf{E}_{q(\mathbf{W)}}
 \end{multicols}
 
 \end{frame}
+\fi
 
 
 
@@ -923,14 +924,14 @@ $$\text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{h}) \geq \mathsf{E}_{q(\mathbf{W)}}
 
 \begin{block}{Теорема, [Бахтеев, 2018]}
 Пусть $\textcolor{red}{\lambda_\text{prior}^L} > 0, m \gg 0, \frac{m}{\lambda_\text{prior}^L} \in \mathbb{N}.$ Тогда оптимизация функции\vspace{-0.3cm} \[L = 
-\textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A}^{-1}, \lambda_{\text{temp}})}} - \textcolor{red}{\lambda_\text{prior}^L\text{D}_{KL}(p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{A}^{-1}, \mathbf{m}, \lambda_{\text{temp}}) || q(\mathbf{w}), q(\boldsymbol{\Gamma}))}\vspace{-0.2cm}\] эквивалентна минимизации $\mathsf{E}_{\hat{\mathbf{X}}, \hat{\mathbf{y}}\sim p(\mathbf{X}, \mathbf{y})}\text{D}_{KL}(q||p(\mathbf{w}, \boldsymbol{\Gamma} | \hat{\mathbf{X}}, \hat{\mathbf{y}})),$ где $\hat{\mathbf{X}}, \hat{\mathbf{y}}$ --- случайные подвыборки мощностью $\frac{m}{\textcolor{red}{\lambda_\text{prior}^L}}$ из генеральной совопкупности.
+\textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \lambda_{\text{temp}},\mathbf{f})}} - \textcolor{red}{\lambda_\text{prior}^L\text{D}_{KL}(p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}}) || q(\mathbf{w}), q(\boldsymbol{\Gamma}))}\vspace{-0.2cm}\] эквивалентна минимизации $\mathsf{E}_{\hat{\mathbf{X}}, \hat{\mathbf{y}}\sim p(\mathbf{X}, \mathbf{y})}\text{D}_{KL}(q||p(\mathbf{w}, \boldsymbol{\Gamma} | \hat{\mathbf{X}}, \hat{\mathbf{y}},\mathbf{h},\lambda_{\text{temp}},\mathbf{f})),$ где $\hat{\mathbf{X}}, \hat{\mathbf{y}}$ --- случайные подвыборки мощностью $\frac{m}{\textcolor{red}{\lambda_\text{prior}^L}}$ из генеральной совопкупности.
 \end{block}
 
 \begin{block}{Определение}
 Параметрической сложностью модели назовем минимальную дивергенцию между априорным и вариационным распределением:
 \vspace{-0.2cm}
 \[
-    C_p = \min_{\mathbf{h}} \textcolor{red}{D_\text{KL}(q||p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h},\lambda_\text{temp})).}
+    C_p = \min_{\mathbf{h}} \textcolor{red}{D_\text{KL}(q||p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h},\lambda_\text{temp}, \mathbf{f})).}
 \]
 \end{block}
 
@@ -938,7 +939,7 @@ $$\text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{h}) \geq \mathsf{E}_{q(\mathbf{W)}}
 При устремлении параметрической сложности модели к нулю относительная плотность параметров модели стремится к единице:
 \vspace{-0.3cm}
 \[
-    C_p \to 0 => \boldsymbol{\rho}(\mathbf{w}) \to 1, \quad \rho(w) = \frac{q(0)}{q(w)} = \text{exp}\left(-\frac{\mu^2}{\sigma^2}\right).
+    C_p \to 0 \implies \boldsymbol{\rho}(\mathbf{w}) \to 1, \quad \rho(w) = \frac{q(0)}{q(w)} = \text{exp}\left(-\frac{\mu^2}{\sigma^2}\right).
 \]
 \end{block}
 
@@ -997,7 +998,7 @@ $$\text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{h}) \geq \mathsf{E}_{q(\mathbf{W)}}
 % Так как L не зависит от h, то получается что L-DKL|h' > L-DKL|h, противоречие.
 \end{frame}
 
-
+\iffalse
 \begin{frame}{Вычислительный эксперимент}
 \small
 Выборка:
@@ -1027,12 +1028,15 @@ $
 \end{figure}   
 
 \end{frame}
-
+\fi
 
 
 \begin{frame}{Результаты, выносимые на защиту}
+\footnotesize
 \begin{enumerate}
-\item Предложен метод выбора модели наиболее правдоподобной структуры, обобщающий ранее описанные алгоритмы оптимизации:
+\item Предложен метод графового описания моделей глубокого обучения.
+\item Определено понятие обобщающей задачи оптимизации. Доказано, что задачи максимума правдоподобия, апостериорной вероятности, вариационной оценки обоснованности, кросс-валидация, AIC, BIC и полный перебор структуры не являются обобщающими.
+\item Предложена обобщающая задача оптимизации модели, обобщающая ранее описанные методы выбора модели:
 \begin{itemize}
 \item оптимизация обоснованности;
 \item последовательное увеличение сложности модели;
@@ -1040,12 +1044,16 @@ $
 \item полный перебор вариантов структуры модели.
 \end{itemize}
 
+
+\item Предложен метод оптимизации вариационной оценки обоснованности на основе мультистарта оптимизации модели.
 \item Предложен алгоритм оптимизации параметров, гиперпараметров и структурных
 параметров моделей глубокого обучения.
 
-\item Проведено исследование свойств алгоритмов выбора модели при различных значениях мета-параметров.
+\item Определено понятие параметрической сложности.  Рассмотрены ассимптотические свойства структурной сложности. 
 
-\item Проведен вычислительный эксперимент, иллюстрирующий работу предложенного метода.
+\item Проведено исследование свойств оптимизационной задачи при различных значениях мета-параметров.
+
+%\item Проведен вычислительный эксперимент, иллюстрирующий работу предложенного метода.
 
 \end{enumerate}
 \end{frame}
