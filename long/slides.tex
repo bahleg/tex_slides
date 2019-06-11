@@ -27,39 +27,49 @@
   \setbeamertemplate{caption}[numbered]
 } 
 
+/iffalse
+1. Цель исследования
+2. Постановка задач
+3-5. Иллюстрации
+6-7.Вар вывод
+8. Теорема
+9-10. Графики
+11. Гиперпараметры
+-14. Гиперпараметры
+15-16. Результаты
+17. Результаты
+18. Список работ
+/fi
 
 \captionsetup[subfloat]{labelformat=empty}
-\title[Последовательное порождение моделей]{Последовательное порождение моделей \\глубокого обучения оптимальной сложности}
-\subtitle
-{\small Диссертация на соискание ученой степени \\
-кандидата физико-математических наук \\
-05.13.17~--- Теоретические основы информатики\\
-научный руководитель д.ф.-м.н В.\,В.\,Стрижов}
+\title[Оптимизация гиперпараметров моделей]{Градиентные методы оптимизации гиперпараметров моделей глубокого обучения}
 \author{О.\,Ю.\,Бахтеев}
-
-\institute[МФТИ]{Московский Физико-Технический Институт (Государственный Университет)}     
+\institute[МФТИ]{Научный руководитель: д.ф.-м.н. В.В. Стрижов\\Московский Физико-Технический Институт (Государственный Университет)}     
 %\institute[МФТИ]{Московский Физико-Технический Институт (Государственный Университет)}
-\date[99.99.2019]{99 июбря 2019 г.}
+\date[09.10.2017]{ММРО-2017 \\~\\09.10.2017}
 \begin{document}
 
 \begin{frame}
   \titlepage
 \end{frame}
 
-\begin{frame}{Задача выбора модели}
-\textbf{Цели исследования}\\
-\begin{enumerate}
-\item Предложить критерии оптимальной и субоптимальной сложности модели глубокого обучения.
-\item Предложить метод построения модели субоптимальной сложности.
-\end{enumerate}
-\textbf{Задачи}\\
-\begin{enumerate}
-\item Предложить критерий оптимальной и субоптимальной сложности модели глубокого обучения.
-\item Разработать алгоритм построения модели глубокого обучения субоптимальной сложности.
-\item Предложить методы оптимизации параметров и гиперпараметров модели.
-\item Предложить обобщенный метод выбора модели глубокого обучения.
-\item Разработать программный комплекс для построения моделей глубокого обучения для задач классификации и регрессии.
-\end{enumerate}
+\begin{frame}{Цель работы}
+\textbf{Исследуются}\\
+Методы автоматического порождения и прореживания моделей глубокого обучения.
+
+\textbf{Требуется}\\
+Предложить алгоритм нахождения оптимальных значений гиперпараметров (параметров распределения параметров) модели.
+
+\textbf{Проблемы нахождения оптимальных значений гиперпараметров}
+\begin{itemize}
+\item Многоэкстремальность задачи оптимизации параметров модели,
+\item Вычислительная сложность оптимизации,
+\item Большое количество гиперпараметров.
+\end{itemize}
+
+\textbf{Решение}\\
+Предлагается оптимизировать параметры и гиперпараметры модели в единой процедуре с использованием градиентных методов. В качестве критерия оптимальности модели рассматривается нижняя оценка правдоподобия модели. 
+
 \end{frame}
 
 
@@ -78,17 +88,69 @@
            
 \begin{figure}[h]                                                                                                                               
 \centering  
-   \includegraphics[width=0.5\textwidth]{./slide_plots/hyper.png}
+   \includegraphics[width=0.75\textwidth]{./slide_plots/hyper.png}
 \end{figure}
 \end{frame}
 
 
 \begin{frame}{Формальная постановка задачи}
+Задана дифференцируемая по параметрам модель $\mathbf{f}(\mathbf{w}, \mathbf{x})$, задающая правдоподобие выборки $\textcolor{red}{p(\mathfrak{D}| \mathbf{w})}$.
+Задано априорное распределение параметров модели:
+\[
+    \textcolor{blue}{p(\mathbf{w}|\mathbf{A}^{-1}) }\sim \mathcal{N}(\mathbf{0}, \mathbf{A}^{-1}) = \mathcal{N}(\mathbf{0}, \text{diag} [\alpha_1, \dots, \alpha_n]^\text{T}).
+\]
+
+Пусть $\boldsymbol{\theta}  \in \mathbb{R}^s$ --- множество параметров, подлежащих оптимизации (соответствует параметрам модели $\mathbf{w}$), \\
+$L$ --- оптимизируемая функция потерь, \\$Q$ --- критерий качества модели.
+
+
+Итоговая задача оптимизации:
+
+\[
+	\hat{\mathbf{A}}^{-1} = \argmax_{[\alpha_1, \dots, \alpha_n]^\text{T} \in \mathbb{R}^n} Q(\hat{\boldsymbol{\theta}}(\mathbf{A}^{-1}), \mathbf{A}^{-1}, \mathfrak{D}),
+\]
+\[
+	\hat{\boldsymbol{\theta}}(\mathbf{A}^{-1}) =  \argmin_{\boldsymbol{\theta} \in \mathbb{R}^s} L(\boldsymbol{\theta}, \mathbf{A}^{-1}, \mathfrak{D}).
+\]
 
 
 \end{frame}
 
+\iffalse
+\begin{frame}{Формальная постановка задачи}
+Задана выборка  \begin{equation}\label{eq:dataset}\mathfrak{D} = \{(\mathbf{x}_i,y_i)\}, i = 1,\dots,m,\end{equation} состоящая из множества пар <<объект-метка>>, $$\mathbf{x}_i \in \mathbf{X} \subset \mathbb{R}^n, \quad {y}_i \in \mathbf{y} \subset \mathbb{Y},$$ где $\mathbf{X}$ --- матрица объектов,  $\mathbf{y}$ --- вектор меток зависимой переменной $y$. 
 
+Задана дифференцируемая по параметрам модель, приближающая зависимую переменную~$y$:
+\[
+	f:\mathbb{R}^n \to \mathbb{Y}, \quad \mathbf{w} \in \mathbb{R}^u.
+\]
+
+Модель $f$ задает правдоподобие выборки $p(\mathbf{y}|\mathbf{X}, \mathbf{w})$.
+\end{frame}
+
+\begin{frame}{Формальная постановка задачи}
+Задано априорное распределение параметров модели:
+\[
+    p(\mathbf{w}|\mathbf{A}^{-1}) \sim \mathcal{N}(\mathbf{0}, \mathbf{A}^{-1}) = \mathcal{N}(\mathbf{0}, \text{diag} [\alpha_1, \dots, \alpha_n]^\text{T}).
+\]
+
+Пусть $\boldsymbol{\theta}  \in \mathbb{R}^s$ --- множество параметров, подлежащих оптимизации (соответствует параметрам модели $\mathbf{w}$).\\
+Пусть $L$ --- оптимизируемая функция потерь, \\$Q$ --- критерий качества модели.
+
+
+Итоговая задача оптимизации:
+
+\[
+	\hat{\mathbf{A}}^{-1} = \argmax_{[\alpha_1, \dots, \alpha_n]^\text{T} \in \mathbb{R}^n} Q(\hat{\boldsymbol{\theta}}(\mathbf{A}^{-1}), \mathbf{A}^{-1}, \mathfrak{D}),
+\]
+\[
+	\hat{\boldsymbol{\theta}}(\mathbf{A}^{-1}) =  \argmin_{\boldsymbol{\theta} \in \mathbb{R}^s} L(\boldsymbol{\theta}, \mathbf{A}^{-1}, \mathfrak{D}).
+\]
+
+
+\end{frame}
+
+\fi
 \begin{frame}{L и Q: Кросс-валидация}
 Разобьем выборку $\mathfrak{D}$ на $k$ равных частей:
 \[
@@ -377,33 +439,35 @@ $$
 \end{frame}
 
 
-\begin{frame}{Результаты, выносимые на защиту}
+\begin{frame}{Заключение}
 \begin{itemize}
-\item Предложен метод критерий и субоптимальной сложности модели глубокого обучения.
-\item Разработан алгоритм построения модели глубокого обучения субоптимальной сложности.
-\item Предложены методы оптимизации параметров и гиперпараметров модели.
-\item Предложен обобщенный метод выбора модели глубокого обучения.
-\item Разработан программный комплекс для построения моделей глубокого обучения для задач классификации и регрессии.
+\item Предложен критерий оптимальной сложности модели глубокого обучения.
+\item Исследована зависимость интегральной оценки правдоподобия от устойчивости модели и возможности переобучения.
+\item Предложен алгоритм выбора субоптимальной модели классификации без использования кросс-валидации.
+\item Рассмотрены градиентные алгоритмы оптимизации гиперпараметров.
+\item Проведены эксперименты на ряде выборок в задачах классификации и регрессии.
+\item Наилучшие результаты показали алгоритмы жадной оптимизации.
 \end{itemize}
 \end{frame}
 
+\appendix
+\bgroup
+\setbeamercolor{background canvas}{bg=black}
+\begin{frame}[plain, noframenumbering]
+\end{frame}
+\egroup
 
 
-\begin{frame}[plain, noframenumbering]{Список работ автора по теме диссертации}
-\footnotesize
-\textbf{Публикации ВАК}\\
-\begin{enumerate}
-\item А.Н. Смердов,  О.Ю. Бахтеев, В.В. Стрижов, Выбор оптимальной модели рекуррентной сети в задачах поиска парафраза // Информатика и её применения, 2019
-\item О.Ю. Бахтеев, В.В. Стрижов, Выбор моделей глубокого обучения субоптимальной сложности // Автоматика и телемеханника, 2018
-\item Бахтеев О.Ю., Попова М.С., Стрижов В.В., Системы и средства глубокого обучения в задачах классификации // Системы и средства информатики, 2016, 26(2) : 4-22
-\item \textbf{Еще несколько работ из АП, нужно вставлять?}
-\end{enumerate}
-\textbf{Выступления с докладом}\\
-\begin{enumerate}
-\item Градиентные методы оптимизации гиперпараметров моделей глубокого обучения, Математические методы распознавания образов, 2017
-\item Выбор модели глубокого обучения субоптимальной сложности с использованием вариационной оценки правдоподобия, Интеллектуализация обработки информации 2016.
-\item \textbf{Еще несколько работ из АП, нужно вставлять?}
-\end{enumerate}
+
+\begin{frame}[plain, noframenumbering]{Исследование основывается на следующих работах}
+\begin{itemize}
+\item Graves A. Practical variational inference for neural networks //Advances in Neural Information Processing Systems. – 2011
+\item  Maclaurin D., Duvenaud D., Adams R. Gradient-based hyperparameter optimization through reversible learning //International Conference on Machine Learning. – 2015
+\item  Luketina J. et al. Scalable gradient-based tuning of continuous regularization hyperparameters //International Conference on Machine Learning. - 2016
+\item J. Fu et al., DrMAD: Distilling Reverse-Mode Automatic Differentiation for Optimizing
+Hyperparameters of Deep Neural Networks // IJCAI - 2016
+\item Pedregosa F. Hyperparameter optimization with approximate gradient //International Conference on Machine Learning. – 2016. –
+\end{itemize}
 \end{frame}
 
 
