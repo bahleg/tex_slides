@@ -37,7 +37,7 @@
 \title[Выбор модели]{Выбор модели глубокого обучения}
 \author{Бахтеев Олег}
 \institute{МФТИ}
-\date{02.10.2019}
+\date{16.10.2019}
 
 \begin{document}
 
@@ -95,7 +95,7 @@
 где $\mathbf{f}$ --- модель, $\mathfrak{D}$ --- выборка, $L$ --- длина описания в битах.
 \\
 \[
-\text{MDL}(\mathbf{f}, \mathfrak{D}) \sim L(\mathbf{f}) + L(\mathbf{w}^*| \mathbf{f}) + L(\mathfrak{D}|\mathbf{w}^*, \mathbf{f}),
+\text{MDL}(\mathbf{f}, \mathfrak{D}) \sim L(\mathbf{f}) + \textcolor{blue}{L(\mathbf{w}^*| \mathbf{f})} + \textcolor{red}{L(\mathfrak{D}|\mathbf{w}^*, \mathbf{f})},
 \]
 $\mathbf{w}^*$ --- оптимальные параметры модели.\\
 
@@ -127,7 +127,7 @@ $\mathbf{w}^*$ --- оптимальные параметры модели.\\
 
 Обоснованность модели (``Evidence''):
 \[
-	p(\mathfrak{D}|\mathbf{h}) = \int_\mathbf{w} p(\mathfrak{D}|\mathbf{w})p(\mathbf{w}|\mathbf{h}) d\mathbf{w}.
+	p(\mathfrak{D}|\mathbf{h}) = \int_\mathbf{w} \textcolor{blue}{p(\mathfrak{D}|\mathbf{w})}\textcolor{red}{p(\mathbf{w}|\mathbf{h})} d\mathbf{w}.
 \]
 
 
@@ -186,7 +186,7 @@ $\mathbf{w}^*$ --- оптимальные параметры модели.\\
 \section{Вариационная нижняя оценка}
 \begin{frame}{Вариационная оценка, ELBO}
 %http://www.orchid.ac.uk/eprints/40/1/fox_vbtut.pdf
-\textbf{Вариационная оценка Evidence}, Evidence lower bound --- метод нахождения приближенного значения аналитически невычислимого распределения $p(\mathbf{w}|\mathfrak{D}, \mathbf{h})$ распределением $q(\mathbf{w}) \in \mathbf{Q}$. Получение вариационной нижней оценки обычно сводится к задаче минимизации
+\textbf{Вариационная оценка Evidence}, Evidence lower bound --- метод нахождения приближенного значения аналитически невычислимого распределения $p(\mathbf{w}|\mathfrak{D}, \mathbf{h})$ распределением $q(\mathbf{w}) \in \mathfrak{Q}$. Получение вариационной нижней оценки обычно сводится к задаче минимизации
 $$\text{KL}(q(\mathbf{w})||p(\mathbf{w}| \mathfrak{D}))=
 -\int_{\mathbf{w}} q(\mathbf{w}) \text{log}~\frac{p(\mathbf{w}| \mathfrak{D})} {q(\mathbf{w})}d\mathbf{w} = \textcolor{blue}{\mathsf{E}_{\mathbf{w}} p(\mathfrak{D}|\mathbf{w})} - \textcolor{red}{\text{KL}(q(\mathbf{w})||p(\mathbf{w}| \mathbf{h}))}.
 $$
@@ -229,7 +229,7 @@ $$
 \begin{block}{Утверждение 2}
 Пусть $m \gg 0$, $\lambda > 0, \frac{m}{\lambda}   \in \mathbb{N}, \frac{m}{\lambda}  \gg 0.$ Тогда оптимизация функции
 \[
-\mathsf{E}_{q} \log \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - \lambda \textnormal{D}_\textnormal{KL}  \bigl(q(\mathbf{w})||p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{h})\bigr)
+\textcolor{blue}{\mathsf{E}_{q} \log \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w})} - \textcolor{red}{\lambda \textnormal{D}_\textnormal{KL}  \bigl(q(\mathbf{w})||p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{h})\bigr)}
 \]
  эквивалентна оптимизации вариационной оценки обоснованности  
 для произвольной случайной подвыборки $\hat{\mathbf{y}}, \hat{\mathbf{X}}$ мощности $\frac{m}{{\lambda}}$ из генеральной совокупности.
@@ -316,10 +316,10 @@ $$
 Пусть $q \sim \mathcal{N}(\boldsymbol{\mu}_q, \mathbf{A}_q).$\\
 Тогда вариационная оценка имеет вид:
 $$
-\int_{\mathbf{w}} q(\mathbf{w})\text{log}~{p(\mathbf{Y}|\mathbf{X},\mathbf{w},\mathbf{h})} d \mathbf{w} - D_\text{KL}\bigl(q (\mathbf{w} )|| p (\mathbf{w}|\mathbf{h})\bigr) \simeq
+\textcolor{blue}{\int_{\mathbf{w}} q(\mathbf{w})\text{log}~{p(\mathbf{Y}|\mathbf{X},\mathbf{w},\mathbf{h})} d \mathbf{w}} - \textcolor{red}{D_\text{KL}\bigl(q (\mathbf{w} )|| p (\mathbf{w}|\mathbf{h})\bigr)} \simeq
 $$
 $$
-\sum_{i=1}^m \text{log}~p(\mathbf{y}_i|\mathbf{x}_i, \hat{\mathbf{w}}) - D_\text{KL}\bigl(q (\mathbf{w} )|| p (\mathbf{w}|\mathbf{h})\bigr) \to \max_{\mathbf{A}_q, \boldsymbol{\mu}_q}, \quad \hat{\mathbf{w}} \sim q.
+\textcolor{blue}{\sum_{i=1}^m \text{log}~p(\mathbf{y}_i|\mathbf{x}_i, \hat{\mathbf{w}})} - \textcolor{red}{D_\text{KL}\bigl(q (\mathbf{w} )|| p (\mathbf{w}|\mathbf{h})\bigr)} \to \max_{\mathbf{A}_q, \boldsymbol{\mu}_q}, \quad \hat{\mathbf{w}} \sim q.
 $$
 В случае, если априорное распределение параметров $p(\mathbf{w}|\mathbf{h})$ является нормальным: 
 $$
@@ -327,7 +327,7 @@ p(\mathbf{w}|\mathbf{h}) \sim \mathcal{N}(\boldsymbol{\mu}, \mathbf{A}),
 $$
 дивергенция $D_\text{KL}\bigl(q (\mathbf{w} )|| p (\mathbf{w}|\mathbf{h})$ вычисляется аналитически:
 $$
-D_\text{KL}\bigl(q (\mathbf{w}) || p (\mathbf{w}|\mathbf{h})\bigr) = \frac{1}{2} \bigl( \text{tr} (\mathbf{A}^{-1}\mathbf{A}_q) + (\boldsymbol{\mu} - \boldsymbol{\mu}_q)^\text{T}\mathbf{A}^{-1}(\boldsymbol{\mu} - \boldsymbol{\mu}_q) - n +\text{ln}~|\mathbf{A}| - \text{ln}~|\mathbf{A}_q| \bigr).
+ \textcolor{red}{D_\text{KL}\bigl(q (\mathbf{w}) || p (\mathbf{w}|\mathbf{h})\bigr)} = \frac{1}{2} \bigl( \text{tr} (\mathbf{A}^{-1}\mathbf{A}_q) + (\boldsymbol{\mu} - \boldsymbol{\mu}_q)^\text{T}\mathbf{A}^{-1}(\boldsymbol{\mu} - \boldsymbol{\mu}_q) - n +\text{ln}~|\mathbf{A}| - \text{ln}~|\mathbf{A}_q| \bigr).
 $$
 \end{frame}
 
@@ -360,15 +360,15 @@ $$
 \begin{column}{.48\textwidth}
 \textbf{``Обычная'' функция потерь:}\\
 $$
-L = \textcolor{red}{\sum_{\mathbf{x}, \mathbf{y} \in \mathfrak{D}} - \text{log}p(\mathbf{y}|\mathbf{x}, \mathbf{w})} + \textcolor{blue}{\lambda||\mathbf{w}||_2^2}.
+L = \textcolor{blue}{\sum_{\mathbf{x}, \mathbf{y} \in \mathfrak{D}} - \text{log}p(\mathbf{y}|\mathbf{x}, \mathbf{w})} + \textcolor{red}{\lambda||\mathbf{w}||_2^2}.
 $$\\~\\
 
 % если n - константна.
 \textbf{Вариационный вывод при $(p(\mathbf{w}|\mathbf{h}) \sim \mathcal{N}(\mathbf{0}, \mathbf{1}))$:}\\
 $$
-L =   \textcolor{red}{\sum_{\mathbf{x}, \mathbf{y}} \text{log}~p(\mathbf{y}|\mathbf{x}, \hat{\mathbf{w}})} +
+L =   \textcolor{blue}{\sum_{\mathbf{x}, \mathbf{y}} \text{log}~p(\mathbf{y}|\mathbf{x}, \hat{\mathbf{w}})} +
 $$
-$$ + \textcolor{blue}{\frac{1}{2} \bigl( \text{tr} (\mathbf{A}_q) + \boldsymbol{\mu}_q^\text{T}\mathbf{A}^{-1}\boldsymbol{\mu}_q  - \text{ln}~|\mathbf{A}_q| \bigr)}.
+$$ + \textcolor{red}{\frac{1}{2} \bigl( \text{tr} (\mathbf{A}_q) + \boldsymbol{\mu}_q^\text{T}\mathbf{A}^{-1}\boldsymbol{\mu}_q  - \text{ln}~|\mathbf{A}_q| \bigr)}.
 $$\\~\\
 
 \end{column}%
@@ -405,7 +405,7 @@ $$\\~\\
 \]
 
 \textbf{Salimans et al., 2014:} будем интерпретировать последовательность применения оператора $T$ как оптимизацию вариационной оценки:
-\[in
+\[
     T^1 \circ \dots T^\eta(\mathbf{w}) \to p(\mathbf{w}^{\tau}|\mathbf{y}, \mathbf{X}, \mathbf{h}).
 \]
 
@@ -570,7 +570,7 @@ $\mathbf{w}_b^g$ --- вектор параметров старта $g$ на ш�
 \end{frame}
 
 \begin{frame}{ДЗ: выбор задания}
-\textbf{Дедлайн: 9 октября, 0 часов.}\\~\\
+\textbf{Дедлайн: 23 октября, 0 часов.}\\~\\
 
 \texttt{ from zlib import crc32}\\~\\
 \texttt{theory = crc32('фамилия на русском языке'.encode('utf-8'))\%3+1}\\~\\
@@ -600,19 +600,10 @@ $\mathbf{w}_b^g$ --- вектор параметров старта $g$ на ш�
 {ДЗ: практика}
 \begin{enumerate}
 \item Реализовать пример выбора модели с аппроксимацией Лапласа (Bishop/McKay).
-\begin{itemize}
-\item Воспользоваться Bishop.
-\end{itemize}
 
 \item Реализовать пример выбора модели с вариационным нормальным распределением (Graves).
-\begin{itemize}
-\item Воспользоваться УЗБЧ.
-\end{itemize}
 
-\item Доказать утверждение 3;
-\begin{itemize}
 \item Реализовать пример выбора модели с распределением под дейвтием градиентного спуска (Maclaurin).
-\end{itemize}
 \end{enumerate}
 
 При оценивании будут учитываться аккуратность кода ноутбуков и наглядность примера.\\~\\
