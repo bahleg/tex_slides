@@ -188,7 +188,7 @@ $\mathbf{w}^*$ --- оптимальные параметры модели.\\
 %http://www.orchid.ac.uk/eprints/40/1/fox_vbtut.pdf
 \textbf{Вариационная оценка Evidence}, Evidence lower bound --- метод нахождения приближенного значения аналитически невычислимого распределения $p(\mathbf{w}|\mathfrak{D}, \mathbf{h})$ распределением $q(\mathbf{w}) \in \mathfrak{Q}$. Получение вариационной нижней оценки обычно сводится к задаче минимизации
 $$\text{KL}(q(\mathbf{w})||p(\mathbf{w}| \mathfrak{D}))=
--\int_{\mathbf{w}} q(\mathbf{w}) \text{log}~\frac{p(\mathbf{w}| \mathfrak{D})} {q(\mathbf{w})}d\mathbf{w} = \textcolor{blue}{\mathsf{E}_{\mathbf{w}} p(\mathfrak{D}|\mathbf{w})} - \textcolor{red}{\text{KL}(q(\mathbf{w})||p(\mathbf{w}| \mathbf{h}))}.
+-\int_{\mathbf{w}} q(\mathbf{w}) \text{log}~\frac{p(\mathbf{w}| \mathfrak{D})} {q(\mathbf{w})}d\mathbf{w} = \textcolor{blue}{\mathsf{E}_{\mathbf{w}} \text{log}~p(\mathfrak{D}|\mathbf{w})} - \textcolor{red}{\text{KL}(q(\mathbf{w})||p(\mathbf{w}| \mathbf{h}))}.
 $$
 
 \begin{figure}
@@ -229,7 +229,7 @@ $$
 \begin{block}{Утверждение 2}
 Пусть $m \gg 0$, $\lambda > 0, \frac{m}{\lambda}   \in \mathbb{N}, \frac{m}{\lambda}  \gg 0.$ Тогда оптимизация функции
 \[
-\textcolor{blue}{\mathsf{E}_{q} \log \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w})} - \textcolor{red}{\lambda \textnormal{D}_\textnormal{KL}  \bigl(q(\mathbf{w})||p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{h})\bigr)}
+\textcolor{blue}{\mathsf{E}_{q} \log p(\mathbf{y}|\mathbf{X}, \mathbf{w})} - \textcolor{red}{\lambda \textnormal{D}_\textnormal{KL}  \bigl(q(\mathbf{w})||p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{h})\bigr)}
 \]
  эквивалентна оптимизации вариационной оценки обоснованности  
 для произвольной случайной подвыборки $\hat{\mathbf{y}}, \hat{\mathbf{X}}$ мощности $\frac{m}{{\lambda}}$ из генеральной совокупности.
@@ -573,11 +573,17 @@ $\mathbf{w}_b^g$ --- вектор параметров старта $g$ на ш�
 \textbf{Дедлайн: 23 октября, 0 часов.}\\~\\
 
 \texttt{ from zlib import crc32}\\~\\
-\texttt{theory = crc32('фамилия на русском языке'.encode('utf-8'))\%3+1}\\~\\
-\texttt{practice = crc32('фамилия на английском'.encode('utf-8'))\%3+1}
+\texttt{theory = crc32('фамилия кириллицей'.lower().encode('utf-8'))\%3+1}\\~\\
+\texttt{practice = crc32('фамилия латиницей'.lower().encode('utf-8'))\%3+1}\\~\\
+
+Задания заливаются на github:
+\textit{https://github.com/Intelligent-Systems-Phystech/model\_selection/фамилия латиницей}\\
+
 \end{frame}
 
 \begin{frame}{ДЗ: теория}
+\textbf{Формат: tex + pdf.}
+
 \begin{enumerate}
 \item Доказать утверждение 1;
 \begin{itemize}
@@ -596,8 +602,9 @@ $\mathbf{w}_b^g$ --- вектор параметров старта $g$ на ш�
 \end{enumerate}
 \end{frame}
 
-\begin{frame}
-{ДЗ: практика}
+\begin{frame}{ДЗ: практика}
+\textbf{Формат: ipynb.}
+
 \begin{enumerate}
 \item Реализовать пример выбора модели с аппроксимацией Лапласа (Bishop/McKay).
 
