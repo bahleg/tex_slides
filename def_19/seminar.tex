@@ -935,7 +935,7 @@ $$\text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{h},\mathbf{f}) \geq \mathsf{E}_{q(\
 
 
 \begin{frame}{Анализ обобщающей задачи оптимизации}
-\small
+\footnotesize
 
 \vspace{-0.1cm}
 \begin{block}{Теорема, [Бахтеев, 2018]}
@@ -950,12 +950,18 @@ $$\text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{h},\mathbf{f}) \geq \mathsf{E}_{q(\
     C_p = \min_{\mathbf{h}} \textcolor{red}{D_\text{KL}(q||p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h},\lambda_\text{temp}, \mathbf{f})).}
 \]
 \end{block}
-\vspace{-0.2cm} 
-\begin{block}{Определение}
-Относительной вариационной   плотностью  назовем отношение:
+\vspace{-0.2cm}
+\begin{block}{Теорема, [Бахтеев, 2018]}
+Пусть $\textcolor{OliveGreen}{\boldsymbol{\lambda}^Q_{\text{struct}}} = \bf 0$.
+Пусть  $\teta_1, \teta_2, \h_1, \h_2$ --- результаты оптимизации при разных значениях гиперпараметров $\textcolor{red}{\lambda_{\text{prior}}^{Q,1},\lambda_{\text{prior}}^{Q,2}, \lambda_{\text{prior}}^{Q,1}>\lambda_{\text{prior}}^{Q,2}}$ на компакте $U$.
+Пусть функция $\Val$ является вогнутой на $U$ при $\textcolor{red}{\lambda_{\text{prior}}^{Q,2}}$.
+Тогда:
+\footnotesize
+\vspace{-0.2cm}
 \[
-\rho(w|\boldsymbol{\Gamma},\boldsymbol{\theta}_\mathbf{w}, \mathbf{h},\boldsymbol{\lambda})=\frac{q_\mathbf{w}(\text{mode}~p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda}))}{q_\mathbf{w}(\text{mode}~{q_\mathbf{w}})}.
+    C_p(\teta_1|\Uh, \lam_1) - C_p(\teta_2|\Uh, \lam_2)  < \frac{\lamCL }{\lamCQ} ({\lamCQ}_2- \lamCL) C,
 \]
+где $C$ --- некоторая константа.
 \end{block}
 
 
@@ -966,32 +972,30 @@ $$\text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{h},\mathbf{f}) \geq \mathsf{E}_{q(\
 
 
 \begin{frame}{Анализ параметрической сложности}
-\footnotesize
-%
+
+
+\vspace{-0.2cm} 
+\begin{block}{Определение}
+Относительной вариационной   плотностью  назовем отношение:
+\[
+\rho(w|\boldsymbol{\Gamma},\boldsymbol{\theta}_\mathbf{w}, \mathbf{h},\boldsymbol{\lambda})=\frac{q_\mathbf{w}(\text{mode}~p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda}))}{q_\mathbf{w}(\text{mode}~{q_\mathbf{w}})}.
+\]
+\end{block}
+
+
 \begin{block}{Теорема, [Бахтеев, 2018]}
 Пусть заданы компактные множества $\Uh \subset \Hb, \Utetaw \subset \Tetawb, \UtetaG \subset \TetaGb$,
 вариационное и априорное распределение $\qw$, $\priorw$  являются абсолютно непрерывным и унимодальным на  $U_{\boldsymbol{\theta}}$ с совпадающей модой и матожиданием.
 Пусть  мода и матожидание априорного распределения не зависят от гиперпараметров $\h$  и структуры $\Gam$.\\
 Пусть задана  бесконечная последовательность векторов вариационных параметров $\teta[1],\teta[2],\dots,\teta[i],\dots \in \Uteta$, такая, что $\lim_{i \to \infty}C_p(\teta[i]|\Uh,\lam) = 0.$
 Тогда:
+\footnotesize
 $$
    \lim_{i \to \infty} \E_{\qG[][{\tetaG[i]}]} {\rho}(\w|\Gam, {\tetaw[i]}, {\h[i]}, \lam)^{-1} = 1, \h[i] = \argmin \KL{\q[\teta_i]}{\prior}.
 $$
 \end{block}
 
 
-
-\begin{block}{Теорема, [Бахтеев, 2018]}
-Пусть $\textcolor{OliveGreen}{\boldsymbol{\lambda}^Q_{\text{struct}}} = \bf 0$.
-Пусть  $\teta_1, \teta_2, \h_1, \h_2$ --- результаты оптимизации при разных значениях гиперпараметров $\textcolor{red}{\lambda_{\text{prior}}^{Q,1},\lambda_{\text{prior}}^{Q,2}, \lambda_{\text{prior}}^{Q,1}>\lambda_{\text{prior}}^{Q,2}}$ на компакте $U$.
-Пусть функция $\Val$ является вогнутой на $U$ при $\textcolor{red}{\lambda_{\text{prior}}^{Q,2}}$.
-Тогда:
-\footnotesize
-\[
-    C_p(\teta_1|\Uh, \lam_1) - C_p(\teta_2|\Uh, \lam_2)  < \frac{\lamCL }{\lamCQ} ({\lamCQ}_2- \lamCL) C,
-\]
-где $C$ --- некоторая константа.
-\end{block}
 % 1. Заметим, что покомпонентная проекция выпулкых функций - выпукла (по определению вроде). поэтому L и Q можно рассматривать как большие мета-функции.
 % 2. По условиям:  L_1(q1) - \lambda_1 DKL(q1) = max, L_2 - \lambda_2 DKL(q_2) = max.
 % 3. L_1(q1) - \lambda_1 DKL(q1) - L_2(q2)  + \lambda_1 DKL(q2) >= 0
