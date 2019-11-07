@@ -879,6 +879,41 @@ $\lambda_{\text{lr}}$ --- длина шага градиентного спус�
 \end{frame}
 
 
+\begin{frame}{Эксперименты: MNIST}
+\begin{figure}  
+\includegraphics[width=0.7\textwidth]{Fig_mnist.eps}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Эксперименты: MNIST}
+Добавление гауссового шума $\mathcal{N}(\mathbf{0},\sigma^2\mathbf{I})$:
+\setlength{\columnsep}{10pt}
+\begin{multicols}{4}
+\begin{figure}[h]
+\includegraphics[width=0.10\textwidth]{./mnist0.png}
+\caption*{Без шума}
+\end{figure}
+
+\begin{figure}[h]
+\includegraphics[width=0.08\textwidth]{./mnist10.png}
+\caption*{$\sigma=0.1$}
+\end{figure}
+
+\begin{figure}[h]
+\includegraphics[width=0.08\textwidth]{./mnist25.png}
+\caption*{$\sigma=0.25$}
+\end{figure}
+
+\begin{figure}[h]
+\includegraphics[width=0.08\textwidth]{./mnist50.png}
+\caption*{$\sigma=0.5$}
+\end{figure}
+\end{multicols}
+\begin{center}
+\includegraphics[width=0.85\textwidth]{Fig_noise.pdf}
+\end{center}
+\end{frame}
 
 
 \begin{frame}
@@ -953,13 +988,13 @@ $$\text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{h},\mathbf{f}) \geq \mathsf{E}_{q(\
 \vspace{-0.2cm}
 \begin{block}{Теорема, [Бахтеев, 2018]}
 Пусть $\textcolor{OliveGreen}{\boldsymbol{\lambda}^Q_{\text{struct}}} = \bf 0$.
-Пусть  $\teta_1, \teta_2, \h_1, \h_2$ --- результаты оптимизации при разных значениях гиперпараметров $\textcolor{red}{\lambda_{\text{prior}}^{Q,1},\lambda_{\text{prior}}^{Q,2}, \lambda_{\text{prior}}^{Q,1}>\lambda_{\text{prior}}^{Q,2}}$ на компакте $U$.
-Пусть функция $\Val$ является вогнутой на $U$ при $\textcolor{red}{\lambda_{\text{prior}}^{Q,2}}$.
+Пусть  $\teta_1, \teta_2, \h_1, \h_2$ --- результаты оптимизации при разных значениях гиперпараметров $\textcolor{red}{{\lamCQ}_1,{\lamCQ}_2, {\lamCQ}_1>{\lamCQ}_2}$ на компакте $U$.
+Пусть функция $\Val$ является вогнутой на $U$ при $\textcolor{red}{{\lamCQ}_2}$.
 Тогда:
 \footnotesize
 \vspace{-0.2cm}
 \[
-    C_p(\teta_1|\Uh, \lam_1) - C_p(\teta_2|\Uh, \lam_2)  < \frac{\lamCL }{\lamCQ} ({\lamCQ}_2- \lamCL) C,
+    C_p(\teta_1|\Uh, \lam_1) - C_p(\teta_2|\Uh, \lam_2)  < \frac{\lamCL }{{\lamCQ}_2} ({\lamCQ}_2- \lamCL) C,
 \]
 где $C$ --- некоторая константа.
 \end{block}
@@ -981,8 +1016,7 @@ $$\text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{h},\mathbf{f}) \geq \mathsf{E}_{q(\
 \rho(w|\boldsymbol{\Gamma},\boldsymbol{\theta}_\mathbf{w}, \mathbf{h},\boldsymbol{\lambda})=\frac{q_\mathbf{w}(\text{mode}~p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda}))}{q_\mathbf{w}(\text{mode}~{q_\mathbf{w}})}.
 \]
 \end{block}
-
-
+\vspace{-0.2cm} 
 \begin{block}{Теорема, [Бахтеев, 2018]}
 Пусть заданы компактные множества $\Uh \subset \Hb, \Utetaw \subset \Tetawb, \UtetaG \subset \TetaGb$,
 вариационное и априорное распределение $\qw$, $\priorw$  являются абсолютно непрерывным и унимодальным на  $U_{\boldsymbol{\theta}}$ с совпадающей модой и матожиданием.
