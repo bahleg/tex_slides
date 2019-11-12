@@ -1,0 +1,83 @@
+% nb: очень не люблю макросы. Но что поделать 
+% https://stackoverflow.com/questions/1509799/how-to-replace-latex-macros-with-their-definitions-using-latex
+\newcommand{\D}{\mathfrak{D}}
+\newcommand{\x}{\mathbf{x}}
+\newcommand{\X}{\mathbf{X}}
+\newcommand{\y}{\mathbf{y}}
+\newcommand{\Xb}{\mathbb{X}}
+\newcommand{\yb}{\mathbb{Y}}
+\newcommand{\F}{\mathfrak{F}}
+
+
+
+\newcommand{\w}{\mathbf{w}}
+\newcommand{\Wb}{\mathbb{W}}
+\newcommand{\Uw}{U_\mathbf{w}}
+
+\newcommand{\Gam}{\boldsymbol{\Gamma}}
+\newcommand{\Gb}{\amsmathbb{\Gamma}}
+\newcommand{\UG}{U_{\boldsymbol{\Gamma}}}
+
+\newcommand{\h}{\mathbf{h}}
+\newcommand{\Hb}{\mathbb{H}}
+\newcommand{\Uh}{U_{\mathbf{h}}}
+
+\newcommand{\teta}{\boldsymbol{\theta}}
+\newcommand{\Tetab}{\amsmathbb{\Theta}}
+\newcommand{\Uteta}{U_{\boldsymbol{\theta}}}
+
+\newcommand{\tetaw}{\boldsymbol{\theta}_\mathbf{w}}
+\newcommand{\Tetawb}{\amsmathbb{\Theta}_\mathbf{w}}
+\newcommand{\Utetaw}{U_{\boldsymbol{\theta}_\mathbf{w}}}
+\newcommand{\tetaG}{\boldsymbol{\theta}_{\boldsymbol{\Gamma}}}
+\newcommand{\TetaGb}{\amsmathbb{\Theta}_{\boldsymbol{\Gamma}}}
+\newcommand{\UtetaG}{U_{\boldsymbol{\theta}_{\boldsymbol{\Gamma}}}}
+
+\newcommand{\lam}{\boldsymbol{\lambda}}
+\newcommand{\Lamb}{\amsmathbb{\Lambda}}
+\newcommand{\Ulam}{U_{\boldsymbol{\lambda}}}
+
+%\newcommand{\prior}{p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h},\boldsymbol{\lambda})}
+\newcommandx{\prior}[4][1=\mathbf{w},2=\boldsymbol{\Gamma},3=\mathbf{h},4=\boldsymbol{\lambda},usedefault]{p(#1,#2|#3,#4)}
+\newcommandx{\priorh}[2][1=\mathbf{h}, 2=\boldsymbol{\lambda},usedefault]{p(#1|#2)}
+\newcommandx{\priorG}[3][1=\boldsymbol{\Gamma}, 2= \mathbf{h}, 3=\boldsymbol{\lambda},usedefault]{p(#1|#2,#3)}
+\newcommandx{\priorw}[4][1=\mathbf{w},2=\boldsymbol{\Gamma},3=\mathbf{h},4=\boldsymbol{\lambda},usedefault]{p(#1|#2,#3,#4)}
+
+
+\newcommand{\post}{p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h},\boldsymbol{\lambda})}
+\newcommand{\posth}{p(\mathbf{h}|\mathbf{y}, \mathbf{X},\boldsymbol{\lambda})}
+\newcommand{\postG}{p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h},\boldsymbol{\lambda})}
+\newcommand{\postw}{p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \boldsymbol{\Gamma}, \mathbf{h},\boldsymbol{\lambda})}
+
+
+\newcommandx{\q}[1][1=\boldsymbol{\theta}, usedefault]{q(\mathbf{w}, \boldsymbol{\Gamma}|#1)}
+\newcommandx{\qG}[2][1=\boldsymbol{\Gamma},2=\boldsymbol{\theta}_{\boldsymbol{\Gamma}},usedefault]{q_{\boldsymbol{\Gamma}}(#1|#2)}
+\newcommandx{\qw}[3][1=\mathbf{w}, 2=\boldsymbol{\Gamma},3=\boldsymbol{\theta}_\mathbf{w},usedefault]{q_\mathbf{w}(#1|#2,#3)}
+
+
+\newcommandx{\LL}[4][1=\mathbf{y},2=\mathbf{X},3=\mathbf{w},4=\boldsymbol{\Gamma},usedefault]{p(#1|#2,#3,#4)}
+
+\newcommand{\EV}{p(\mathbf{y}|\mathbf{X}, \mathbf{h},\boldsymbol{\lambda})}
+
+\newcommandx{\Loss}[5][1=\boldsymbol{\theta},2=\mathbf{y},3=\mathbf{X},4=\mathbf{h},5=\boldsymbol{\lambda},usedefault]{L(#1 |#2,#3,#4,#5)}
+\newcommandx{\Val}[5][1=\mathbf{h},2=\mathbf{y},3=\mathbf{X},4=\boldsymbol{\theta},5=\boldsymbol{\lambda},usedefault]{Q(#1|#2,#3,#4,#5)}
+
+% прочее
+\newcommand{\model}{\mathbf{f}}
+\newcommand{\A}{\mathbf{A}}
+\newcommand{\s}{\mathbf{s}}
+\newcommand{\g}{\boldsymbol{\gamma}}
+\newcommand{\E}{\mathsf{E}}
+\newcommand{\KL}[2]{D_\text{KL}\bigl(#1 || #2\bigr)}
+
+\newcommand{\lamT}{\lambda_{\text{temp}}}
+\newcommand{\lamLL}{\lambda_\text{likelihood}^\text{Q}}
+\newcommand{\lamCL}{\lambda_\text{prior}^\text{L}}
+\newcommand{\lamCQ}{\lambda_\text{prior}^\text{Q}}
+\newcommand{\lamS}{\boldsymbol{\lambda}_\text{struct}^\text{Q}}
+\newcommandx{\TLoss}[6][1=\boldsymbol{\theta},2=L,3=\mathbf{y}, 4=\mathbf{X}, 5=\mathbf{h},6=\boldsymbol{\lambda},usedefault]{T(#1|#2,#3,#4,#5,#6)}
+\newcommandx{\TVal}[6][1=\mathbf{h},2=Q,3=\mathbf{y}, 4=\mathbf{X}, 5=\boldsymbol{\teta},6=\boldsymbol{\lambda},usedefault]{T(#1|#2,#3,#4,#5,#6)}
+%\newcommand{\log}{\text{log}~}
+
+
+
