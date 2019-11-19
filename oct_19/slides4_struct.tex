@@ -14,8 +14,7 @@
 \usepackage{tikz} 
 \DeclareSymbolFontAlphabet{\mathbb}{AMSb}%
 \DeclareSymbolFontAlphabet{\amsmathbb}{bbold}%
-
-
+\DeclareUnicodeCharacter{00A0}{ } % При наборе текста с планшета появляются невидимые символы. ЭТо костыль.
 
 \usetikzlibrary{arrows,automata}
 \usetikzlibrary{positioning}
@@ -74,46 +73,80 @@
 \end{frame}
 
 \begin{frame}{Automatic relevance determination}
+\textbf{Идея:} при оптимизации Evidence \textit{априорное} распределение неинформативных параметров будет сконцентрировано в нуле:
+\[
+    \w \sim \mathcal{N}(0, \mathbf{A}), \quad \mathbf{A}=\text{diag}(\boldsymbol{\alpha}).
+\]
+$w_i$ --- неинформативен $\rightarrow \alpha_i \approx 0.$
+\vspace{1cm}
 
+\textbf{Параллель с вариационным выводом:}
+прунинг параметра ${w}_i$ определяется относительной плотностью:
+\[
+	\lambda = \frac{q(\mathbf{0})}{q(\boldsymbol{\mu}_{i,q})}  = \text{exp}(-\frac{\mu_i^2}{2\sigma_i^2}).
+\]
 \end{frame}
 
 \begin{frame}{Пример: вариационный автокодировщик + ARD}
+\begin{columns}[T] 
+\begin{column}{.48\textwidth}
 \textbf{VAE:}
 \[
     L = \int_{\mathbf{z}} p(\x|\mathbf{z})p(\mathbf{z})d\mathbf{z}.
 \]
+
 \textbf{VAE + ARD:}
 \[
-    L = \iint_{\mathbf{z}, \boldsymbol{\gamma}} p(\x|\mathbf{z} \cdot \boldsymbol{\gamma})p(\mathbf{z})p(\boldsymbol{\gamma})d\mathbf{z}d\boldsymbol{\gamma}.
+    L = \iint_{\mathbf{z}, \boldsymbol{\gamma}} p(\x|\mathbf{z} \odot \boldsymbol{\gamma})p(\mathbf{z})p(\boldsymbol{\gamma})d\mathbf{z}d\boldsymbol{\gamma}.
 \]
+\end{column}
+\begin{column}{.48\textwidth}
+
 \includegraphics[width=\textwidth]{ard_vae.png}
+\end{column}
+\end{columns}
 
 \end{frame}
 
-
-
-\begin{frame}{SpikeAndSlab}
-
-\end{frame}
-
-\begin{frame}{Гауссовый процесс для выбора структуры модели}
-\end{frame}
-
-\begin{frame}{Индийский буфет, еще один пример}
-\end{frame}
 
 \begin{frame}{AdaNet}
+\begin{columns}[T] 
+\begin{column}{.48\textwidth}
+В качестве алгоритма выбора структуры модели выступает бустинговый алгоритм.
+
+На каждом шаге бустинга рассматривается две альтернативы: добавить новую слабую модель той же глубины или более глубокую.
+
+Оптимизируемый функционал:
+\[
+    Q = \sum_{i} \Phi(1- y_i f_{t-1}\left(\mathbf{x}_i)  - y_i \boldsymbol{\gamma}' f'(\mathbf{x})\right) + \mathcal{R},
+\]
+где $\mathcal{R}$ --- оценка сложности по Радемахеру.
+\end{column}
+\begin{column}{.48\textwidth}
+\includegraphics[width=\textwidth]{adanet.png}
+\end{column}
+\end{columns}
 \end{frame}
 
 
 \begin{frame}{Neural Architecture Search}
+\begin{columns}[T] 
+\begin{column}{.48\textwidth}
+\textbf{Идея алгоритма:} модели порождаются с использованием обучения с подкреплением. Контроллер - рекуррентная нейронная сеть.
+
 \includegraphics[width=\textwidth]{nas_scheme.png}
+\end{column}
+\begin{column}{.48\textwidth}
 \includegraphics[width=\textwidth]{nas_seq.png}
+\end{column}
+\end{columns}
 \end{frame}
 
 
 \begin{frame}{Neural Architecture Search}
 \includegraphics[width=\textwidth]{nas_transfer.png}
+
+Для оптимизации использовалось 500 GPU.
 \end{frame}
 
 
@@ -125,18 +158,60 @@
 \label{fig:1}\qquad
 \caption*{Zoph et al., 2017.  Сложность моделей отличается почти в два раза при одинаковом качестве.}
 \end{figure}
+
 \end{frame}
 
 \begin{frame}{Neural Architecture Search: постановка задачи}
-TODO
+$\w$ (или $\qw$) --- параметры модели, оптимизируемые при заданной структуре.
+
+$\Gam$ (или $\qG$) --- структура модели, задается контроллером, должна доставлять максимум валидации.
+
+\[
+    \Gam^{*} = \argmax Q (\w^{*}, \Gam),
+\]
+\[
+    \w^{*} = \argmax L(\w, \Gam).
+\]
+
+\textit{Нужно ли здесь обучение с подкреплением?}
 \end{frame}
 
 \begin{frame}{DARTS}
+\begin{columns}[T] 
+\begin{column}{.48\textwidth}
+Модель --- мультиграф, где ребра $[\mathbf{g}^e]$ соответствуют подмоделям, а вершины $\mathbf{f}_v(\mathbf{x})$ --- результату действия подмоделей на выборку. 
 
+Результат применения подмоделей:
+\[
+    \mathbf{f}_v = \langle\boldsymbol{\gamma}, \textbf{softmax}([\mathbf{g}^e (\mathbf{x})])\rangle.
+\]
+\end{column}
+\begin{column}{.48\textwidth}
+\includegraphics[width=\textwidth]{nas_seq.png}
+\end{column}
+\end{columns}
 \end{frame}
 
 
 \begin{frame}{DARTS}
+Задача оптимизации:
+\[
+    \Gam^{*} = \argmax Q (\w^{*}, \Gam), Q \text{--- ошибка на валидации},
+\]
+\[
+    \w^{*} = \argmax L(\w, \Gam), L \text{--- ошибка на обучении}.
+\]
+
+Оптимизация структуры производится жадным градиентным методом:
+$$
+    \nabla_{\Gam} Q( \w', \Gam) = \lambda_L \nabla_{\Gam, \w} L(\w, \Gam)\nabla_{\w}Q(\Gam, \w').
+$$
+
+\textit{Напоминание:}\\
+Численное приближение аналитической формулы:
+ \[\nabla_{\mathbf{h}}Q(\boldsymbol{\theta}^\eta, \mathbf{h}) - \nabla_{\mathbf{h}}\nabla_{\boldsymbol{\theta}} L(\boldsymbol{\theta}^\eta, \mathbf{h})^\text{T}\mathbf{H}^{-1}\nabla_{\boldsymbol{\theta}}Q(\boldsymbol{\theta}^\eta, \mathbf{h}).\]
+
+Для быстрого вычисления множителя $\nabla_{\Gam, \w} L(\w, \Gam)$ используется метод конечных приращений.
 \end{frame}
 
 
@@ -393,9 +468,56 @@ z={({0.5*cos(45)},{0.5*sin(45)})},
 \end{frame}
 
 
+\begin{frame}{Распределение Дирихле}
+Каждая точка на симплексе задает модель.
+
+
+\begin{figure}
+ \begin{minipage}[t]{.3\textwidth}
+        \centering
+\begin{tikzpicture}[%
+x={(1.7cm,0cm)},
+y={(0cm,1.7cm)},
+]
+
+\coordinate (A) at (0,0); 
+\coordinate (B) at (1,0) ;
+\coordinate (C) at (0.5,0.86); 
+
+%Ecken
+\node[circle,scale=0.5,fill=black,draw=black](Ap) at (0,0){};
+\node[circle,scale=0.5,fill=black,draw=black](Bp) at (1,0){};
+\node[circle,scale=0.5,fill=black,draw=black](Cp) at (0.5,0.86){};
+
+%Kanten
+\draw[] (A)
+-- (B)  node[midway, below]{}
+-- (C)      node[midway, right]{}
+-- (A)  node[midway, left]{};
+
+\end{tikzpicture}
+\caption*{$\lambda_\text{temp}\to0$}
+\end{minipage}
+\hfill
+ \begin{minipage}[t]{.3\textwidth}
+   \includegraphics[width=\textwidth]{dir0995.png}
+\caption*{$\lambda_\text{temp}=0.995$}
+\end{minipage}
+\hfill
+ \begin{minipage}[t]{.3\textwidth}
+   \includegraphics[width=\textwidth]{dir5.png}
+\caption*{$\lambda_\text{temp}=5.0$}
+\end{minipage}
+
+\end{figure}
+
+\end{frame}
+
+
+
 
 \begin{frame}{Репараметризация}
-\small
+\footnotesize
 \begin{block}{Определение} Случайную величину  $\psi$ с распределением $q$ с параметрами $\teta_\psi$ назовем репараметризованной через случайную величину $\varepsilon$, чье распределение не зависит от параметров $\teta_\psi$, если:
 \[
    \psi = g(\varepsilon, \teta_\psi)
@@ -422,42 +544,313 @@ $
  \nabla_{\tetaw} \E_{\q} \log \LL = \nabla_{\tetaw} \E_{\boldsymbol{\varepsilon}} \log \LL [][][\mathbf{g}(\boldsymbol{\varepsilon})] =
 \]
 \[= \int_{\boldsymbol{\varepsilon}}\nabla_{\tetaw} \log\LL [][][\mathbf{g}(\boldsymbol{\varepsilon})] p(\boldsymbol{\varepsilon}) d\boldsymbol{\varepsilon}=\E_{\boldsymbol{\varepsilon}} \nabla_{\tetaw} \log\LL [][][\mathbf{g}(\boldsymbol{\varepsilon})].\]
-
+\textbf{Проблема:} не всегда просто найти $\mathbf{g}$.
 \end{frame}
 
 
-\begin{frame}{Reparametrization}
+\begin{frame}{Implicit Reparameterization Gradients}
+Пусть $\mathbf{g}^{-1}$ --- обратная функция к функции $\mathbf{g}$.
+\textbf{Формула полной производной:}
+\[
+    \nabla^{\text{total}} f(x_1,\dots,x_n) = \sum \frac{\partial{f}}{\partial{x_i}}.
+\]
+
+Применяем к равенству:
+\[
+    \mathbf{g}^{-1}(\w) = \varepsilon.
+\]
+
+Получаем равенстнво:
+\[
+    \nabla_{\tetaw} \mathbf{g}(\varepsilon, \tetaw) = -\left(\nabla_{\w} \mathbf{g}^{-1}(\w) \right)^{-1} \nabla_{\tetaw} \mathbf{g}^{-1}(\w).
+\]
+\textbf{Универсальная функция стандартизации:}
+\[
+    \mathbf{g}^{-1}(\w) = F(\w) \sim \mathcal{U}(0,1),
+\]
+можно использовать методы сэмплирования типа MCMC.
 \end{frame}
+
 
 
 \begin{frame}{Logit-Normal}
+\includegraphics[width=0.9\textwidth]{logn.png}
+\begin{centering}
+[Источник: Deep Generative Models, http://stat.columbia.edu]
+\end{centering}
 \end{frame}
 
 
-\begin{frame}{Gumbel-Softmax}
+
+\begin{frame}{Априорное распределение на структуре модели}
+Каждая точка на симплексе задает модель.
+
+
+\textbf{Распределение Гумбель-софтмакс: }$\textcolor{red}{\boldsymbol{\Gamma}\sim \text{GS}(\mathbf{s}, \lambda_\text{temp})}$\\
+\begin{figure}
+ \begin{minipage}[t]{.2\textwidth}
+        \centering
+\begin{tikzpicture}[%
+x={(1.7cm,0cm)},
+y={(0cm,1.7cm)},
+]
+
+\coordinate (A) at (0,0); 
+\coordinate (B) at (1,0) ;
+\coordinate (C) at (0.5,0.86); 
+
+%Ecken
+\node[circle,scale=0.5,fill=black,draw=black](Ap) at (0,0){};
+\node[circle,scale=0.5,fill=black,draw=black](Bp) at (1,0){};
+\node[circle,scale=0.5,fill=black,draw=black](Cp) at (0.5,0.86){};
+
+%Kanten
+\draw[] (A)
+-- (B)  node[midway, below]{}
+-- (C)      node[midway, right]{}
+-- (A)  node[midway, left]{};
+
+\end{tikzpicture}
+\caption*{$\lambda_\text{temp}\to0$}
+\end{minipage}
+\hfill
+ \begin{minipage}[t]{.2\textwidth}
+   \includegraphics[width=\textwidth]{gs0995.png}
+\caption*{$\lambda_\text{temp}=0.995$}
+\end{minipage}
+\hfill
+ \begin{minipage}[t]{.2\textwidth}
+   \includegraphics[width=\textwidth]{gs5.png}
+\caption*{$\lambda_\text{temp}=5.0$}
+\end{minipage}
+
+\end{figure}
+
+\textbf{Распределение Дирихле: }$\textcolor{red}{\boldsymbol{\Gamma}\sim \text{Dir}(\mathbf{s}, \lambda_\text{temp})}$\\
+\begin{figure}
+ \begin{minipage}[t]{.2\textwidth}
+        \centering
+\begin{tikzpicture}[%
+x={(1.7cm,0cm)},
+y={(0cm,1.7cm)},
+]
+
+\coordinate (A) at (0,0); 
+\coordinate (B) at (1,0) ;
+\coordinate (C) at (0.5,0.86); 
+
+%Ecken
+\node[circle,scale=0.5,fill=black,draw=black](Ap) at (0,0){};
+\node[circle,scale=0.5,fill=black,draw=black](Bp) at (1,0){};
+\node[circle,scale=0.5,fill=black,draw=black](Cp) at (0.5,0.86){};
+
+%Kanten
+\draw[] (A)
+-- (B)  node[midway, below]{}
+-- (C)      node[midway, right]{}
+-- (A)  node[midway, left]{};
+
+\end{tikzpicture}
+\caption*{$\lambda_\text{temp}\to0$}
+\end{minipage}
+\hfill
+ \begin{minipage}[t]{.2\textwidth}
+   \includegraphics[width=\textwidth]{dir0995.png}
+\caption*{$\lambda_\text{temp}=0.995$}
+\end{minipage}
+\hfill
+ \begin{minipage}[t]{.2\textwidth}
+   \includegraphics[width=\textwidth]{dir5.png}
+\caption*{$\lambda_\text{temp}=5.0$}
+\end{minipage}
+
+\end{figure}
+
 \end{frame}
 
-\begin{frame}{Proposed Method}
 
+\begin{frame}{Предлагаемая задача оптимизации}
+
+\footnotesize
+\begin{columns}
+\begin{column}{0.8\textwidth}
+\begin{block}{Теорема [Бахтеев, 2018]}
+Пусть функции потерь и валидации $L,Q$ являются непрерывно-дифференцируемыми на компакте $U$.
+Тогда следующая задача является обобщающей на $U$.
+\[
+\mathbf{h}^{*} = \argmax_{\mathbf{h}} Q = 
+\]
+\[
+= \textcolor{blue}{\lambda_\text{likelihood}^\text{Q}\mathsf{E}_{{q}^{*}} \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w},\boldsymbol{\Gamma}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f})}}
+ -\]
+\vspace{-0.3cm}
+\[- \textcolor{red}{^\text{prior}_\text{Q}\text{D}_{KL}\bigl( q^{*}(\mathbf{w}, \boldsymbol{\Gamma}) || p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}},\mathbf{f}) \bigr)}  -\]
+\vspace{-0.3cm}
+\[
+ - \textcolor{olive}{\sum_{p' \in \mathfrak{P}, \lambda \in \boldsymbol{\lambda}^\text{struct}_\text{Q}} \lambda\text{D}_{KL}(\boldsymbol{\Gamma} | p')}, 
+\]
+где 
+\[
+\tag{$L^{*}$}
+{q}^{*} = \argmax_{q} L = 
+\textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \lambda_{\text{temp}}, \mathbf{f})}}
+\]
+\vspace{-0.3cm}
+\[- \textcolor{red}{^\text{prior}_\text{L}\text{D}_{KL}\bigl( q^{*}(\mathbf{w}, \boldsymbol{\Gamma}) || p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}},\mathbf{f}) \bigr)}.
+\]
+\end{block}
+%$\lambda^\text{likelihood}_\text{L}, \lambda^\text{prior}_\text{L}, \lambda^\text{prior}_\text{Q},  \boldsymbol{\lambda}_{\text{struct}}^Q, \lambda_{\text{temp}}$ и параметры распределений $\mathbf{P}$ --- метапараметры оптимизации.\\
+Оптимизационная задача обобщает алгоритмы оптимизации: оптимизация правдоподобия и обоснованности, последовательное увеличение и снижение сложности модели, полный перебор структуры.
+\end{column}
+\begin{column}{0.2\textwidth}
+\begin{figure}
+\centering
+\includegraphics[width=0.75\textwidth]{combinations_1.png}
+\end{figure}
+\vspace{-0.2cm}
+$ \textcolor{olive}{\boldsymbol{\lambda}_{\text{struct}}^Q=[0;0;0].}$
+\begin{figure}
+\centering
+\includegraphics[width=0.75\textwidth]{combinations_2.png}
+\end{figure}
+\vspace{-0.2cm}
+$ \textcolor{olive}{\boldsymbol{\lambda}_{\text{struct}}^Q=[1;0;0].}$
+\begin{figure}
+\centering
+\includegraphics[width=0.75\textwidth]{combinations_3.png}
+\end{figure}
+\vspace{-0.2cm}
+$ \textcolor{olive}{\boldsymbol{\lambda}_{\text{struct}}^Q=[1;1;0].}$
+\end{column}
+\end{columns}
 \end{frame}
 
 
-\begin{frame}{Proposed Method}
+\begin{frame}{Свойства задачи оптимизации}
+\begin{itemize}
+\item Коэффициенты при ${D}_\text{KL}$ контролируют эффективный размер выборки.
+\item При $\lamCQ  = \lamCL = \lamLL = 1$ --- вариационная оценка.
+\item При $\frac{\lamCQ}{\lamLL} = \lamCL$ --- сводится к одноуровневой оптимизации.
+\item При $\lamCQ = 0, \lamCL = 1$ --- вариационная оценка обоснованности, при гиперпараметрах, доставляющих максимум правдоподобия.
+\item При $\lamCL = 0$ --- метод максимального правдоподобия.
+\end{itemize}
+
+\begin{block}{Утверждение}
+Пусть $\textcolor{olive}{\boldsymbol{\lambda}^Q_{\text{struct}}} = \bf 0$.
+Пусть  $\teta_1, \teta_2, \h_1, \h_2$ --- результаты оптимизации при разных значениях гиперпараметров $\textcolor{red}{{\lamCQ}_1,{\lamCQ}_2, {\lamCQ}_1>{\lamCQ}_2}$ на компакте $U$.
+Пусть функция $\Val$ является вогнутой на $U$ при $\textcolor{red}{{\lamCQ}_2}$.
+Тогда:
+\footnotesize
+\vspace{-0.2cm}
+\[
+    C_p(\teta_1|\Uh, \lam_1) - C_p(\teta_2|\Uh, \lam_2)  < \frac{\lamCL }{{\lamCQ}_2} ({\lamCQ}_2- \lamCL) C,
+\]
+где $C$ --- некоторая константа.
+\end{block}
+
 
 \end{frame}
 
-
-\begin{frame}{Properties}
+\begin{frame}{Пример}
+Подмодели: обобщено-линейная с одним признаком, с 11 признаками, константа.
+\begin{center}
+\includegraphics[width=0.66\textwidth]{example.png}
+\end{center}
 \end{frame}
 
-\begin{frame}{Examples}
+\begin{frame}{Пример}
+Подмодели: обобщено-линейная с одним признаком, с 11 признаками, константа.
+\begin{center}
+\includegraphics[width=0.44\textwidth]{example2.png}
+\end{center}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Список источников}
+\begin{itemize}
+\item MacKay, David JC. "Bayesian nonlinear modeling for the prediction competition." ASHRAE transactions 100.2 (1994): 1053-1062.
+\item Graves, Alex. "Practical variational inference for neural networks." Advances in neural information processing systems. 2011.
+\item Karaletsos, Theofanis, and Gunnar Rätsch. "Automatic relevance determination for deep generative models." arXiv preprint arXiv:1505.07765 (2015).
+\item Cortes, Corinna, et al. "Adanet: Adaptive structural learning of artificial neural networks." Proceedings of the 34th International Conference on Machine Learning-Volume 70. JMLR. org, 2017.
+\item Zoph, Barret, and Quoc V. Le. "Neural architecture search with reinforcement learning." arXiv preprint arXiv:1611.01578 (2016).
+\item Zoph, B., Vasudevan, V., Shlens, J. and Le, Q.V., 2018. Learning transferable architectures for scalable image recognition
+\item Liu, Hanxiao, Karen Simonyan, and Yiming Yang. "Darts: Differentiable architecture search." arXiv preprint arXiv:1806.09055 (2018).
+\end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{Используемые материалы}
-\footnotesize
-%\begin{enumerate}
+\frametitle{Список источников}
+\begin{itemize}
 
-%\end{enumerate}
+\item Figurnov M., Mohamed S., Mnih A. Implicit reparameterization gradients //Advances in Neural Information Processing Systems. – 2018. – С. 441-452.
+\item http://stat.columbia.edu/{\textasciitilde}cunningham/teaching/GR8201/STAT\\\_GR8201\_2019\_SPRG\_slides\_lec03.pdf
+\item Jang, Eric, Shixiang Gu, and Ben Poole. "Categorical reparameterization with gumbel-softmax." arXiv preprint arXiv:1611.01144 (2016).
+\item Maddison, Chris J., Andriy Mnih, and Yee Whye Teh. "The concrete distribution: A continuous relaxation of discrete random variables." arXiv preprint arXiv:1611.00712 (2016).
+\end{itemize}
 \end{frame}
+
+
+
+\begin{frame}{ДЗ: выбор задания}
+\textbf{Дедлайн: 27 ноября, 0 часов.}\\~\\
+
+\texttt{ from zlib import crc32}\\~\\
+\texttt{theory = crc32('фамилия кириллицей'.lower().encode('utf-8'))\%2+1}\\~\\
+\texttt{practice = 1}\\~\\
+
+Задания заливаются на github:
+\textit{https://github.com/Intelligent-Systems-Phystech/model\_selection/фамилия латиницей}\\
+
+\end{frame}
+
+\begin{frame}{ДЗ: теория}
+\textbf{Формат: tex + pdf.}
+
+\textbf{Задание 1:}
+
+Доказать, что при устремлении параметра температуры к бесконечности, плотность Gumbel-Softmax концентрируется в центре симплекса.
+
+(за формулами Gumbel-Softmax обращаться к оригинальным статьям, Jang et al., Maddison et al.).
+\end{frame}
+
+
+
+\begin{frame}{ДЗ: теория}
+\textbf{Формат: tex + pdf.}
+
+\textbf{Задание 2:}
+Доказать утверждение:
+\begin{block}{утверждение}
+Пусть задан компакт $U = \Uh \times \Uteta$ и  $\lamS=\mathbf{0}$. Пусть решение задачи
+\[
+\min_{\h \in \Uh} \KL{\q[\teta_2]}{p(\w, \Gam|\h)}
+\]
+ является единственным для некоторых ${\lamCQ}_1, {\lamCQ}_2, {\lamCQ}_1 > {\lamCQ}_2$ на $U$ при некоторых фиксированных $\lamLL, \lamCL, \lamT$.
+Пусть также решения задач из слайда 20 являются единственными на $U$ при ${\lamCQ}_1, {\lamCQ}_2$ и $\lamLL, \lamCL, \lamT$.
+Тогда справедливо следующее неравенство:
+\[
+    \KL{\q[\teta_1]}{p(\w, \Gam|\h_1)}  <   \KL{\q[\teta_2]}{p(\w, \Gam|\h_2)},
+\]
+где $\h_1, \teta_1,$ $\h_2, \teta_2$  --- решения задачи  при ${\lamCQ}_1, {\lamCQ}_2$,
+$$
+\teta_1 = \teta^{*}(\h_1), \quad  \teta_2 = \teta^{*}(\h_2).$$
+
+\end{block}
+
+
+\end{frame}
+
+\begin{frame}{ДЗ: практика}
+\textbf{Формат: ipynb.}
+Реализовать визуализация зависимоссти распределения Gumbel-Softmax от температуры.
+
+Пример для распределения Дирихле:
+http://blog.bogatron.net/blog/2014/02/02/visualizing-dirichlet-distributions/
+
+При оценивании будут учитываться аккуратность кода ноутбуков и наглядность примера.\\~\\
+Пример должен быть выполнен на  \textbf{простых} игрушечных синтетических данных.
+\end{frame}
+
 \end{document}
