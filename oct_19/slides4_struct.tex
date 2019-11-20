@@ -669,6 +669,54 @@ y={(0cm,1.7cm)},
 \end{frame}
 
 
+\begin{frame}{Обобщающая задача оптимизации}
+Какие требования можно выдвинуть к ``хорошей'' функции оптимизации?
+\begin{enumerate}
+\item При некоторых значениях метапараметров функция должна приближать \textcolor{blue}{метод максимального правдоподобия}.
+\item При некоторых значениях метапараметров функция должна штрафовать \textcolor{red}{излишне сложные модели.}
+\item При некоторых значениях метапараметров функция должна приближать обоснованность модели.
+\item При некоторых значениях метапараметров функция должна позволять \textcolor{olive}{переходить между оптимальными структурами модели.}
+\item Функции потерь и валидации должны быть непрерывны по метапараметрам.
+\item Область определения функции должна быть нетривиальна.
+\end{enumerate}
+\end{frame}
+
+
+\begin{frame}{Вероятностная модель}
+
+
+\begin{columns}
+\begin{column}{0.4\textwidth}
+\textbf{Базовая модель:} %https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/bishop-variational-icann-98.pdf
+\begin{itemize}
+\item \textbf{параметры} модели\\ $\textcolor{red}{\mathbf{w} \sim \mathcal{N}(0, \alpha^{-1})},$
+\item \textbf{гиперпараметры} модели $\mathbf{h} = [\alpha].$
+\end{itemize}
+\begin{figure}
+\includegraphics[width=\textwidth]{simple_plate_concrete.pdf}
+\end{figure}
+\end{column}
+\begin{column}{0.6\textwidth}
+\textbf{Предлагаемая модель: }
+\begin{itemize}
+\item \textbf{параметры} модели\\ $\textcolor{red}{\mathbf{w}_r^{j,k} \sim \mathcal{N}(0, (\gamma_{r}^{j,k})^2 (\mathbf{A}_r^{j,k})^{-1})},$
+$\mathbf{A}_r^{j,k}$ --- диагональная матрица параметров, соответствующих базовых функций $\mathbf{g}_r^{j,k}$,
+\\$\textcolor{olive}{(\mathbf{A}_r^{j,k})^{-1} \sim \text{inv-gamma}(\lambda_1,\lambda_2)},$
+
+\item \textbf{структурные параметры} модели \\$\boldsymbol{\Gamma} = \{\boldsymbol{\gamma}^{j,k}, (j,k) \in E\},$ \\$\textcolor{red}{\boldsymbol{\gamma}^{j,k} \sim \text{GS}(\mathbf{s}^{j,k}, \lambda_\text{temp})},$ 
+\item \textbf{гиперпараметры} модели $\mathbf{h} = [\text{diag}(\mathbf{A}), \mathbf{s} ],$
+\item \textbf{метапараметры} $\lambda_1,\lambda_2,\lambda_\text{temp}$.
+\end{itemize}
+
+\end{column}
+
+\end{columns}
+
+%
+
+\end{frame}
+
+
 \begin{frame}{Предлагаемая задача оптимизации}
 
 \footnotesize
@@ -687,7 +735,7 @@ y={(0cm,1.7cm)},
 \[- \textcolor{red}{^\text{prior}_\text{Q}\text{D}_{KL}\bigl( q^{*}(\mathbf{w}, \boldsymbol{\Gamma}) || p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}},\mathbf{f}) \bigr)}  -\]
 \vspace{-0.3cm}
 \[
- - \textcolor{olive}{\sum_{p' \in \mathfrak{P}, \lambda \in \boldsymbol{\lambda}^\text{struct}_\text{Q}} \lambda\text{D}_{KL}(\boldsymbol{\Gamma} | p')}, 
+ - \textcolor{olive}{\sum_{p' \in \mathfrak{P}, \lambda \in \boldsymbol{\lambda}^\text{struct}_\text{Q}} \lambda\text{D}_{KL}(\boldsymbol{\Gamma} | p')+ \text{log}p(\mathbf{h}|\mathbf{f})}, 
 \]
 где 
 \[
