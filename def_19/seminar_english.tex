@@ -84,7 +84,7 @@
 \textbf{Objectives:}
 \begin{enumerate}
 \item Proposal of suboptimal and optimal complexity criteria for deep learning models.
-\item Proposal of an algorithm suboptimal deep learning model selection and optimization of its parameters.
+\item Proposal of an algorithm suboptimal deep learning model selection and optimization of model parameters.
 \end{enumerate}
 \textbf{Investigated problems}
 \begin{enumerate}
@@ -115,7 +115,7 @@ Data likelihood does not change with removing redundant parameters.
 \begin{frame}{Deep learning model}
 \small
 \begin{block}{Definition}
-\textit{Model} $\mathbf{f}(\mathbf{w}, \mathbf{x})$ is a differentiable with respect to parameters $\mathbf{w}$  function from the set of object descriptions into the set of labels:
+\textit{Model} $\mathbf{f}(\mathbf{w}, \mathbf{x})$ is a differentiable function with respect to parameters $\mathbf{w}$  from the set of object descriptions into the set of labels:
 \[
     \mathbf{f}: \mathbb{X} \times \mathbb{W} \to \mathbb{Y},
 \] 
@@ -123,8 +123,8 @@ where $\mathbb{W}$ is a space of parameters of model $\mathbf{f}$.
 \end{block}
 ~\\
 \textbf{Main challenge} of deep learning model selection is in large number of parameters of models. This disallows to use many classical approached for the model and structure selection (AIC, BIC, cross-validation). \\~\\
-The model is defined by its parameters $\mathbf{W}$ and structure $\boldsymbol{\Gamma}$.\\
-\textbf{A structure} defines a set of functional superpositions in the model. It is selected using statistical complexity criteria.\\
+A model is defined by its parameters $\mathbf{W}$ and structure $\boldsymbol{\Gamma}$.\\
+A \textbf{structure} defines a set of functional superpositions in the model. It is selected using statistical complexity criteria.\\
 
 \textbf{Empirical model complexity estimations:}
 \begin{enumerate}
@@ -170,9 +170,9 @@ where $\mathbf{w} = [\mathbf{w}^{0,1}_0, \mathbf{w}^{0,1}_1, \mathbf{w}^{1,2}_0]
 Define:
 \begin{enumerate}
  \item acyclic graph $(V,E)$;
-\item for each edge $(j,k) \in E$: a vector primitive differentiable functions $\mathbf{g}^{j,k} = [\mathbf{g}^{j,k}_0, \dots, \mathbf{g}^{j,k}_{K^{j,k}}]$  with power $K^{j,k}$;
+\item for each edge $(j,k) \in E$: a vector primitive differentiable functions $\mathbf{g}^{j,k} = [\mathbf{g}^{j,k}_0, \dots, \mathbf{g}^{j,k}_{K^{j,k}}]$  with length of $K^{j,k}$;
 \item for each vertex $v \in V$: a differentiable aggregation function  $\textbf{agg}_v$.
-\item A function $\mathbf{f} = \mathbf{f}_{|V|-1}:$
+\item a function $\mathbf{f} = \mathbf{f}_{|V|-1}:$
 \begin{equation}
 \label{eq:modelfam}
     \mathbf{f}_{v}(\mathbf{w}, \mathbf{x}) = \textbf{agg}_{v}\left(\{ \langle \boldsymbol{\gamma}^{j,k}, \mathbf{g}^{j,k} \rangle \circ  \mathbf{f}_j(\mathbf{x})| j \in \text{Adj}(v_k)\}\right), v \in \{1,\dots,|V|-1\}, \quad \mathbf{f}_0(\mathbf{x}) = \mathbf{x}
@@ -184,14 +184,14 @@ that is a function from  $\mathbb{X}$ into a set of labels $\mathbb{Y}$ for any 
 A \textit{parametric set of models} $\mathfrak{F}$ is a graph $(V, E)$  with a set of primitive functions $\{\mathbf{g}^{j,k}, (j,k) \in E\}$ and aggregation functions  $\{ \textbf{agg}_v, {v \in V}\}$.
 \end{block}
 \begin{block}{Statement}
-For each  $\boldsymbol{\gamma}^{j,k} \in [0,1]^{K^{j,k}}$ a function $\mathbf{f} \in \mathfrak{F}$ is a model.
+A function $\mathbf{f} \in \mathfrak{F}$ is a model for each  $\boldsymbol{\gamma}^{j,k} \in [0,1]^{K^{j,k}}$.
 \end{block}
 \end{frame}
 
       
 
 \begin{frame}{Structure restrictions}
-An example of structure parameter $\boldsymbol{\gamma}$ restrictions, $|\boldsymbol{\gamma}| = 3$.
+An example of restrictions for structure parameter $\boldsymbol{\gamma}$, $|\boldsymbol{\gamma}| = 3$.
 \begin{figure}
  \begin{minipage}[t]{.45\textwidth}
         \centering
@@ -388,16 +388,16 @@ z={({0.5*cos(45)},{0.5*sin(45)})},
 
 
 
-\begin{frame}{Distribution prior}
+\begin{frame}{Prior distribution}
 \footnotesize   
 \begin{columns}
 \begin{column}{0.6\textwidth}
    \begin{block}{Definition}
 \textit{Prior distribution} for parameters $\mathbf{w}$ and structure $\boldsymbol{\Gamma}$ of model $\mathbf{f}$ is a distribution
 $
-    \textcolor{red}{p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{h},\mathbf{f})}: \mathbb{W} \times \amsmathbb{\Gamma} \times \mathbb{H} \to \mathbb{R}^{+}, 
+    \textcolor{red}{p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{h},\lam)}: \mathbb{W} \times \amsmathbb{\Gamma} \times \mathbb{H} \to \mathbb{R}^{+}, 
 $
-where $\mathbb{W}$ is a parameter space, $\amsmathbb{\Gamma}$ is a structure space.
+where $\mathbb{W}$ is a parameter space, $\amsmathbb{\Gamma}$ is a structure space, $\lam$ is a vector of metaparameters.
 \end{block}
 
 \end{column}
@@ -408,16 +408,16 @@ where $\mathbb{W}$ is a parameter space, $\amsmathbb{\Gamma}$ is a structure spa
 \end{column}
 \end{columns}
 \vspace*{-0.5cm}
-\begin{block}{Определение}
-\textit{Hyperparameters} $\mathbf{h}\in \mathbb{H}$ are the parameters of prior distribution $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h},\mathbf{f})$ (parameters of the distribution of parameters of model $\mathbf{f}$).
+\begin{block}{Definition}
+\textit{Hyperparameters} $\mathbf{h}\in \mathbb{H}$ are the parameters of prior distribution $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h},\mathbf{f})$ (parameters of the distribution of the parameters and structure  of model $\mathbf{f}$).
  
 \end{block}
 A model $\mathbf{f}$ is defined by:
 \begin{itemize}
 \item \textbf{Parameters} $\mathbf{w} \in \mathbb{W}$ that define superpositions  $\mathbf{f}_v$ in the model $\mathbf{f}$.
 \item \textbf{Structure} $\boldsymbol{\Gamma}=\{\gamma^{j,k}\}_{(j,k)\in E} \in \amsmathbb{\Gamma}$ that define the contribution of all the superpositions  $\mathbf{f}_v$ into $\mathbf{f}$.
-\item \textbf{Hyperparameters} $\mathbf{h} \in \mathbb{H}$ that define prior distribution.
-\item \textbf{Metaparameters} $\boldsymbol{\lambda} \in \amsmathbb{\Lambda}$ that define optimization function.
+\item \textbf{Hyperparameters} $\mathbf{h} \in \mathbb{H}$ that define the prior distribution.
+\item \textbf{Metaparameters} $\boldsymbol{\lambda} \in \amsmathbb{\Lambda}$ that define the optimization function.
 \end{itemize}
 
 \end{frame}
@@ -428,7 +428,7 @@ A model $\mathbf{f}$ is defined by:
 
 
 \begin{frame}{Prior distribution for the model structure}
-Every point in simplex defines a model.
+Every point in a simplex defines a model.
 
 \textbf{Gumbel-Softmax distribution: }$\textcolor{red}{\boldsymbol{\Gamma}\sim \text{GS}(\mathbf{s}, \lambda_\text{temp})}$\\
 \begin{figure}
@@ -554,24 +554,24 @@ $\mathbf{A}_r^{j,k}$ is a diagonal matrix for the parameters of the primitive fu
 \[
 	\text{MDL}(\mathbf{y},\mathbf{f}) = \textcolor{OliveGreen}{-\text{log}~p(\mathbf{h}|\mathbf{f})} - \textcolor{red}{\text{log}~p(\hat{\mathbf{w}} | \mathbf{h},\mathbf{f})}-  \textcolor{blue}{\text{log}~\bigl(p(\mathbf{y}|\mathbf{X}, \hat{\mathbf{w}},\mathbf{f})\delta\mathfrak{D}\bigr)},
 \]
-where $\delta\mathfrak{D}$ information transmission precision.\\~\\
-
+where $\delta\mathfrak{D}$ is an information transmission precision.\\~\\
+\textbf{Bayesian approach:}\\
 Obtain values of parameters   $\mathbf{w}$ with respect to \textbf{posterior distribution of parameters}:                                      
 \[
-     L = \text{log} p(\mathbf{w}|\mathbf{X}, \mathbf{y}, \mathbf{h},\mathbf{f}) \propto  \textcolor{red}{\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \mathbf{h},\mathbf{f})} +  \textcolor{blue}{\text{log} p(\mathbf{w} |\mathbf{h},\mathbf{f})}.
+     L = \text{log} p(\mathbf{w}|\mathbf{X}, \mathbf{y}, \mathbf{h}, \lam) \propto  \textcolor{red}{\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \mathbf{h},\lam)} +  \textcolor{blue}{\text{log} p(\mathbf{w} |\mathbf{h},\lam)}.
 \]
 
 Hyperparameters are optimized using  \textbf{posterior distribution of hyperparameters}:                                      
 \[                                                                                                                                              
-        Q = \text{log}p(\mathbf{f}|\mathbf{X}, \mathbf{y}) \propto \textcolor{OliveGreen}{\text{log}p(\mathbf{h}|\mathbf{f})} +  \text{log}\int\limits_{\mathbf{w}} \textcolor{red}{p(\mathbf{y}|\mathbf{X},\mathbf{w},\mathbf{f})} \textcolor{blue}{p(\mathbf{w}| \mathbf{h},\mathbf{f})} d\mathbf{w}.                     
+        Q = \text{log}p(\mathbf{f}|\mathbf{X}, \mathbf{y}) \propto \textcolor{OliveGreen}{\text{log}p(\mathbf{h}|\mathbf{f})} +  \text{log}\int\limits_{\mathbf{w}} \textcolor{red}{p(\mathbf{y}|\mathbf{X},\mathbf{w},\lam)} \textcolor{blue}{p(\mathbf{w}| \mathbf{h},\lam)} d\mathbf{w}.                     
 \]       
 
 
 \begin{figure}
-\vspace{-1cm}
+\vspace{-0.5cm}
   \centering    
- \subfloat[]{\includegraphics[width=0.45\textwidth]{slide_plots/evidence_en.pdf}} 
- \subfloat[]{\includegraphics[width=0.45\textwidth]{slide_plots/example.pdf}}
+ \subfloat[]{\includegraphics[width=0.43\textwidth]{slide_plots/evidence_en.pdf}} 
+ \subfloat[]{\includegraphics[width=0.43\textwidth]{slide_plots/example.pdf}}
 
 \end{figure}
 \end{frame}
@@ -582,17 +582,17 @@ Hyperparameters are optimized using  \textbf{posterior distribution of hyperpara
 The evidence is analytically intractable.\\
 \textbf{Model evidence:}
 \[
-p(\mathbf{y}|\mathbf{X}, \lambda_\text{temp},\mathbf{f}) =
- \iint\limits_{\mathbf{w}, \boldsymbol{\Gamma}}  \textcolor{red}{p(\mathbf{y}|\mathbf{X},\mathbf{w},  \boldsymbol{\Gamma}, \mathbf{f})} \textcolor{blue}{p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \lambda_\text{temp},\mathbf{f})}d\mathbf{w}d{\boldsymbol{\Gamma}}.                         
+p(\mathbf{y}|\mathbf{X}, \h, \lam) =
+ \iint\limits_{\mathbf{w}, \boldsymbol{\Gamma}}  \textcolor{red}{p(\mathbf{y}|\mathbf{X},\mathbf{w},  \boldsymbol{\Gamma})} \textcolor{blue}{p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \lam)}d\mathbf{w}d{\boldsymbol{\Gamma}}.                         
 \]
 
 \begin{columns}
 \begin{column}{0.55\textwidth}
   
 \begin{block}{Definition}
-\textit{Variational parameters} of the model $\boldsymbol{\theta} \in \mathbb{R}^{{u}}$ are the parameters of the distribution $q$ that approximates posterior distribution $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{X}, \mathbf{y}, \mathbf{h}, \mathbf{f}, \lambda_\text{temp})$:
+\textit{Variational parameters} of the model $\boldsymbol{\theta} \in \Tetab$ are the parameters of the distribution $q$ that approximates posterior distribution $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{X}, \mathbf{y}, \mathbf{h}, \lam)$:
 \[
-    q \approx  \frac{\textcolor{blue}{p(\mathbf{y}|\mathbf{X},\mathbf{w},\boldsymbol{\Gamma}, \mathbf{f})}\textcolor{red}{p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \lambda_\text{temp},\mathbf{f})}}{\iint\limits_{\mathbf{w}', \boldsymbol{\Gamma'}}\textcolor{blue}{p(\mathbf{y}|\mathbf{X},\mathbf{w}',\boldsymbol{\Gamma}',\mathbf{f})}\textcolor{red}{p(\mathbf{w}', \boldsymbol{\Gamma}'|\mathbf{h}, \lambda_\text{temp},\mathbf{f})}d\mathbf{w}'d\boldsymbol{\Gamma}'}.
+    q \approx  \frac{\textcolor{blue}{p(\mathbf{y}|\mathbf{X},\mathbf{w},\boldsymbol{\Gamma})}\textcolor{red}{p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \lam)}}{\iint\limits_{\mathbf{w}', \boldsymbol{\Gamma'}}\textcolor{blue}{p(\mathbf{y}|\mathbf{X},\mathbf{w}',\boldsymbol{\Gamma}')}\textcolor{red}{p(\mathbf{w}', \boldsymbol{\Gamma}'|\mathbf{h}, \lam)}d\mathbf{w}'d\boldsymbol{\Gamma}'}.
 \]
 \end{block} 
 
@@ -608,15 +608,15 @@ p(\mathbf{y}|\mathbf{X}, \lambda_\text{temp},\mathbf{f}) =
 
 %Пусть $q(\mathbf{W}, \boldsymbol{\Gamma}) = q_{\mathbf{W}}(\mathbf{W})q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma})$ --- непрерывное распределение, аппроксимирующее 
 %апостериорное распределение $p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X})$.
-~\\Lower bound of $\text{log}\hat{{p}}(\mathbf{y}|\mathbf{X}, \lambda_\text{temp},\mathbf{f})$:
+~\\Lower bound of $\text{log}{{p}}(\mathbf{y}|\mathbf{X}, \h, \lam)$:
 $$                                                                                                                                              
-        \text{log}~p(\mathbf{y}|\mathbf{X}, \lambda_\text{temp},\mathbf{f}) \geq 
-\textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma},\mathbf{f})}} - \textcolor{red}{\text{D}_{KL}\bigl(q(\mathbf{w}, \boldsymbol{\Gamma})||p(\mathbf{w}, \boldsymbol{\Gamma}| \mathbf{h}, \lambda_\text{temp},\mathbf{f})\bigr)}.
+        \text{log}~p(\mathbf{y}|\mathbf{X}, \h, \lam) \geq 
+\textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma})}} - \textcolor{red}{\text{D}_{KL}\bigl(q(\mathbf{w}, \boldsymbol{\Gamma})||p(\mathbf{w}, \boldsymbol{\Gamma}| \mathbf{h}, \lam)\bigr)}.
 $$ 
 
 
 
-The lower bound equals to evidence when $$D_\text{KL}\bigl(q(\mathbf{w}, \boldsymbol{\Gamma})|p\left(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \lambda_\text{temp},\mathbf{f}\right)\bigr)=0.$$
+The lower bound equals to evidence when $$D_\text{KL}\bigl(q(\mathbf{w}, \boldsymbol{\Gamma})|p\left(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \h, \lam\right)\bigr)=0.$$
 
 \end{frame}      
 
@@ -629,18 +629,18 @@ Define a variational distribution $q=q_\mathbf{w}q_{\boldsymbol{\Gamma}}$ with p
 
 \begin{block}{Definition}
 
-\textit{Loss function} $L( \boldsymbol{\theta}| \mathbf{h}, \mathbf{X}, \mathbf{y}, \mathbf{f})$ is a differentiable function interpreted as a performance of the model on the train dataset.~\\~\\
-\textit{Validation function} $Q(\mathbf{h}| \boldsymbol{\theta}, \mathbf{X}, \mathbf{y}, \mathbf{f} )$  is a differentiable function  interpreted as a general performance of the model.
+\textit{Loss function} $\Loss$ is a differentiable function interpreted as a performance of the model on the train dataset.~\\~\\
+\textit{Validation function} $\Val$  is a differentiable function  interpreted as a general performance of the model.
 \end{block}
 \begin{block}{}
 The \textit{model selection problem} $\mathbf{f}$ is a level optimization:
 
 \[
-	\mathbf{h}^{*} = \argmax_{\mathbf{h} \in \mathbb{H}} Q(\mathbf{h}|  \boldsymbol{\theta}^{*}, \mathbf{X}, \mathbf{y}, \mathbf{f} ),
+	\mathbf{h}^{*} = \argmax_{\mathbf{h} \in \mathbb{H}} \Val[][][][\teta^{*}],
 \]
 where $\boldsymbol{\theta}^{*}$ is a solution for the following optimization:
 \[
-   \boldsymbol{\theta}^{*} = \argmax_{\boldsymbol{\theta} \in \mathbb{U}} L(\boldsymbol{\theta}|  \mathbf{h},  \mathbf{X}, \mathbf{y}, \mathbf{f}).
+   \boldsymbol{\theta}^{*} = \argmax_{\boldsymbol{\theta} \in \mathbb{U}} \Loss.
 \]
 \end{block}
 
@@ -660,18 +660,18 @@ where $\boldsymbol{\theta}^{*}$ is a solution for the following optimization:
 \begin{frame}{Generalizing optimization problem}
 \footnotesize
 %\begin{block}{Определение}
-The model selection problem  $\mathbf{h}^{*}, \boldsymbol{\theta}^{*}$ is generalizing on the compact $U_{\theta}\times U_{h} \times U_{\lambda} \subset \mathbb{R}^{u} \times \mathbb{H} \times \amsmathbb{\Lambda}$, if the following conditions are met:
+The model selection problem  $\mathbf{h}^{*}, \boldsymbol{\theta}^{*}$ is a generalizing problem on the compact $U_{\theta}\times U_{h} \times U_{\lambda} \subset \mathbb{R}^{u} \times \mathbb{H} \times \amsmathbb{\Lambda}$, if the following conditions are met:
 \begin{enumerate}
 \item For each parameter, hyperparameter and metaparameters its domain is not empty and not a point.
-\item For each  $\mathbf{h} \in U_h$ and each  $\boldsymbol{\lambda} \in U_{\lambda}$ the solution  $\boldsymbol{\theta}^{*}$ uniquely defined.
+\item For each  $\mathbf{h} \in U_h$ and each  $\boldsymbol{\lambda} \in U_{\lambda}$ the solution  $\boldsymbol{\theta}^{*}$ is uniquely defined.
 
 
 \item \textbf{Continuance:} $L,Q$ are continuous with respect to metaparameters.
 \item \textbf{\textcolor{OliveGreen}{optimal structure exhaustive search: }}
 %\textcolor{darkgray}{
-there is a constant $K_3>0$ such that there is at least one pair of hyperparameters $\mathbf{h}_1, \mathbf{h}_2,$ and a value for the  metaparameters $\boldsymbol{\lambda}$ such that for all pairs of local optima $\mathbf{h}_1,\mathbf{h}_2$ of $Q$ with metaparameters $\boldsymbol{\lambda}$ such that  $$D_\text{KL}\left(p(\boldsymbol{\Gamma}| \mathbf{h}_1, \boldsymbol{\lambda}) | p(\boldsymbol{\Gamma}| \mathbf{h}_1, \boldsymbol{\lambda})\right) > K_3, D_\text{KL}\left(p(\boldsymbol{\Gamma}| \mathbf{h}_1, \boldsymbol{\lambda}) | p(\boldsymbol{\Gamma}| \mathbf{h}_2, \boldsymbol{\lambda})\right) > K_3,$$ $$Q(\mathbf{h}_1|\boldsymbol{\lambda})>Q(\mathbf{h}_2|\boldsymbol{\lambda}),$$  there exists another value of metaparameters $\boldsymbol{\lambda}' \neq \boldsymbol{\lambda}$ that
+there is a constant $K_3>0$  and a value for the  metaparameters $\boldsymbol{\lambda}$ such that for all pairs of local optima $\mathbf{h}_1,\mathbf{h}_2$ of $Q$ with metaparameters $\boldsymbol{\lambda}$ such that  $$D_\text{KL}\left(p(\boldsymbol{\Gamma}| \mathbf{h}_1, \boldsymbol{\lambda}) | p(\boldsymbol{\Gamma}| \mathbf{h}_1, \boldsymbol{\lambda})\right) > K_3, D_\text{KL}\left(p(\boldsymbol{\Gamma}| \mathbf{h}_1, \boldsymbol{\lambda}) | p(\boldsymbol{\Gamma}| \mathbf{h}_2, \boldsymbol{\lambda})\right) > K_3,$$ $$Q(\mathbf{h}_1|\boldsymbol{\lambda})>Q(\mathbf{h}_2|\boldsymbol{\lambda}),$$  there exists another value of metaparameters $\boldsymbol{\lambda}' \neq \boldsymbol{\lambda}$ that
 \begin{enumerate}
-\item correspondence between optimal variational parameters and hyperparameters  $\boldsymbol{\theta}^{*}(\mathbf{h}_1),\boldsymbol{\theta}^{*}(\mathbf{h}_2)$ remain for $\boldsymbol{\lambda}'$,
+\item the  correspondence between optimal variational parameters and hyperparameters  $\boldsymbol{\theta}^{*}(\mathbf{h}_1),\boldsymbol{\theta}^{*}(\mathbf{h}_2)$ remains for $\boldsymbol{\lambda}'$,
 \item the following inequality is satisfied: $Q(\mathbf{h}_1|\boldsymbol{\lambda}')<Q(\mathbf{h}_2|\boldsymbol{\lambda}')$.
 \end{enumerate}
 %}
@@ -691,13 +691,15 @@ The model selection problem  $\mathbf{h}^{*}, \boldsymbol{\theta}^{*}$ is genera
 \item \textbf{ \textcolor{blue}{Likelihood maximization: }}\textcolor{darkgray}{ there is a metaparameter value $\boldsymbol{\lambda} \in U_{\lambda}$ and  $K_1 \in \mathbb{R}_{+}$ such that for each pair of hyperparameter vectors $\mathbf{h}_1, \mathbf{h}_2 \in  U_{h}, Q(\mathbf{h}_1) - Q(\mathbf{h}_2) > K_1$ the following inequality is satisfied : $\mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}^{*}(\mathbf{h}_1), \lambda_{\text{temp}}, \mathbf{f})>\text{log}\mathsf{E}_q ~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}^{*}(\mathbf{h}_2), \lambda_{\text{temp}}, \mathbf{f})$.}
 
 % здесь мы имеем ввиду что для любого lambda, такого что мы считаем параметр неинформативными
-\item \textbf{\textcolor{red}{complexity minimization: }}\textcolor{darkgray}{ there is a metaparameter value  $\boldsymbol{\lambda} \in U_{\lambda}$ and $K_2 \in \mathbb{R}_{+}$ such that for each pair of hyperparameter vectors $\mathbf{h}_1, \mathbf{h}_2 \in U_h, Q(\mathbf{h}_1) - Q(\mathbf{h}_2) > K_2$,  $\mathsf{E}_q \text{log}~p(\mathbf{y}|\boldsymbol{\theta}_1, \lambda_{\text{temp}}, \mathbf{f}) = \text{log}\mathsf{E}_q ~p(\mathbf{y}|\boldsymbol{\theta}_2, \lambda_{\text{temp}}, \mathbf{f})$, the complexity of the first model is greater than the second one.}
+\item \textbf{\textcolor{red}{Сomplexity minimization: }}\textcolor{darkgray}{ there is a metaparameter value  $\boldsymbol{\lambda} \in U_{\lambda}$ and $K_2 \in \mathbb{R}_{+}$ such that for each pair of hyperparameter vectors $\mathbf{h}_1, \mathbf{h}_2 \in U_h, Q(\mathbf{h}_1) - Q(\mathbf{h}_2) > K_2$,  $\mathsf{E}_q \text{log}~p(\mathbf{y}|\boldsymbol{\theta}_1, \lambda_{\text{temp}}, \mathbf{f}) = \text{log}\mathsf{E}_q ~p(\mathbf{y}|\boldsymbol{\theta}_2, \lambda_{\text{temp}}, \mathbf{f})$, the complexity of the first model is less than the second one.}
 
 \item \textbf{Evidence lower bound optimization: }\textcolor{darkgray}{ there is a metaparameter value  $\boldsymbol{\lambda}$, such that the optimization is equivalent to the evidence lower bound optimization:
 \vspace{-0.2cm}
 \[
-    \mathbf{h}^{*} \propto \argmax_{} p(\mathbf{y}|\mathbf{X}, \mathbf{h}, \lambda_{\text{temp}}, \mathbf{f})p(\mathbf{h}|\boldsymbol{\lambda}),\quad
-    \boldsymbol{\theta}^{*} = \argmin D_\text{KL}(q| p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \lambda_{\text{temp}}, \mathbf{f})).
+    \mathbf{h}^{*} \propto \argmax_{} \log \E_{\q} \LL - \KL{\q}{\prior} + \log p(\mathbf{h}|\boldsymbol{\lambda}),
+\]
+\[
+    \boldsymbol{\theta}^{*} = \argmin D_\text{KL}(q| p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \h, \lam)).
 \]}
 \vspace{-0.6cm}
 \end{enumerate}
@@ -710,15 +712,15 @@ The model selection problem  $\mathbf{h}^{*}, \boldsymbol{\theta}^{*}$ is genera
 The following problems are not generalizing:
 \begin{enumerate}
 % задача не является строго двууровневой, нельзя проомтимизировать ELBO
-\item maximum likelihood criterion: $\max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, \lambda_\text{temp}, \mathbf{f})};$
+\item maximum likelihood criterion: $\max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, \h, \lam)};$
 
 % нет возможности оптимизации структуры
-\item maximum posterior probability criterion $\max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X},  \boldsymbol{\theta}, \mathbf{f})}\textcolor{red}{p( \boldsymbol{\theta}| \mathbf{h}, \lambda_\text{temp})};$
+\item maximum posterior probability criterion: $\max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X},  \boldsymbol{\theta}, \mathbf{f})}\textcolor{red}{p( \boldsymbol{\theta}| \mathbf{h}, \lam)};$
 
 % нет возможности оптимизации правдоподобия модели - структа не подчиняется beta
-\item evidence lower bound maximization $\max_{\mathbf{h}} \max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{f})}} - \textcolor{red}{\text{D}_{KL}\bigl(q(\mathbf{w}, \boldsymbol{\Gamma})||p(\mathbf{w}, \boldsymbol{\Gamma}, \lambda_\text{temp})\bigr)} + \text{log}~\textcolor{OliveGreen}{p(\mathbf{h}|\mathbf{f})};$
+\item evidence lower bound maximization: $\max_{\mathbf{h}} \max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} \LL} - \textcolor{red}{\KL{\prior}{\q}\bigr)}  + \textcolor{OliveGreen}{ \text{log} p(\mathbf{h}|\mathbf{f})};$
 
-\item cross-validation $\max_{\mathbf{h}} \textcolor{blue}{\mathsf{E}_q \text{log}p(\mathbf{y}_\text{valid}|\mathbf{X}_\text{valid}, \boldsymbol{\theta}^{*}, \lambda_\text{temp}, \mathbf{f})}$, $\boldsymbol{\theta}^{*} = \argmax_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log}p(\mathbf{y}_\text{train}|\mathbf{X}_\text{train}, \boldsymbol{\theta}, \lambda_\text{temp}, \mathbf{f})}\textcolor{red}{p(\boldsymbol{\theta}| \mathbf{h})}$.
+\item cross-validation: $\max_{\mathbf{h}} \textcolor{blue}{\mathsf{E}_q \text{log}p(\mathbf{y}_\text{valid}|\mathbf{X}_\text{valid}, \boldsymbol{\theta}^{*})}$, $\boldsymbol{\theta}^{*} = \argmax_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log}p(\mathbf{y}_\text{train}|\mathbf{X}_\text{train}, \h, \lam)} \textcolor{red}{p(\boldsymbol{\theta}| \mathbf{h})}$.
 
 % задача не является строго двууровневой, нельзя проомтимизировать ELBO
 \item AIC: $\max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, \lambda_\text{temp}, \mathbf{f})} - \textcolor{red}{|\theta_i: \text{D}_\text{KL}\left(q(w_i)|p(w_i|\boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda}\right) < \lambda|}$;
@@ -727,7 +729,7 @@ The following problems are not generalizing:
 \item BIC: $\max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, \lambda_\text{temp}, \mathbf{f})} - \textcolor{red}{\frac{1}{2}\text{log}(|\mathbb{W}|{|\theta_i: \text{D}_\text{KL}\left(q(w_i)|p(w_i|\boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda}\right) < \lambda|}}$;
 
 
-\item structure exhaustive search:  $\max{\boldsymbol{\Gamma}'} \max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, \lambda_\text{temp}, \mathbf{f})}\textcolor{red}{\mathbb{I}(q(\boldsymbol{\Gamma}{\Gamma} = p') },$ где $p'$ --- распределение на структуре.
+\item structure exhaustive search:  $\max{\boldsymbol{\Gamma}'} \max_{\boldsymbol{\theta}} \textcolor{blue}{\mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}, \lambda_\text{temp}, \mathbf{f})}\textcolor{red}{\mathbb{I}(q(\boldsymbol{\Gamma}{\Gamma} = p') },$ where $p'$ is a distribution on a structure (metaparameter).
 \end{enumerate}
 \end{block}
 \end{frame}
@@ -738,29 +740,26 @@ The following problems are not generalizing:
 \begin{columns}
 \begin{column}{0.8\textwidth}
 \begin{block}{Theorem [Bakhtreev, 2019]}
-The following problem is generalized for the compact $U$.
-\begin{equation}
-\tag{$Q^{*}$}
-\label{eq:qopt}
-\mathbf{h}^{*} = \argmax_{\mathbf{h}} Q = 
-\end{equation}
+The following problem is generalizing:
 \[
-= \textcolor{blue}{\lambda_\text{likelihood}^\text{Q}\mathsf{E}_{{q}^{*}} \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w},\boldsymbol{\Gamma}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f})}}
+\mathbf{h}^{*} = \argmax_{\mathbf{h}} Q = 
+\]
+\[
+= \textcolor{blue}{\lamLL\mathsf{E}_{\q[\teta^{*}]} \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w},\boldsymbol{\Gamma}, \mathbf{h}, \lam)}}
  -\]
 \vspace{-0.3cm}
-\[- \textcolor{red}{^\text{prior}_\text{Q}\text{D}_{KL}\bigl( q^{*}(\mathbf{w}, \boldsymbol{\Gamma}) || p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}},\mathbf{f}) \bigr)}  -\]
+\[- \textcolor{red}{^\text{prior}_\text{Q}\text{D}_{KL}\bigl(\q[\teta^{*}] || p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lam) \bigr)}  -\]
 \vspace{-0.3cm}
 \[
- - \textcolor{OliveGreen}{\sum_{p' \in \mathfrak{P}, \lambda \in \boldsymbol{\lambda}^\text{struct}_\text{Q}} \lambda\text{D}_{KL}(\boldsymbol{\Gamma} | p') + \text{log}p(\mathbf{h}|\mathbf{f})}, 
+ - \textcolor{OliveGreen}{\sum_{p' \in \mathfrak{P}, \lambda \in \boldsymbol{\lambda}^\text{struct}_\text{Q}} \lambda\text{D}_{KL}(\boldsymbol{\Gamma} | p') + \text{log}p(\mathbf{h}|\lam)}, 
 \]
-где 
-\begin{equation}
-\tag{$L^{*}$}
-{q}^{*} = \argmax_{q} L = 
-\textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \lambda_{\text{temp}}, \mathbf{f})}}
-\end{equation}
+where 
+\[
+\teta^{*} = \argmax_{\teta} L = 
+\textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \lam)}}
+\]
 \vspace{-0.3cm}
-\[- \textcolor{red}{^\text{prior}_\text{L}\text{D}_{KL}\bigl( q^{*}(\mathbf{w}, \boldsymbol{\Gamma}) || p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}},\mathbf{f}) \bigr)}.
+\[- \textcolor{red}{^\text{prior}_\text{L}\text{D}_{KL}\bigl( q^{*}(\mathbf{w}, \boldsymbol{\Gamma}) || p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lam) \bigr)}.
 \]
 \end{block}
 %$\lambda^\text{likelihood}_\text{L}, \lambda^\text{prior}_\text{L}, \lambda^\text{prior}_\text{Q},  \boldsymbol{\lambda}_{\text{struct}}^Q, \lambda_{\text{temp}}$ и параметры распределений $\mathbf{P}$ --- метапараметры оптимизации.\\
@@ -790,13 +789,14 @@ $ \textcolor{OliveGreen}{\boldsymbol{\lambda}_{\text{struct}}^Q=[1;1;0].}$
 \end{frame}
 
 
-\begin{frame}{Optimization problem adequacy}
+\begin{frame}{Bayesian interpretation of the proposed optimization}
 \footnotesize
 \begin{block}{Theorem, [Bakhteev, 2018]}
 Define a set of variational distribution $q(\boldsymbol{\theta})$. 
+
 Let $\textcolor{blue}{\lambda^L_\text{likelihood}} = \textcolor{red}{\lambda^L_\text{prior}=\lambda^Q_\text{prior}}=1, \textcolor{OliveGreen}{\boldsymbol{\lambda}^Q_{\text{struct}}}=\mathbf{0}$. Then:
 \begin{enumerate}
-\item Solution of the proposed optimization problem ~\eqref{eq:qopt} is a maximum posterior distribution for the hyperparameters with approximation of evidence:
+\item Solution of the proposed optimization problem obtains a maximum posterior distribution for the hyperparameters with evidence lower bound approximation:
 \vspace{-0.3cm}
 \[
     \text{log}\hat{p}(\mathbf{y}|\mathbf{X}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f}) + \textcolor{OliveGreen}{\text{log}p(\mathbf{h}|\mathbf{f})} \to \max_{\mathbf{h}}.
@@ -831,7 +831,7 @@ then the solution of optimization of $L$ is equal to these values.
 \begin{frame}{Optimization operator}
 \small
 \begin{block}{Definition}
-An \textit{optimization operator}  $T$ is an estimation of the new vector of parameters $\boldsymbol{\theta}'$  using the previous ones $\boldsymbol{\theta}$.
+An \textit{optimization operator}  $T$ is an estimation of the new vector of parameters $\boldsymbol{\theta}'$  using the previous one $\boldsymbol{\theta}$.
 \end{block}
 Stochastic gradient descent operator
 :\[
@@ -877,9 +877,16 @@ The hyperparameter gradient-based optimization methods were investigated.\\
 \end{frame}
 
 
+
+\begin{frame}{Experiments: WISDM}
+\begin{figure}  
+\includegraphics[width=0.85\textwidth]{Fig_wisdm.eps}
+\end{figure}
+\end{frame}
+
 \begin{frame}{Experiments: MNIST}
 \begin{figure}  
-\includegraphics[width=0.7\textwidth]{Fig_mnist.eps}
+\includegraphics[width=0.85\textwidth]{Fig_mnist.eps}
 \end{figure}
 \end{frame}
 
@@ -927,7 +934,7 @@ Then the difference of differentiable entropies for the optimization step can be
 \[
 	\mathsf{E}_{q^{\tau}_{\mathbf{w}}}(-\text{log}(q^{\tau}_\mathbf{w})) -  \mathsf{E}_{q^{\tau-1}_{\mathbf{w}}}(-\text{log}(q^{\tau-1}_\mathbf{w}))  \approx  \frac{1}{k}\sum_{r=1}^k \bigl(\lambda_\text{lr} Tr[\mathbf{H}(\mathbf{w}^r)] - \lambda_\text{lr}^2 Tr[\mathbf{H}(\mathbf{w}^r)\mathbf{H}(\mathbf{w}^r)]  \bigr),
 \]
-where $\mathbf{H}$ is a Hessian of the negative loss function $-L$, $q^{\tau}_\mathbf{w}$is a distribution $q^{\tau}_\mathbf{w}$ at the iteration $\tau$.
+where $\mathbf{H}$ is a Hessian of the negative loss function $-L$, $q^{\tau}_\mathbf{w}$ is a distribution $q$ at the iteration $\tau$.
 \end{block}
 \end{frame}
 
@@ -1042,7 +1049,7 @@ $$
 The following results were proposed:
 \begin{enumerate}
 \item method of Bayesian selection of suboptimal structure;
-\item Optimal and suboptimal complexity criteria;
+\item optimal and suboptimal complexity criteria;
 \item deep learning model graph description;
 \item generalizing function that includes other methods of model selection:
 \begin{itemize}
