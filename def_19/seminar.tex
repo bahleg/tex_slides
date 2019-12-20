@@ -754,7 +754,7 @@ $$
 \[
  - \textcolor{OliveGreen}{\sum_{p' \in \mathfrak{P}, \lambda \in \boldsymbol{\lambda}^\text{struct}_\text{Q}} \lambda\text{D}_{KL}(\priorG | p') + \text{log}p(\mathbf{h}|\lam)}, 
 \]
-where 
+где 
 \[
 \teta^{*} = \argmax_{\teta} L = 
 \textcolor{blue}{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \lam)}}
@@ -1037,15 +1037,7 @@ $$
 \end{block}
 
 
-% 1. Заметим, что покомпонентная проекция выпулкых функций - выпукла (по определению вроде). поэтому L и Q можно рассматривать как большие мета-функции.
-% 2. По условиям:  L_1(q1) - \lambda_1 DKL(q1) = max, L_2 - \lambda_2 DKL(q_2) = max.
-% 3. L_1(q1) - \lambda_1 DKL(q1) - L_2(q2)  + \lambda_1 DKL(q2) >= 0
-%    L_2(q2) - \lambda_2 DKL(q2) - L_1(q1) +  \lambda_2 DKL(q1) >= 0
-% 4. Складываем
-%    \lambda_1 DKL(q2) - \lambda_2DKL(q2) >= c1 DKL(q1) - c2 DKL(q1), DKL (q2) <= DKL(q1)
-% 5. Заметим, что это DKL и есть параметрической сложностью.
-% Пусть существует h': DKL(q|h')<DKL(q|h).
-% Так как L не зависит от h, то получается что L-DKL|h' > L-DKL|h, противоречие.
+
 \end{frame}
 
 \iffalse
@@ -1114,15 +1106,15 @@ $
 \tiny
 \textbf{Публикации ВАК}
 \begin{enumerate}
-\item Bakhteev, O., Kuznetsova, R., Romanov, A. and Khritankov, A. A monolingual approach to detection of text reuse in Russian-English collection // In 2015 Artificial Intelligence and Natural Language and Information Extraction, Social Media and Web Search FRUCT Conference (AINL-ISMW FRUCT) (pp. 3-10). IEEE.
+\item Bakhteev, O., Kuznetsova, R., Romanov, A. and Khritankov, A. A monolingual approach to detection of text reuse in Russian-English collection // In 2015 Artificial Intelligence and Natural Language and Information Extraction, Social Media and Web Search FRUCT Conference (AINL-ISMW FRUCT) (pp. 3-10). IEEE. 2015.
 
-\item Бахтеев О.Ю., Попова М.С., Стрижов В.В. Системы и средства глубокого обучения в задачах классификации. // Системы и средства информатики. 2016. № 26.2. С. 4-22.
+\item Бахтеев О.Ю., Попова М.С., Стрижов В.В. Системы и средства глубокого обучения в задачах классификации // Системы и средства информатики. 2016. № 26.2. С. 4-22.
 \item Romanov, A., Kuznetsova, R., Bakhteev, O. and Khritankov, A. Machine-Translated Text Detection in a Collection of Russian Scientific Papers. // Computational Linguistics and Intellectual Technologies. 2016. 
-\item Bakhteev, O. and Khazov, A., 2017. Author Masking using Sequence-to-Sequence Models // In CLEF (Working Notes). 2017.
-\item Бахтеев О.Ю., Стрижов В.В. Выбор моделей глубокого обучения субоптимальной сложности. // Автоматика и телемеханика. 2018. №8. С. 129-147.
-\item Огальцов А.В., Бахтеев О.Ю. Автоматическое извлечение метаданных из научных PDF-документов. // Информатика и её применения. 2018.
-\item Смердов А.Н., Бахтеев О.Ю., Стрижов В.В. Выбор оптимальной модели рекуррентной сети в задачах поиска парафраза. // Информатика и ее применения. 2019.
-\item Грабовой А.В., Бахтеев О.Ю., Стрижов В.В. Определение релевантности параметров нейросети. // Информатика и её применения. 2019.
+\item Bakhteev, O. and Khazov, A., Author Masking using Sequence-to-Sequence Models // In CLEF (Working Notes). 2017.
+\item Бахтеев О.Ю., Стрижов В.В. Выбор моделей глубокого обучения субоптимальной сложности // Автоматика и телемеханика. 2018. №8. С. 129-147.
+\item Огальцов А.В., Бахтеев О.Ю. Автоматическое извлечение метаданных из научных PDF-документов // Информатика и её применения. 2018.
+\item Смердов А.Н., Бахтеев О.Ю., Стрижов В.В. Выбор оптимальной модели рекуррентной сети в задачах поиска парафраза // Информатика и ее применения. 2019.
+\item Грабовой А.В., Бахтеев О.Ю., Стрижов В.В. Определение релевантности параметров нейросети // Информатика и её применения. 2019.
 \item Bakhteev O., Strijov V. Comprehensive analysis of gradient-based hyperparameter optimization algorithms // Annals of Operations Research. 2019.
 \end{enumerate}
 \textbf{Выступления с докладом}
@@ -1195,5 +1187,90 @@ $
 \end{frame}
 
 
+\begin{frame}{Эксперимент по выбору моделей}
+\tiny
+\begin{table}[htbp!]
+\begin{tabular}{ | p{1.5cm} | p{1.25cm} | p{1.25cm} | p{1.25cm} | p{1.25cm} | p{1.25cm} | p{1.25cm} |}
+
+\hline
+&\multicolumn{6}{|c|}{Алгоритмы}  \\
+\hline
+Выборка $\mathfrak{D}$ & ML & ML+VAL & MAP+VAL & Var+SGD & Var+Lang & Var+Norm \\
+\hline
+\multicolumn{7}{|c|}{Результаты, RMSE/Accuracy}  \\
+
+\hline
+{ Boston,  1  слой} & 8,1  $\pm$ 2,0 & 5,9 $\pm$ 0,7 & 5,2 $\pm$ 0,6 & $\mathbf{3,7 \pm 0,2}$ & 6,7 $\pm$ 0,7 & 5,0 $\pm$ 0,4 \\
+\hline
+Boston, 3 слоя & 7,1 $\pm$ 1,3 & 4,3 $\pm$ 0,1 & 4,4 $\pm$ 0,4 & $\mathbf{3,2 \pm 0,06}$ & 4,6 $\pm$ 0,4 & 6,8 $\pm$ 1,6 \\
+\hline
+Protein & 5,1 $\pm$ 0,0 & 5,1 $\pm$ 0,0 & 5,1 $\pm$ 0,0 & 5,1 $\pm$ 0,0 & 5,1 $\pm$ 0,0 & $\mathbf{5,0 \pm 0,1}$ \\
+\hline
+MSD & 12,2 $\pm$ 0,0 & $\mathbf{10,9 \pm 0,1}$ & $\mathbf{10,9 \pm 0,1}$ & 12,2 $\pm$ 0,0 & 12,9 $\pm$ 0,0 & 19,6 $\pm$ 3,6  \\
+\hline
+MNIST & 0,985 $\pm$ 0,002 & 0,984 $\pm$ 0,002 & $\mathbf{0,986 }\pm \mathbf{0,002}$ & 0,914 $\pm$ 0,005 & 0,979 $\pm$ 0,003 & 0,971 $\pm$ 0,001 \\
+\hline
+
+\multicolumn{7}{|c|}{Результаты, $\textnormal{RMSE/Accuracy}_{0,5}$}  \\
+\hline
+{ Boston,  1  слой} & 43,9  $\pm$ 9,4 & 18,6 $\pm$ 2,0 &  15,8 $\pm$ 2,3 & $\mathbf{11,9}\pm \mathbf{ 1,1}$ & 20,3 $\pm$ 3,1 & 18,2 $\pm$ 3,3 \\
+\hline
+Boston, 3 слоя & 23,4 $\pm$ 4,9 & 18,7 $\pm$ 2,8 & 18,3 $\pm$ 3,0 & \bf 9,0 $\pm$ 0,7 & 14,5 $\pm$ 2,6 &  15,2 $\pm$ 2,7 \\
+\hline
+Protein & 19,5 $\pm$ 0,3 & 18,5 $\pm$ 0,5 & 18,6 $\pm$ 0,3 & $\mathbf{16,7 }\pm \mathbf{ 0,3}$ & 19,3 $\pm$ 0,6 & 19,7 $\pm$ 3,7  \\
+\hline
+MSD & 178,3 $\pm$ 0,8 & $\mathbf{121,3 }\pm \mathbf{ 4,5}$ & 123,7 $\pm$ 2,5 & 175,8 $\pm$ 1,0 & 203,8 $\pm$ 1,4 & 292,0 $\pm$ 2,0 \\
+\hline
+MNIST & 0,931 $\pm$ 0,004 & 0,929 $\pm$ 0,006 & $\mathbf{0,934 }\pm \mathbf{ 0,007}$ & 0,857 $\pm$ 0,007 & 0,919 $\pm$ 0,008 & 0,916 $\pm$ 0,004 \\
+\hline
+
+
+\multicolumn{7}{|c|}{Результаты, $\textnormal{RMSE/Accuracy}_{1,0}$}  \\
+\hline
+{ Boston,  1  слой} & 120,9 $\pm$ 33,4 & 42,5 $\pm$ 6,3 & 32,5 $\pm$ 6,0 & $\mathbf{25,7 }\pm \mathbf{ 3,2}$ & 42,4 $\pm$ 5,7 & 41,3 $\pm$ 6,3  \\
+\hline
+Boston, 3 слоя & 46,1 $\pm$ 15,8 & 40,5 $\pm$ 5,3 & 38,6 $\pm$ 8,0 & \bf 16,5 $\pm$ 2,5 & 30,4 $\pm$ 7,9 & 26,2 $\pm$ 6,9 \\
+\hline
+Protein & 37,0 $\pm$ 0,8 & 34,4 $\pm$ 1,1 & 35,0 $\pm$ 1,0 & $\mathbf{30,6 }\pm \mathbf{ 0,6}$ & 36,6 $\pm$ 1,1 & 35,0 $\pm$ 8,1 \\
+\hline
+MSD & 319,6 $\pm$ 1,4 & $\mathbf{217,5 }\pm \mathbf{ 8,2}$ & 221,9 $\pm$ 4,2 & 314,8 $\pm$ 1,8 & 363,7 $\pm$ 1,9 & 521,6 $\pm$ 3,1  \\
+\hline
+MNIST & $\mathbf{0,814 }\pm \mathbf{ 0,010 }$& 0,808 $\pm$ 0,010 &  0,812 $\pm$ 0,008 & 0,772 $\pm$ 0,010 & 0,802 $\pm$ 0,009 & 0,800 $\pm$ 0,009 \\
+\hline
+
+\end{tabular}
+\end{table}
+
+\end{frame}
+
+\begin{frame}{Выбор структуры модели: число параметров в модели}
+\begin{table}[htbp!]
+\begin{tabular}{| c | c |}
+\hline
+Метод выбора структуры & Число параметров \\ \hline
+Случайный поиск & 1.3M $\pm$ 0.8M \\ \hline
+Softmax-суперсеть & 3M $\pm$ 0.0M \\ \hline
+Gumbel-Softmax-суперсеть & 1.5M $\pm$ 0.4M \\ \hline
+Предложенный метод & 0.2M $\pm$ 0.1M \\ \hline
+\end{tabular}
+\end{table}
+Результаты были округлены до десятой миллиона.
+\end{frame}
+
+\begin{frame}{Выбор структуры модели: устойчивость моделей при добавлении шума в выборку}
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{noise.pdf}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Выбор структуры модели:  устойчивость моделей при добавлении шума в параметры}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{params.pdf}
+\end{figure}
+\end{frame}
 
 \end{document}
