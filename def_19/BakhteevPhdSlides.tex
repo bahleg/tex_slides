@@ -133,7 +133,7 @@
 \end{frame}
 
 
-\begin{frame}{Выбор структуры: двуслойная нейросеть}
+\begin{frame}{Выбор структуры: нейросеть с одним скрытым слоем}
 \small
 Модель $\mathbf{f}$ задана \textbf{структурой}  $\boldsymbol{\Gamma} = [\boldsymbol{\gamma}^{0,1}, {\boldsymbol{\gamma}^{1,2}}].$
 
@@ -414,7 +414,7 @@ $
 Модель $\mathbf{f}$ задается следующими величинами:
 \begin{itemize}
 \item \textbf{Параметры} $\mathbf{w} \in \mathbb{W}$ задают суперпозиции $\mathbf{f}_v$, из которых состоит модель $\mathbf{f}$.
-\item \textbf{Структурные параметры} $\boldsymbol{\Gamma}=\{\gamma^{j,k}\}_{(j,k)\in E} \in \amsmathbb{\Gamma}$ задают вклад суперпозиций $\mathbf{f}_v$ в модель $\mathbf{f}$.
+\item \textbf{Структура} $\boldsymbol{\Gamma}=\{\gamma^{j,k}\}_{(j,k)\in E} \in \amsmathbb{\Gamma}$ задает вклад базовых функций $\mathbf{g}^{j,k}$ в модель $\mathbf{f}$.
 \item \textbf{Гиперпараметры} $\mathbf{h} \in \mathbb{H}$ задают распределение параметров и структурных параметров модели.
 \item \textbf{Метапараметры} $\boldsymbol{\lambda} \in \amsmathbb{\Lambda}$ задают вид оптимизации модели.
 \end{itemize}
