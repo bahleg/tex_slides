@@ -1,0 +1,242 @@
+\documentclass[usenames,dvipsnames,10pt,pdf,utf8,russian,aspectratio=43]{beamer}
+\usepackage[english,russian]{babel}
+\usepackage{cmap}
+\usepackage[T2A]{fontenc}
+\usepackage{subfig}
+\usepackage{color}
+\usepackage{tikz}
+\usepackage{xargs}  
+\usepackage{multicol}
+\usepackage{amsmath}
+
+%\usepackage{tikz,fullpage}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\usetikzlibrary{arrows,automata}
+\usetikzlibrary{positioning}
+
+%
+% Choose how your presentation looks.
+%
+% For more themes, color themes and font themes, see:
+% http://deic.uab.es/~iblanes/beamer_gallery/index_by_theme.html
+%
+
+
+\mode<presentation>
+{
+
+
+  \usetheme{Boadilla}      % or try Darmstadt, Madrid, Warsaw, ...
+  \usecolortheme{seagull} % or try albatross, beaver, crane, ..
+
+ \usefonttheme{structurebold}  % or try serif, structurebold, ...
+  \setbeamertemplate{navigation symbols}{}
+  \setbeamertemplate{caption}[numbered]
+} 
+
+
+\captionsetup[subfloat]{labelformat=empty}
+\title[BP]{Bayesian programming}
+\author{Бахтеев Олег}
+\date{11.11.2020}
+
+\begin{document}
+\input{defs}
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Мотивация}
+Любой предмет представляется человеку как совокупность связанных между собой понятий.
+\centering
+\includegraphics[width=0.5\textwidth]{moto.png}
+\end{frame}
+
+\begin{frame}{Основные работы}
+\begin{itemize}
+\item Lake B. M., Salakhutdinov R., Tenenbaum J. B. Human-level concept learning through probabilistic program induction //Science. – 2015. – Т. 350. – №. 6266. – С. 1332-1338.
+\item Lake B. M. et al. Building machines that learn and think like people //Behavioral and brain sciences. – 2017. – Т. 40.
+\item Lake B. M., Salakhutdinov R. R., Tenenbaum J. One-shot learning by inverting a compositional causal process //Advances in neural information processing systems. – 2013. – С. 2526-2534.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Постановка}
+\begin{block}{One-shot classification}
+ The tasks tested within-alphabet classification on 10 alphabets.  Each trial (of 400 total) consists of a single test image ofa new character compared to 20 new characters from the same alphabet, given just one image eachproduced by a typical drawer of that alphabet.
+\end{block}
+\centering
+\includegraphics[width=0.5\textwidth]{omni.png}
+\end{frame}
+
+
+\begin{frame}{Идея подхода}
+\textbf{Три ключевые концепции подхода}
+\begin{itemize}
+\item Композиционность
+\begin{itemize}
+\item Объект разбивается на несколько элементов
+\item Каждый элемент характеризуется своей генеративной моделью
+\end{itemize}
+
+\item Причинность
+\begin{itemize}
+\item Над элементами вводится вероятностная иерархия
+\item Элемент сам по себе представляется в иерархическом виде (токен и тип токена)
+\end{itemize}
+
+\item Обучение обучению
+\begin{itemize}
+\item Настройка гиперпараметров на обучающем датасете 
+\end{itemize}
+
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Модель}
+\centering
+\includegraphics[width=0.75\textwidth]{bp1.png}
+\centering
+\includegraphics[width=0.75\textwidth]{bp2.png}
+\centering
+\includegraphics[width=0.75\textwidth]{bp3.png}
+
+\end{frame}
+
+\begin{frame}{Модель}
+\centering
+\includegraphics[width=0.75\textwidth]{bp4a.png}
+
+\end{frame}
+
+
+\begin{frame}{Результат}
+\centering
+\includegraphics[width=0.75\textwidth]{bp6.png}
+
+\end{frame}
+
+
+
+
+
+\begin{frame}{Идея подхода}
+\textbf{Где нашли продолжение описанные концепции?}
+\begin{itemize}
+\item Композиционность
+\item Причинность
+\item Обучение обучению
+\end{itemize}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Идея подхода}
+\textbf{Где нашли продолжение описанные концепции?}
+\begin{itemize}
+\item Композиционность
+
+\item Причинность
+\begin{itemize}
+\item Attention и Self-attention
+\item Иерархические генеративные модели и смеси
+\end{itemize}
+\item Обучение обучению
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Работа с разными модальностями}
+\centering
+
+\centering
+\begin{figure}
+\includegraphics[width=0.6\textwidth]{jmvae.png}
+\caption{Suzuki et al., 2017 }
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.35\textwidth]{vbta.png}
+\caption{Kuznetsova et al., 2018}
+\end{figure}
+
+
+\end{frame}
+
+
+
+\begin{frame}{Метапараметры}
+\begin{block}{Wikipedia}
+A parameter that controls the value of one or more others.
+\end{block}
+
+\begin{block}{Определение}
+Метапараметрами $\boldsymbol{\lambda}$ модели назовем параметры оптимизации.
+\end{block}
+
+Чаще всего метапараметры назначаются экспертно и не подлежат оптимизации в ходе решения задачи выбора модели. 
+
+Что можно считать метапараметрами:
+\begin{itemize}
+\item параметры оператора оптимизации;
+\item параметры задачи оптимизации;
+\item структуру модели;
+\item функции активации слоев сети;
+\item вид априорного распределения и функции правдоподобия.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{A neural network that embeds its own meta-levels}
+Предлагается разделить подмодели внутри модели сети по назначениям:
+\begin{itemize}
+\item ``Normal'' model: обучение и вывод.
+\item Evaluation model: оценка качества $Q$.
+\item Analyzing model: анализ параметров модели.
+\item Modifiyng model: модификация параметров.
+\end{itemize}
+
+Представлен градиентный алгоритм оптимизации нейронной сети.
+\end{frame}
+
+
+
+\begin{frame}{L2L by gradient descent by gradient descent}
+
+\textbf{Идея: } рассматривать результат применения градиентного спуска $T$ как дифференцируемую функцию:
+\[
+    T(\boldsymbol{\theta}) = \text{LSTM}(\boldsymbol{\theta}).
+\]
+Оптимизационная задача:
+\[
+    \sum_{t=t_0}^{t_\eta} L\left(T^t(\boldsymbol{\theta}_{t_0})\right) \to \min.
+\]
+
+LSTM имеет небольшое число параметров и делит параметры между всеми параметрами, подлежащими оптимизации.
+
+\begin{figure}
+\includegraphics[width=\textwidth]{sgd_by_sgd.png}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Список источников}
+\begin{itemize}
+\item Lake B. M., Salakhutdinov R., Tenenbaum J. B. Human-level concept learning through probabilistic program induction //Science. – 2015. – Т. 350. – №. 6266. – С. 1332-1338.
+\item Lake B. M. et al. Building machines that learn and think like people //Behavioral and brain sciences. – 2017. – Т. 40.
+\item Lake B. M., Salakhutdinov R. R., Tenenbaum J. One-shot learning by inverting a compositional causal process //Advances in neural information processing systems. – 2013. – С. 2526-2534.
+\item Suzuki M., Nakayama K., Matsuo Y. Joint multimodal learning with deep generative models //arXiv preprint arXiv:1611.01891. – 2016.
+\item Kuznetsova R., Bakhteev O., Ogaltsov A. Variational learning across domains with triplet information //arXiv preprint arXiv:1806.08672. – 2018.
+\item Schmidhuber J. A neural network that embeds its own meta-levels //IEEE International Conference on Neural Networks. – IEEE, 1993. – С. 407-412.
+\item Andrychowicz M. et al. Learning to learn by gradient descent by gradient descent //Advances in neural information processing systems. – 2016. – С. 3981-3989.
+\end{itemize}
+\end{frame}
+
+
+\end{document}
+
