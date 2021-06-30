@@ -186,6 +186,40 @@ where $\mathbf{w} = [\mathbf{w}^{0,1}_0, \mathbf{w}^{0,1}_1, \mathbf{w}^{1,2}_0]
 \end{frame}
 
 
+
+\begin{frame}{Structure selection: neural architecture search space}
+\small
+The model $\mathbf{f}$ is defined by the \textbf{structure}  $\boldsymbol{\Gamma} = [\boldsymbol{\gamma}^{0,1}, {\boldsymbol{\gamma}^{1,2}}].$
+
+\[
+    \text{Model: }\mathbf{f}(\mathbf{x}) = \textbf{softmax}\left((\mathbf{w}^{1,2}_0)^\mathsf{T}{\mathbf{f}_1}(\mathbf{x})\right), \quad \mathbf{f}(\mathbf{x}): \mathbb{R}^n \to [0,1]^{|\mathbb{Y}|}, \quad \mathbf{x} \in \mathbb{R}^n.
+\]
+\[
+\mathbf{f}_1(\mathbf{x}) = {\gamma}^{0,1}_{0}\mathbf{g}^{0,1}_{0}(\mathbf{x}) + {\gamma}^{0,1}_{1}\mathbf{g}^{0,1}_{1}(\mathbf{x}),
+\]
+where $\mathbf{w} = [\mathbf{w}^{0,1}_0, \mathbf{w}^{1,2}_0]^{\text{T}}$ --- parameter matrices, $\mathbf{g}^{0}_{0,1}$ is a convolution,$\mathbf{g}^{1}_{0,1}$ is a pooling operation, $\mathbf{g}^{0}_{1,2}$ is a generalized-linear function.
+
+\begin{tikzpicture}[node distance=0.5cm, auto]
+  %\tikzstyle{every state}=[fill=red,draw=none,text=white]
+
+  \node (f0)  at (1,6)                  {$\mathbf{f}_0(\mathbf{x}) = \mathbf{x}$};
+  %\node (g11) at (6,3)                    {$\mathbf{g}^{1,1}(\mathbf{x})$};% = \text{Conv}(\mathbf{x}, 3, 32, 1)$};
+  %\node (g12)  at (6,9)                   {$\mathbf{g}^{1,2}(\mathbf{x})$};% = \text{Conv}(\mathbf{x}, 4, 32, 1)$};
+  \node (f1)  at (7,6)                 {$\mathbf{f}_1(\mathbf{x})$};% = \gamma^{1,1}\mathbf{g}^{1,1}(\mathbf{x}) +  \gamma^{1,2}\mathbf{g}^{1,2}(\mathbf{x})$};
+  %\node (g21) at (12,6)                   {$\mathbf{g}^{2,1}(\mathbf{x})$};% = \boldsymbol{\sigma}(\mathbf{w}^{2,1}\mathbf{x})$};
+  \node (f2)  at (12,6)                   {$\mathbf{f}_2(\mathbf{x})$};% = \gamma^{2,1}\mathbf{g}^{2,1}(\mathbf{x})$};
+  \path[->]  (f0) edge [bend left=50] node {$\gamma^{0,1}_0\mathbf{g}^{0,1}_0(\mathbf{x}) = \gamma^{0,1}_0 \textbf{Conv}(\mathbf{x},\mathbf{w}^{0,1}_0)$}(f1);
+  \path[->] (f0)  edge[bend right=50] node[below] {$\gamma^{0,1}_1\mathbf{g}^{0,1}_1(\mathbf{x}) = \gamma^{0,1}_1\textbf{MaxPool}(\mathbf{x})$}(f1);
+  \path[->] (f1)  edge node {$\gamma^{1,2}_0\mathbf{g}^{1,2}_0(\mathbf{x}) = \gamma^{1,2}_0\textbf{softmax}\left((\mathbf{w}^{1,2}_0)^{\mathsf{T}}\mathbf{x}\right)$}(f2);       
+  \draw[->] (f1) to (f2);
+ 
+\end{tikzpicture}
+
+\end{frame}
+
+
+
+
 \begin{frame}{Deep learning model structure as a graph}
 \footnotesize
 Define:
@@ -510,7 +544,7 @@ y={(0cm,1.7cm)},
 \begin{columns}
 \begin{column}{0.6\textwidth}
 \begin{itemize}
-\item \textbf{parameters} \\ $\textcolor{red}{\mathbf{w}_r^{j,k} \sim \mathcal{N}(0, (\gamma_{r}^{j,k})^2 (\mathbf{A}_r^{j,k})^{-1})},$
+\item \textbf{parameters} \\ $\textcolor{red}{\mathbf{w}_r^{j,k} \sim \mathcal{N}(0, (\mathbf{A}_r^{j,k})^{-1})},$
 $\mathbf{A}_r^{j,k}$ is a diagonal matrix for the parameters of the primitive function $\mathbf{g}_r^{j,k}$,
 \item \textbf{structure} \\$\boldsymbol{\Gamma} = \{\boldsymbol{\gamma}^{j,k}, (j,k) \in E\},$ \\$\textcolor{red}{\boldsymbol{\gamma}^{j,k} \sim \text{GS}(\mathbf{s}^{j,k}, \lambda_\text{temp})},$ 
 \item \textbf{hyperparameters} $\mathbf{h} = [\text{diag}(\mathbf{A}), \mathbf{s} ],$
@@ -552,12 +586,14 @@ Hyperparameters are optimized using  \textbf{posterior distribution of hyperpara
         Q = \text{log}p(\mathbf{f}|\mathbf{X}, \mathbf{y}) \propto \textcolor{OliveGreen}{\text{log}p(\mathbf{h}|\mathbf{f})} +  \text{log}\int\limits_{\mathbf{w}} \textcolor{red}{p(\mathbf{y}|\mathbf{X},\mathbf{w},\lam)} \textcolor{blue}{p(\mathbf{w}| \mathbf{h},\lam)} d\mathbf{w}.                     
 \]       
 
+\end{frame}
 
+\begin{frame}{Evidence: example}
 \begin{figure}
 \vspace{-0.5cm}
   \centering    
- \subfloat[]{\includegraphics[width=0.3\textwidth]{slide_plots/evidence_en.pdf}} 
- \subfloat[]{\includegraphics[width=0.3\textwidth]{slide_plots/example.pdf}}
+ \subfloat[]{\includegraphics[width=0.5\textwidth]{slide_plots/evidence_en.pdf}} 
+ \subfloat[]{\includegraphics[width=0.5\textwidth]{slide_plots/example.pdf}}
 
 \end{figure}
 \end{frame}
@@ -841,8 +877,7 @@ $\lambda_\text{prior}$ controls the importance of the prior distribution. With i
 \begin{frame}{Current challenge}
 \begin{itemize}
 \item Can we control the model complexity at the inference step?
-\item Can we select robust architrecture?
-%\item Can we train not a single model, but an ensemble of models? Can we control their deiversity?
+\item Can we select robust architrecture? What properties should it have?
 \end{itemize}
 \end{frame}
 
@@ -865,7 +900,7 @@ The hypernetwork approximates not only deep learning model's performance, but al
 \end{frame}
 
 
-\begin{frame}{Example}
+\begin{frame}{Example: CIFAR-10}
 \vspace{-0.5cm}
 \begin{multicols}{2}
 \begin{figure}[h]
@@ -905,7 +940,7 @@ where $\mathbf{n}({\mathbf{g}}^{(i,j)})$ is a vector of amount of parameters for
 
 \begin{frame}{Example: Fashion-MNIST}
 \begin{figure}[h]
-\includegraphics[width=0.7\textwidth]{./darts.pdf}
+\includegraphics[width=0.6\textwidth]{./darts.pdf}
 \caption*{\footnotesize Yakovlev, Grebenkova, Bakhteev, Strijov. Automated architecture search with model complexity control, 2021. (\textit{work in progress}).}
 \end{figure}
 \end{frame}
@@ -924,6 +959,7 @@ where $\mathbf{n}({\mathbf{g}}^{(i,j)})$ is a vector of amount of parameters for
 \caption*{Complex CNN cell architeuctre}
 \end{figure}
 \end{multicols}
+\vspace{-0.5cm}
 {\footnotesize Yakovlev, Grebenkova, Bakhteev, Strijov. Automated architecture search with model complexity control, 2021. (\textit{work in progress}).}
 \end{frame}
  
@@ -931,17 +967,28 @@ where $\mathbf{n}({\mathbf{g}}^{(i,j)})$ is a vector of amount of parameters for
 
 
 
-\begin{frame}
-Robustness and architecture ensembling
+\begin{frame}{Robust architecture}
+\begin{itemize}
+\item Robustness to noise in data
+\begin{itemize}
+\item Random noise
+\item Adversarial attacks
+\end{itemize}
+\item Robustness to model modification
+\begin{itemize}
+\item Parameters modification
+\item Structure modification
+\end{itemize}
+\end{itemize}
 \end{frame}
 
-\begin{frame}
-Intro + references
-\end{frame}
+
+
 
 
 \begin{frame}{Experiments: MNIST}
-Noise adjusment $\mathcal{N}(\mathbf{0},\sigma^2\mathbf{I})$:
+Correct hyperparameter optimization leads to the model robustness under noise adjustment:  $\mathcal{N}(\mathbf{0},\sigma^2\mathbf{I})$.
+
 \setlength{\columnsep}{10pt}
 \begin{multicols}{4}
 \begin{figure}[h]
@@ -970,23 +1017,26 @@ Noise adjusment $\mathcal{N}(\mathbf{0},\sigma^2\mathbf{I})$:
 \end{frame}
 
 
-\begin{frame}
-Plots on MNIST
+
+\begin{frame}{Robustness to adversarial attacks}
+FGSM-method: $\hat{\mathbf{x}} = \mathbf{x} + \epsilon \cdot \textbf{sign}(\nabla_{\mathbf{x}} \log p(y|\mathbf{x}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{f})).$
+
+\begin{figure}[h]
+\includegraphics[width=0.6\textwidth]{./var_fgm.png}
+\caption*{Simple CNN cell architecture}
+\end{figure}
+
 \end{frame}
 
 
-\begin{frame}
-Ensemblings
+\begin{frame}{Robustness to struccture pruning}
+
+\begin{figure}[h]
+\includegraphics[width=0.6\textwidth]{./var_struct.png}
+\caption*{Simple CNN cell architecture}
+\end{figure}
+
 \end{frame}
-
-
-\begin{frame}
-Plots on MNIST
-\end{frame}
-
-
-
-
 
 
 \begin{frame}{References}
